@@ -1,0 +1,46 @@
+package executor.service.model;
+
+import java.util.Objects;
+
+public class ScenarioDTO {
+    private String name;
+    private String site;
+    private List<Step> steps;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
+    }
+
+    public List<Step> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<Step> steps) {
+        this.steps = steps;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScenarioDTO that = (ScenarioDTO) o;
+        return Objects.equals(name, that.name) && Objects.equals(site, that.site) && Objects.equals(steps, that.steps);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, site, steps);
+    }
+}
