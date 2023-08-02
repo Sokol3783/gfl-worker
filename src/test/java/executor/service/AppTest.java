@@ -1,4 +1,4 @@
-package executor.service.service;
+package executor.service;
 
 import static org.junit.Assert.assertTrue;
 
