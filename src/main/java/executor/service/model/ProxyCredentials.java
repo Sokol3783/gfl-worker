@@ -9,6 +9,11 @@ public class ProxyCredentials {
     public ProxyCredentials() {
     }
 
+    public ProxyCredentials(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public String getUsername() {
         return username;
     }
