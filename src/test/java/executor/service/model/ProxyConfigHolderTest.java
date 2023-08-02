@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class ProxyConfigHolderTest {
     @Test
-    public void noArgsConstructor() {
+    public void testNoArgsConstructor() {
         ProxyConfigHolder proxyConfigHolder = new ProxyConfigHolder();
 
         assertNull(proxyConfigHolder.getProxyCredentials());
@@ -14,7 +14,7 @@ public class ProxyConfigHolderTest {
     }
 
     @Test
-    public void allArgsConstructor() {
+    public void testAllArgsConstructor() {
         ProxyCredentials proxyCredentials = new ProxyCredentials("user", "admin");
         ProxyNetworkConfig proxyNetworkConfig = new ProxyNetworkConfig("localhost", 5080);
 
@@ -43,7 +43,7 @@ public class ProxyConfigHolderTest {
     }
 
     @Test
-    public void HashCodeTest() {
+    public void testHashCode() {
         ProxyCredentials proxyCredentials1 = new ProxyCredentials("user1", "admin");
         ProxyNetworkConfig proxyNetworkConfig1 = new ProxyNetworkConfig("localhost", 5080);
         ProxyConfigHolder proxyConfigHolder1 = new ProxyConfigHolder(proxyNetworkConfig1, proxyCredentials1);
