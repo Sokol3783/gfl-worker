@@ -12,7 +12,8 @@ public class ProxyConfigHolder {
 
     public ProxyConfigHolder(ProxyNetworkConfig proxyNetworkConfig,
                              ProxyCredentials proxyCredentials) {
-
+        this.proxyNetworkConfig = proxyNetworkConfig;
+        this.proxyCredentials = proxyCredentials;
     }
 
     public ProxyNetworkConfig getProxyNetworkConfig() {
