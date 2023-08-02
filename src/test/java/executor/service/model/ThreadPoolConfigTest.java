@@ -65,9 +65,23 @@ public class ThreadPoolConfigTest {
     }
 
     @Test
-    public void AllArgsConstructorTest() {
+    public void allArgsConstructorTest() {
         config1 = new ThreadPoolConfig(10,100L);
         config2 = new ThreadPoolConfig(10,100L);
         assertTrue(config1.equals(config2));
+    }
+
+    @Test
+    public void setTest() {
+        config1.setCorePoolSize(10);
+        config1.setKeepAliveTime(100L);
+        assertEquals(10, (int) config1.getCorePoolSize());
+        assertEquals(100L, (long) config1.getKeepAliveTime());
+    }
+    @Test
+    public void getTest() {
+        config1 = new ThreadPoolConfig(10,100L);
+        assertEquals(10, (int) config1.getCorePoolSize());
+        assertEquals(100L, (long) config1.getKeepAliveTime());
     }
 }
