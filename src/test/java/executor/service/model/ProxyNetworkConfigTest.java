@@ -1,22 +1,33 @@
 package executor.service.model;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ProxyNetworkConfigTest {
     private static final String HOSTNAME = "example.com";
+    private static final String HOSTNAME_ANOTHER = "example.org";
     private static final Integer PORT = 8080;
+    private static final Integer PORT_ANOTHER = 8081;
     private ProxyNetworkConfig config1;
     private ProxyNetworkConfig config2;
     private ProxyNetworkConfig config3;
 
     @Before
     public void setUp() {
-        config1 = new ProxyNetworkConfig("example.com", 8080);
-        config2 = new ProxyNetworkConfig("example.com", 8080);
-        config3 = new ProxyNetworkConfig("example.org", 8081);
+        config1 = new ProxyNetworkConfig(HOSTNAME, PORT);
+        config2 = new ProxyNetworkConfig(HOSTNAME, PORT);
+        config3 = new ProxyNetworkConfig(HOSTNAME_ANOTHER, PORT_ANOTHER);
+    }
+
+    @After
+    public void tearDown() {
+        config1 = null;
+        config2 = null;
+        config3 = null;
     }
 
     @Test
@@ -27,10 +38,11 @@ public class ProxyNetworkConfigTest {
     }
 
     @Test
-    public void testParameterizedConstructor() {
-        ProxyNetworkConfig config = new ProxyNetworkConfig(HOSTNAME, PORT);
-        assertEquals(HOSTNAME, config.getHostname());
-        assertEquals(PORT, config.getPort());
+    public void testParameterizedConstructorAndSetters() {
+        ProxyNetworkConfig config = new ProxyNetworkConfig();
+        config.setHostname(HOSTNAME);
+        config.setPort(PORT);
+        assertEquals(config, config1);
     }
 
     @Test
