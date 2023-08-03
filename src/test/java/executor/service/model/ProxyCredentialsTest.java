@@ -44,8 +44,36 @@ public class ProxyCredentialsTest {
     }
 
     @Test
+    public void testEqualsWithEmptyObjects() {
+        proxyCredentials.setUsername(null);
+        proxyCredentials.setPassword(null);
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        assertEquals(proxyCredentials, proxyCredentials1);
+    }
+
+    @Test
+    public void testNotEqualsByUsername() {
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        proxyCredentials1.setUsername("other name");
+        assertNotEquals(proxyCredentials, proxyCredentials1);
+    }
+
+    @Test
+    public void testNotEqualsByPassword() {
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        proxyCredentials1.setPassword("wrong password");
+        assertNotEquals(proxyCredentials, proxyCredentials1);
+    }
+
+    @Test
     public void testHashCode() {
         ProxyCredentials proxyCredentials1 = new ProxyCredentials("test name", "test password");
         assertEquals(proxyCredentials.hashCode(), proxyCredentials1.hashCode());
+    }
+
+    @Test
+    public void testHashCodeNotMatch() {
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        assertNotEquals(proxyCredentials.hashCode(), proxyCredentials1.hashCode());
     }
 }
