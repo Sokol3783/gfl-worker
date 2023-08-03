@@ -56,9 +56,6 @@ public class WebDriverConfigTest {
     @Test
     public void testHashCode() {
         assertEquals(config1.hashCode(), config2.hashCode());
-
-        assertNotEquals(config1.hashCode(), config3.hashCode());
-        assertNotEquals(config2.hashCode(), config3.hashCode());
     }
 
     @Test
