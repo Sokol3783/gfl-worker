@@ -1,4 +1,6 @@
 package executor.service.model;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +19,14 @@ public class WebDriverConfigTest {
         config2 = new WebDriverConfig("driver.exe", "Chrome", 5000L, 2000L);
         config3 = new WebDriverConfig("geckodriver.exe", "Firefox", 3000L, 1000L);
     }
+
+    @After
+    public void tearDown() {
+        config1 = null;
+        config2 = null;
+        config3 = null;
+    }
+
     @Test
     public void testGettersAndSetters() {
         config1.setWebDriverExecutable("chromedriver.exe");
@@ -29,6 +39,7 @@ public class WebDriverConfigTest {
         assertEquals(6000L, (long) config1.getPageLoadTimeout());
         assertEquals(1500L, (long) config1.getImplicitlyWait());
     }
+
     @Test
     public void testEquals() {
 
@@ -49,4 +60,5 @@ public class WebDriverConfigTest {
         assertNotEquals(config1.hashCode(), config3.hashCode());
         assertNotEquals(config2.hashCode(), config3.hashCode());
     }
+
 }
