@@ -1,16 +1,23 @@
 package executor.service.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ProxyCredentialsTest {
     private ProxyCredentials proxyCredentials;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         proxyCredentials = new ProxyCredentials("test name", "test password");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        proxyCredentials = null;
     }
 
     @Test
