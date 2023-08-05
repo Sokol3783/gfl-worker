@@ -14,6 +14,7 @@ public class PropertiesConfig {
      * Get the properties from resources file.
      *
      * @param fileName properties file name with extension
+     * @return the Properties class represents a persistent set of properties
      * */
     public Properties getProperties(String fileName) {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(fileName)) {
