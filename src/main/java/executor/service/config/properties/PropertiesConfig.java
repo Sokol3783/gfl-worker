@@ -1,5 +1,8 @@
 package executor.service.config.properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -9,6 +12,8 @@ import java.util.Properties;
  * Class for reading properties from properties file.
  * */
 public class PropertiesConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(PropertiesConfig.class);
 
     /**
      * Get the properties from resources file.
@@ -22,6 +27,7 @@ public class PropertiesConfig {
             properties.load(in);
             return properties;
         } catch (IOException e) {
+            log.info("UncheckedIOException in the PropertiesConfig.class.");
             throw new UncheckedIOException(e);
         }
     }
