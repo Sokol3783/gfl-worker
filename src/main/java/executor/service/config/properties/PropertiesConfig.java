@@ -1,4 +1,4 @@
-package executor.service.config.property;
+package executor.service.config.properties;
 
 import java.io.IOException;
 import java.io.InputStream;
