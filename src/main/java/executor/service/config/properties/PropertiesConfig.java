@@ -10,6 +10,9 @@ import java.util.Properties;
 
 /**
  * Class for reading properties from properties file.
+ *
+ *  @author Oleksandr Tuleninov
+ *  @version 01
  * */
 public class PropertiesConfig {
 

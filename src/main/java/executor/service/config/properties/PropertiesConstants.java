@@ -2,6 +2,9 @@ package executor.service.config.properties;
 
 /**
  * Class for application`s constants.
+ *
+ * @author Oleksandr Tuleninov
+ * @version 01
  * */
 public final class PropertiesConstants {
 
