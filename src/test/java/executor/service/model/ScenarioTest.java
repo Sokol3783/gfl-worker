@@ -1,22 +1,26 @@
 package executor.service.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ScenarioTest {
 
+    private static final String NAME = "Test Scenario";
+    private static final String NAME_ANOTHER = "Scenario 1";
+    private static final String SITE = "example.com";
+    private static final String SITE_ANOTHER = "site1.com";
     private List<Step> steps1;
     private List<Step> steps2;
     private List<Step> steps3;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         steps1 = new ArrayList<>();
         steps1.add(new Step("sleep", "5000:15000"));
@@ -31,7 +35,7 @@ public class ScenarioTest {
         steps3.add(new Step("click", "body"));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         steps1 = null;
         steps2 = null;
@@ -39,48 +43,55 @@ public class ScenarioTest {
     }
 
     @Test
-    public void testConstructorAndSettersAndGetters() {
+    public void testConstructorWithoutArgsAndSettersAndGetters() {
         Scenario scenario = new Scenario();
-        scenario.setName("Test Scenario");
-        scenario.setSite("example.com");
+        scenario.setName(NAME);
+        scenario.setSite(SITE);
         scenario.setSteps(steps1);
 
-        assertEquals("Test Scenario", scenario.getName());
-        assertEquals("example.com", scenario.getSite());
+        assertEquals(NAME, scenario.getName());
+        assertEquals(SITE, scenario.getSite());
         assertEquals(steps1, scenario.getSteps());
     }
 
     @Test
-    public void testConstructorAndGetters() {
-        Scenario scenario = new Scenario("Test Scenario", "example.com", steps1);
+    public void testConstructorWithArgsAndGetters() {
+        Scenario scenario = new Scenario(NAME, SITE, steps1);
 
-        assertEquals("Test Scenario", scenario.getName());
-        assertEquals("example.com", scenario.getSite());
+        assertEquals(NAME, scenario.getName());
+        assertEquals(SITE, scenario.getSite());
         assertEquals(steps1, scenario.getSteps());
     }
 
     @Test
     public void testEquals() {
-        Scenario scenario1 = new Scenario("Scenario 1", "site1.com", steps1);
-        Scenario scenario2 = new Scenario("Scenario 1", "site1.com", steps2);
+        Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
+        Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps2);
 
         assertEquals(scenario1, scenario2);
     }
 
     @Test
+    public void testNotEquals() {
+        Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
+        Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps3);
+
+        assertNotEquals(scenario1, scenario2);
+    }
+
+    @Test
     public void testHashCode() {
-        Scenario scenario1 = new Scenario("Scenario 1", "site1.com", steps1);
-        Scenario scenario2 = new Scenario("Scenario 1", "site1.com", steps2);
+        Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
+        Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps2);
 
         assertEquals(scenario1.hashCode(), scenario2.hashCode());
     }
 
     @Test
-    public void testNotEquals() {
-        Scenario scenario1 = new Scenario("Scenario 1", "site1.com", steps1);
-        Scenario scenario2 = new Scenario("Scenario 1", "site1.com", steps3);
+    public void testHashCodeNotMatch() {
+        Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
+        Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps3);
 
-        assertNotEquals(scenario1, scenario2);
         assertNotEquals(scenario1.hashCode(), scenario2.hashCode());
     }
 }

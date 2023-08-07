@@ -1,16 +1,23 @@
 package executor.service.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ProxyCredentialsTest {
     private ProxyCredentials proxyCredentials;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         proxyCredentials = new ProxyCredentials("test name", "test password");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        proxyCredentials = null;
     }
 
     @Test
@@ -44,8 +51,36 @@ public class ProxyCredentialsTest {
     }
 
     @Test
+    public void testEqualsWithEmptyObjects() {
+        proxyCredentials.setUsername(null);
+        proxyCredentials.setPassword(null);
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        assertEquals(proxyCredentials, proxyCredentials1);
+    }
+
+    @Test
+    public void testNotEqualsByUsername() {
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        proxyCredentials1.setUsername("other name");
+        assertNotEquals(proxyCredentials, proxyCredentials1);
+    }
+
+    @Test
+    public void testNotEqualsByPassword() {
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        proxyCredentials1.setPassword("wrong password");
+        assertNotEquals(proxyCredentials, proxyCredentials1);
+    }
+
+    @Test
     public void testHashCode() {
         ProxyCredentials proxyCredentials1 = new ProxyCredentials("test name", "test password");
         assertEquals(proxyCredentials.hashCode(), proxyCredentials1.hashCode());
+    }
+
+    @Test
+    public void testHashCodeNotMatch() {
+        ProxyCredentials proxyCredentials1 = new ProxyCredentials();
+        assertNotEquals(proxyCredentials.hashCode(), proxyCredentials1.hashCode());
     }
 }
