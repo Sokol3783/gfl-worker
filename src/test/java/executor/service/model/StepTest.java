@@ -42,6 +42,7 @@ public class StepTest {
         assertEquals(step, sameStep);
     }
 
+    @Test
     public void testDifferentObjectsNotEquals() {
         Step step = prepareStep();
         Step anotherStep = prepareAnotherStep();
@@ -65,11 +66,11 @@ public class StepTest {
         assertNotEquals(step.hashCode(), anotherStep.hashCode());
     }
 
-    private static Step prepareStep() {
+    private Step prepareStep() {
         return new Step(DEFAULT_ACTION, DEFAULT_VALUE);
     }
 
-    private static Step prepareAnotherStep() {
+    private Step prepareAnotherStep() {
         return new Step(ANOTHER_ACTION, ANOTHER_VALUE);
     }
 }
