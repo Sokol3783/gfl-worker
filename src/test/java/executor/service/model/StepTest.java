@@ -1,5 +1,4 @@
 package executor.service.model;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +19,7 @@ public class StepTest {
 
     @Test
     public void testAllArgsConstructor() {
-        Step step = new Step(DEFAULT_ACTION, DEFAULT_VALUE);
+        Step step = prepareStep();
 
         assertNotNull(step);
     }
@@ -37,29 +36,41 @@ public class StepTest {
 
     @Test
     public void testSameObjectsEquals() {
-        Step step = new Step(DEFAULT_ACTION, DEFAULT_VALUE);
+        Step step = prepareStep();
+        Step sameStep = prepareStep();
 
-        assertEquals(step, new Step(DEFAULT_ACTION, DEFAULT_VALUE));
+        assertEquals(step, sameStep);
     }
 
     @Test
     public void testDifferentObjectsNotEquals() {
-        Step step = new Step(DEFAULT_ACTION, DEFAULT_VALUE);
+        Step step = prepareStep();
+        Step anotherStep = prepareAnotherStep();
 
-        assertNotEquals(step, new Step(ANOTHER_ACTION, ANOTHER_VALUE));
+        assertNotEquals(step, anotherStep);
     }
 
     @Test
     public void testSameObjectsHashCode() {
-        Step step = new Step(DEFAULT_ACTION, DEFAULT_VALUE);
+        Step step = prepareStep();
+        Step sameStep = prepareStep();
 
-        assertEquals(step.hashCode(), new Step(DEFAULT_ACTION, DEFAULT_VALUE).hashCode());
+        assertEquals(step.hashCode(), sameStep.hashCode());
     }
 
     @Test
     public void testDifferentObjectsHashCode() {
-        Step step = new Step(DEFAULT_ACTION, DEFAULT_VALUE);
+        Step step = prepareStep();
+        Step anotherStep = prepareAnotherStep();
 
-        assertNotEquals(step.hashCode(), new Step(ANOTHER_ACTION, ANOTHER_VALUE).hashCode());
+        assertNotEquals(step.hashCode(), anotherStep.hashCode());
+    }
+
+    private Step prepareStep() {
+        return new Step(DEFAULT_ACTION, DEFAULT_VALUE);
+    }
+
+    private Step prepareAnotherStep() {
+        return new Step(ANOTHER_ACTION, ANOTHER_VALUE);
     }
 }
