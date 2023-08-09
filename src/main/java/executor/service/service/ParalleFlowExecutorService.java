@@ -12,6 +12,12 @@ import java.util.concurrent.TimeUnit;
 
 import static executor.service.config.properties.PropertiesConstants.*;
 
+/**
+ * Class for running ExecutionService in parallel multi-threaded mode.
+ *
+ * @author Oleksandr Tuleninov
+ * @version 01
+ * */
 public class ParalleFlowExecutorService {
 
     private final WebDriver webDriver;
@@ -24,10 +30,18 @@ public class ParalleFlowExecutorService {
         blockingQueue = new LinkedBlockingQueue<>();
     }
 
+    /**
+     * Method for add the Scenario in the ParalleFlowExecutorService().
+     *
+     * @param scenario the execution script
+     * */
     public void addScenario(Scenario scenario) {
         blockingQueue.add(() -> executionService.execute(scenario, webDriver));
     }
 
+    /**
+     * Method to add the Scenario in the ParalleFlowExecutorService().
+     * */
     public void runAllScenario() {
         ThreadPoolConfig threadPoolConfig = createThreadPoolConfig();
 
@@ -41,6 +55,9 @@ public class ParalleFlowExecutorService {
         threadPool.shutdown();
     }
 
+    /**
+     * Method to create the ThreadPoolConfig from properties file.
+     * */
     private ThreadPoolConfig createThreadPoolConfig() {
         var properties = new PropertiesConfig().getProperties(THREAD_POOL_PROPERTIES);
         var corePoolSize = Integer.parseInt(properties.getProperty(CORE_POOL_SIZE));
