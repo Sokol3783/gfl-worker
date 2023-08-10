@@ -15,10 +15,10 @@ public class FactoryForDI {
     private final StepExecutionClickCss stepExecutionClickCss;
 
     public FactoryForDI() {
-        webDriverInitializer = new WebDriverInitializer();
+        webDriverInitializer = new WebDriverInitializer(null,null);
         proxySourcesClient = new ProxySourcesClientImpl();
         scenarioSourceListener = new ScenarioSourceListenerImpl();
-        paralleFlowExecutorService = new ParalleFlowExecutorService();
+        paralleFlowExecutorService = new ParalleFlowExecutorService(null,null);
         executionService = new ExecutionServiceImpl();
         scenarioExecutor = new ScenarioExecutorImpl();
         stepExecutionSleep = new StepExecutionSleepImpl();
