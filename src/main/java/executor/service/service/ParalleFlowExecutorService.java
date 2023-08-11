@@ -22,14 +22,14 @@ public class ParalleFlowExecutorService {
 
     private final WebDriver webDriver;
     private final ExecutionService executionService;
-    private final ThreadPoolExecutor threadPoolExecutor;
+    private final ThreadPoolExecutor threadPool;
     private final BlockingQueue<Runnable> blockingQueue;
 
     public ParalleFlowExecutorService(WebDriver webDriver, ExecutionService executionService) {
         this.webDriver = webDriver;
         this.executionService = executionService;
         blockingQueue = new LinkedBlockingQueue<>();
-        threadPoolExecutor = createThreadPoolExecutor();
+        threadPool = createThreadPoolExecutor();
     }
 
     /**
@@ -45,15 +45,7 @@ public class ParalleFlowExecutorService {
      * Method to add the Scenario in the ParalleFlowExecutorService().
      * */
     public void run() {
-        ThreadPoolConfig threadPoolConfig = createThreadPoolConfig();
 
-        var threadPool = new ThreadPoolExecutor(
-                threadPoolConfig.getCorePoolSize(),
-                16,
-                threadPoolConfig.getKeepAliveTime(),
-                TimeUnit.MINUTES,
-                blockingQueue
-        );
         threadPool.shutdown();
     }
 
