@@ -32,21 +32,24 @@ public class ParalleFlowExecutorService {
 
     /**
      * Method to add the Scenario in the ParalleFlowExecutorService().
-     * */
+     *
+     * @param scenario  the scenario for execution in parallel flow
+     * @param webDriver the remote control interface that enables introspection and control of user agents (browsers)
+     */
     public void enqueueScenarioForExecution(Scenario scenario, WebDriver webDriver) {
         blockingQueue.add(() -> scenarioExecutor.execute(scenario, webDriver));
     }
 
     /**
      * Method to shut down the ParalleFlowExecutorService.
-     * */
+     */
     public void shutdown() {
         threadPool.shutdown();
     }
 
     /**
      * Method to create the ThreadPoolExecutor from ThreadPoolConfig.class.
-     * */
+     */
     private ThreadPoolExecutor createThreadPoolExecutor() {
         ThreadPoolConfig threadPoolConfig = createThreadPoolConfig();
         return new ThreadPoolExecutor(
@@ -59,7 +62,7 @@ public class ParalleFlowExecutorService {
 
     /**
      * Method to create the ThreadPoolConfig from properties file.
-     * */
+     */
     private ThreadPoolConfig createThreadPoolConfig() {
         var properties = new PropertiesConfig().getProperties(THREAD_POOL_PROPERTIES);
         var corePoolSize = Integer.parseInt(properties.getProperty(CORE_POOL_SIZE));
