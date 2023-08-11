@@ -1,6 +1,7 @@
 package executor.service.service;
 
 import executor.service.config.properties.PropertiesConfig;
+import executor.service.model.Scenario;
 import executor.service.model.ThreadPoolConfig;
 import org.openqa.selenium.WebDriver;
 
@@ -19,14 +20,12 @@ import static executor.service.config.properties.PropertiesConstants.*;
  */
 public class ParalleFlowExecutorService {
 
-    private final WebDriver webDriver;
-    private final ExecutionService executionService;
+    private final ScenarioExecutor scenarioExecutor;
     private final ThreadPoolExecutor threadPool;
     private final BlockingQueue<Runnable> blockingQueue;
 
-    public ParalleFlowExecutorService(WebDriver webDriver, ExecutionService executionService) {
-        this.webDriver = webDriver;
-        this.executionService = executionService;
+    public ParalleFlowExecutorService(ScenarioExecutor scenarioExecutor) {
+        this.scenarioExecutor = scenarioExecutor;
         blockingQueue = new LinkedBlockingQueue<>();
         threadPool = createThreadPoolExecutor();
     }
@@ -34,19 +33,27 @@ public class ParalleFlowExecutorService {
     /**
      * Method to add the Scenario in the ParalleFlowExecutorService().
      * */
-    public void run() {
-
-        threadPool.shutdown();
-
+    public void enqueueScenarioForExecution(Scenario scenario, WebDriver webDriver) {
+        blockingQueue.add(() -> scenarioExecutor.execute(scenario, webDriver));
     }
 
+    /**
+     * Method to shut down the ParalleFlowExecutorService.
+     * */
+    public void shutdown() {
+        threadPool.shutdown();
+    }
+
+    /**
+     * Method to create the ThreadPoolExecutor from ThreadPoolConfig.class.
+     * */
     private ThreadPoolExecutor createThreadPoolExecutor() {
         ThreadPoolConfig threadPoolConfig = createThreadPoolConfig();
         return new ThreadPoolExecutor(
                 threadPoolConfig.getCorePoolSize(),
                 16,
                 threadPoolConfig.getKeepAliveTime(),
-                TimeUnit.MINUTES,
+                TimeUnit.SECONDS,
                 blockingQueue);
     }
 
