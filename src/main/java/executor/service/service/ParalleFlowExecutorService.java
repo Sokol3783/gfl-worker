@@ -13,11 +13,7 @@ public class ParalleFlowExecutorService {
         this.executionService = executionService;
     }
 
-    public void addScenario(Scenario scenario) {
-
-    }
-
-    public void runAllScenario() {
+    public void runAllScenario(Scenario scenario) {
 
     }
 }
