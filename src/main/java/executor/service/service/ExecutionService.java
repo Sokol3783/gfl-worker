@@ -1,10 +1,20 @@
 package executor.service.service;
 
-import executor.service.model.Scenario;
-import org.openqa.selenium.WebDriver;
+public class ExecutionService {
 
-public interface ExecutionService {
+    private WebDriverInitializer driverInitializer;
+    private ScenarioExecutor scenarioExecutor;
+    private ScenarioSourceListener scenarioSourceListener;
 
-    void execute(Scenario scenario, WebDriver webDriver);
+    public ExecutionService(WebDriverInitializer driverInitializer, ScenarioExecutor scenarioExecutor, ScenarioSourceListener scenarioSourceListener) {
+        this.driverInitializer = driverInitializer;
+        this.scenarioExecutor = scenarioExecutor;
+        this.scenarioSourceListener = scenarioSourceListener;
+    }
 
+    public void execute() {
+
+        scenarioSourceListener.execute();
+
+    }
 }
