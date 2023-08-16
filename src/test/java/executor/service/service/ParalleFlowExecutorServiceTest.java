@@ -37,7 +37,7 @@ public class ParalleFlowExecutorServiceTest {
         steps1.add(new Step("sleep", "5:10"));
         steps1.add(new Step("clickXpath", "/html/body/p"));
 
-        var arrScenario1 = new Scenario(
+        var scenario1 = new Scenario(
                 "test scenario 1",
                 "http://info.cern.ch",
                 steps1
@@ -48,21 +48,18 @@ public class ParalleFlowExecutorServiceTest {
         steps2.add(new Step("sleep", "5:10"));
         steps2.add(new Step("clickCss", "body > ul > li:nth-child(1) > a"));
 
-        var arrScenario2 = new Scenario(
+        var scenario2 = new Scenario(
                 "test scenario 2",
                 "http://info.cern.ch",
                 steps2
         );
 
-        var arrScenario = new Scenario[] {arrScenario1,arrScenario2};
+        var arrScenario = new Scenario[] {scenario1,scenario2};
 
         for (Scenario scenario : arrScenario) {
-            // Mock the behavior of scenarioExecutor.execute
-            doNothing().when(scenarioExecutor).execute(scenario, webDriver);
             parallelFlow.enqueueScenarioForExecution(scenario, webDriver);
         }
 
-        // Add assertions and verifications here
         verify(scenarioExecutor, times(2)).execute(any(), eq(webDriver));
     }
 }

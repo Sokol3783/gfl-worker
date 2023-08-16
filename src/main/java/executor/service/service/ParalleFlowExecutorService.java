@@ -37,7 +37,7 @@ public class ParalleFlowExecutorService {
      * @param webDriver the remote control interface that enables introspection and control of user agents (browsers)
      */
     public void enqueueScenarioForExecution(Scenario scenario, WebDriver webDriver) {
-        blockingQueue.add(() -> scenarioExecutor.execute(scenario, webDriver));
+        threadPool.execute(() -> scenarioExecutor.execute(scenario, webDriver));
     }
 
     /**
