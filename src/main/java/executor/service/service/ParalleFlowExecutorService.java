@@ -22,6 +22,7 @@ import static executor.service.config.properties.PropertiesConstants.*;
 public class ParalleFlowExecutorService {
 
     private static final Logger log = LoggerFactory.getLogger(ParalleFlowExecutorService.class);
+    private static final int MAXIMUM_POOL_SIZE = 16;
 
     private final ScenarioExecutor scenarioExecutor;
     private final ThreadPoolExecutor threadPool;
@@ -69,7 +70,7 @@ public class ParalleFlowExecutorService {
         ThreadPoolConfig threadPoolConfig = createThreadPoolConfig();
         return new ThreadPoolExecutor(
                 threadPoolConfig.getCorePoolSize(),
-                16,
+                MAXIMUM_POOL_SIZE,
                 threadPoolConfig.getKeepAliveTime(),
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>());
