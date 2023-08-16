@@ -9,7 +9,7 @@ import java.io.UncheckedIOException;
 import java.util.Properties;
 
 /**
- * Class for reading properties from properties file.
+ * Read properties from properties file.
  *
  *  @author Oleksandr Tuleninov
  *  @version 01

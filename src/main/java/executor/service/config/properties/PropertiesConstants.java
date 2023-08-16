@@ -1,7 +1,7 @@
 package executor.service.config.properties;
 
 /**
- * Class for application`s constants.
+ * Application`s constants.
  *
  * @author Oleksandr Tuleninov
  * @version 01

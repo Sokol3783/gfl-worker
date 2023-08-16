@@ -4,8 +4,9 @@ import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.Scenario;
 import executor.service.model.ThreadPoolConfig;
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -13,42 +14,56 @@ import java.util.concurrent.TimeUnit;
 import static executor.service.config.properties.PropertiesConstants.*;
 
 /**
- * Class for running ExecutionService in parallel multi-threaded mode.
+ * Start ExecutionService in parallel multi-threaded mode.
  *
  * @author Oleksandr Tuleninov
  * @version 01
  */
 public class ParalleFlowExecutorService {
 
+    private static final Logger log = LoggerFactory.getLogger(ParalleFlowExecutorService.class);
+
     private final ScenarioExecutor scenarioExecutor;
     private final ThreadPoolExecutor threadPool;
-    private final BlockingQueue<Runnable> blockingQueue;
 
     public ParalleFlowExecutorService(ScenarioExecutor scenarioExecutor) {
         this.scenarioExecutor = scenarioExecutor;
-        blockingQueue = new LinkedBlockingQueue<>();
         threadPool = createThreadPoolExecutor();
     }
 
     /**
-     * Method to add the Scenario in the ParalleFlowExecutorService().
+     * Adds Scenario to ParalleFlowExecutorService.
      *
      * @param scenario  the scenario for execution in parallel flow
      * @param webDriver the remote control interface that enables introspection and control of user agents (browsers)
      */
     public void enqueueScenarioForExecution(Scenario scenario, WebDriver webDriver) {
-        threadPool.execute(() -> scenarioExecutor.execute(scenario, webDriver));
+        threadPool.execute(() -> execute(scenario, webDriver));
     }
 
     /**
-     * Method to shut down the ParalleFlowExecutorService.
+     * Shut down the ParallelFlowExecutorService.
      */
     public void shutdown() {
         threadPool.shutdown();
     }
 
     /**
-     * Method to create the ThreadPoolExecutor from ThreadPoolConfig.class.
+     * Handles and logs errors.
+     *
+     * @param scenario  the scenario for execution in parallel flow
+     * @param webDriver the remote control interface that enables introspection and control of user agents (browsers)
+     */
+    private void execute(Scenario scenario, WebDriver webDriver) {
+        try {
+            scenarioExecutor.execute(scenario, webDriver);
+        } catch (Exception e) {
+            log.error("An error occurred during scenario execution", e);
+        }
+    }
+
+    /**
+     * Create ThreadPoolExecutor from ThreadPoolConfig.class.
      */
     private ThreadPoolExecutor createThreadPoolExecutor() {
         ThreadPoolConfig threadPoolConfig = createThreadPoolConfig();
@@ -57,11 +72,11 @@ public class ParalleFlowExecutorService {
                 16,
                 threadPoolConfig.getKeepAliveTime(),
                 TimeUnit.SECONDS,
-                blockingQueue);
+                new LinkedBlockingQueue<>());
     }
 
     /**
-     * Method to create the ThreadPoolConfig from properties file.
+     * Create ThreadPoolConfig from properties file.
      */
     private ThreadPoolConfig createThreadPoolConfig() {
         var properties = new PropertiesConfig().getProperties(THREAD_POOL_PROPERTIES);
