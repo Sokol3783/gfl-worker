@@ -29,7 +29,7 @@ public class ParalleFlowExecutorService {
 
     public ParalleFlowExecutorService(ScenarioExecutor scenarioExecutor) {
         this.scenarioExecutor = scenarioExecutor;
-        threadPool = createThreadPoolExecutor();
+        this.threadPool = createThreadPoolExecutor();
     }
 
     /**
