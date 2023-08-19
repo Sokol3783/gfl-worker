@@ -1,12 +1,9 @@
 package executor.service.service;
 
 import executor.service.config.properties.PropertiesConfig;
-import executor.service.model.Scenario;
 import executor.service.model.ThreadPoolConfig;
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -21,25 +18,21 @@ import static executor.service.config.properties.PropertiesConstants.*;
  */
 public class ParalleFlowExecutorService {
 
-    private static final Logger log = LoggerFactory.getLogger(ParalleFlowExecutorService.class);
     private static final int MAXIMUM_POOL_SIZE = 16;
 
-    private final ScenarioExecutor scenarioExecutor;
-    private final ThreadPoolExecutor threadPool;
+    private final ExecutionService service;
+    private final ExecutorService threadPool;
 
-    public ParalleFlowExecutorService(ScenarioExecutor scenarioExecutor) {
-        this.scenarioExecutor = scenarioExecutor;
+    public ParalleFlowExecutorService(ExecutionService service) {
+        this.service = service;
         this.threadPool = createThreadPoolExecutor();
     }
 
     /**
-     * Adds Scenario to ParalleFlowExecutorService.
-     *
-     * @param scenario  the scenario for execution in parallel flow
-     * @param webDriver the remote control interface that enables introspection and control of user agents (browsers)
+     * Adds array of user scripts to ParalleFlowExecutorService.
      */
-    public void enqueueScenarioForExecution(Scenario scenario, WebDriver webDriver) {
-        threadPool.execute(() -> execute(scenario, webDriver));
+    public void execute() {
+        threadPool.execute(service::execute);
     }
 
     /**
@@ -47,20 +40,6 @@ public class ParalleFlowExecutorService {
      */
     public void shutdown() {
         threadPool.shutdown();
-    }
-
-    /**
-     * Handles and logs errors.
-     *
-     * @param scenario  the scenario for execution in parallel flow
-     * @param webDriver the remote control interface that enables introspection and control of user agents (browsers)
-     */
-    private void execute(Scenario scenario, WebDriver webDriver) {
-        try {
-            scenarioExecutor.execute(scenario, webDriver);
-        } catch (Exception e) {
-            log.error("An error occurred during scenario execution", e);
-        }
     }
 
     /**
