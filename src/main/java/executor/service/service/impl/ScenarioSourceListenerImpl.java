@@ -3,7 +3,12 @@ package executor.service.service.impl;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import executor.service.model.Scenario;
+import executor.service.service.ParalleFlowExecutorService;
+import executor.service.service.ScenarioProvider;
 import executor.service.service.ScenarioSourceListener;
+import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,32 +18,34 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public class ScenarioSourceListenerImpl implements ScenarioSourceListener {
-    // TODO: introduce proper filename constant holding
-    public static final String FILE_NAME = "/scenarios.json";
+
+    private final ScenarioProvider provider;
+    private final ParalleFlowExecutorService service;
+    private final WebDriver webDriver;
+    private static final Logger log = LoggerFactory.getLogger(ScenarioProvider.class);
+
+    public ScenarioSourceListenerImpl(ScenarioProvider provider, ParalleFlowExecutorService service, WebDriver webDriver) {
+        this.provider = provider;
+        this.service = service;
+        this.webDriver = webDriver;
+    }
 
     @Override
     public void execute() {
-        try (InputStream inputStream = getClass().getResourceAsStream(FILE_NAME);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-
-            List<Scenario> scenarios = parseScenariosFromJson(reader);
-
-            for (Scenario scenario : scenarios) {
-                processScenario(scenario);
-            }
-
-        } catch (IOException e) {
-            // TODO: handle exceptions
-            System.err.println(e.getMessage());
-        }
+        List<Scenario> scenarios = provider.readScenarios();
+        validateScenarios(scenarios);
+        scenarios.forEach(scenario -> processScenario(scenario));
     }
 
-    private List<Scenario> parseScenariosFromJson(BufferedReader reader) {
-        Type listType = new TypeToken<List<Scenario>>() {}.getType();
-        return new Gson().fromJson(reader, listType);
+    private void validateScenarios(List<Scenario> scenarios) {
+        if(scenarios == null || scenarios.isEmpty()) {
+            log.error("Bad scenarios list.");
+            throw new IllegalArgumentException("List cannot be null or empty");
+        }
     }
 
     private void processScenario(Scenario scenario) {
         // TODO: add logic here
+        log.info("Adding scenario {}.", scenario);
     }
 }
