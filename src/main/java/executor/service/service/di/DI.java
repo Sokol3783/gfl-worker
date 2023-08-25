@@ -10,8 +10,8 @@ import java.util.Map;
 public class DI {
 
     public static Object run() {
-        ApplicationContext context = Application.run("executor.service", new HashMap<>(Map.of(ParalleFlowExecutorService.class, ParalleFlowExecutorService.class)));
-        return context.getObject(ParalleFlowExecutorService.class);
+        ApplicationContext context = Application.run("executor.service", new HashMap<>(Map.of(ScenarioSourceListener.class, ScenarioSourceListenerImpl.class)));
+        return context.getObject(ScenarioSourceListener.class);
     }
 
     public static void main(String[] args) {
