@@ -5,8 +5,11 @@ import org.openqa.selenium.WebDriver;
 
 public class ParalleFlowExecutorService {
 
-    private final WebDriver webDriver;
-    private final ExecutionService executionService;
+    private  WebDriver webDriver;
+    private  ExecutionService executionService;
+
+    public ParalleFlowExecutorService() {
+    }
 
     public ParalleFlowExecutorService(WebDriver webDriver, ExecutionService executionService) {
         this.webDriver = webDriver;

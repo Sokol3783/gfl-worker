@@ -17,6 +17,10 @@ public class ApplicationContext {
         this.factory = factory;
     }
 
+    public Config getConfig() {
+        return config;
+    }
+
     public <T> T getObject(Class<T> type) {
         if (cache.containsKey(type)) {
             return type.cast(cache.get(type));
