@@ -4,6 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ObjectFactory {
 
+    private final ApplicationContext context;
+
+    public ObjectFactory(ApplicationContext context) {
+        this.context = context;
+    }
+
     public <T> T createObject(Class<T> implClass) {
         T t;
         try {
