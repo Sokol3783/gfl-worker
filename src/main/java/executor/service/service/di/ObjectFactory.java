@@ -1,6 +1,5 @@
 package executor.service.service.di;
 
-import executor.service.config.properties.PropertiesConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class ObjectFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(PropertiesConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(ObjectFactory.class);
 
     private final ApplicationContext context;
     private final List<ObjectConfigurator> configurators = new ArrayList<>();
