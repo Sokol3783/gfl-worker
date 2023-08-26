@@ -22,20 +22,18 @@ public class ParalleFlowExecutorService {
 
     private final ExecutionService service;
     private ThreadPoolConfig threadPoolConfig;
-    private ExecutorService threadPoolExecutor;
+    private final ExecutorService threadPoolExecutor;
 
     public ParalleFlowExecutorService(ExecutionService service, ThreadPoolConfig threadPoolConfig) {
         this.service = service;
-        this.threadPoolConfig = threadPoolConfig;
+        this.threadPoolConfig = configureThreadPoolConfig(threadPoolConfig);
+        this.threadPoolExecutor = createThreadPoolExecutor(this.threadPoolConfig);
     }
 
     /**
      * Adds array of user scripts to ParalleFlowExecutorService.
      */
     public void execute() {
-        threadPoolConfig = configureThreadPoolConfig();
-        threadPoolExecutor = createThreadPoolExecutor(threadPoolConfig);
-
         threadPoolExecutor.execute(service::execute);
     }
 
@@ -64,9 +62,10 @@ public class ParalleFlowExecutorService {
     /**
      * Configure ThreadPoolConfig from properties file.
      *
+     * @param threadPoolConfig the ThreadPoolConfig entity
      * @return configured thread pool config
      */
-    private ThreadPoolConfig configureThreadPoolConfig() {
+    private ThreadPoolConfig configureThreadPoolConfig(ThreadPoolConfig threadPoolConfig) {
         var properties = new PropertiesConfig().getProperties(THREAD_POOL_PROPERTIES);
         var corePoolSize = Integer.parseInt(properties.getProperty(CORE_POOL_SIZE));
         var keepAliveTime = Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME));
