@@ -21,7 +21,7 @@ public class ParalleFlowExecutorService {
     private static final int MAXIMUM_POOL_SIZE = 16;
 
     private final ExecutionService service;
-    private ThreadPoolConfig threadPoolConfig;
+    private final ThreadPoolConfig threadPoolConfig;
     private final ExecutorService threadPoolExecutor;
 
     public ParalleFlowExecutorService(ExecutionService service, ThreadPoolConfig threadPoolConfig) {
