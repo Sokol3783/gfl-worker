@@ -21,32 +21,38 @@ public class ParalleFlowExecutorService {
     private static final int MAXIMUM_POOL_SIZE = 16;
 
     private final ExecutionService service;
-    private final ExecutorService threadPool;
+    private ThreadPoolConfig threadPoolConfig;
+    private ExecutorService threadPoolExecutor;
 
-    public ParalleFlowExecutorService(ExecutionService service) {
+    public ParalleFlowExecutorService(ExecutionService service, ThreadPoolConfig threadPoolConfig) {
         this.service = service;
-        this.threadPool = createThreadPoolExecutor();
+        this.threadPoolConfig = threadPoolConfig;
     }
 
     /**
      * Adds array of user scripts to ParalleFlowExecutorService.
      */
     public void execute() {
-        threadPool.execute(service::execute);
+        threadPoolConfig = configureThreadPoolConfig();
+        threadPoolExecutor = createThreadPoolExecutor(threadPoolConfig);
+
+        threadPoolExecutor.execute(service::execute);
     }
 
     /**
      * Shut down the ParallelFlowExecutorService.
      */
     public void shutdown() {
-        threadPool.shutdown();
+        threadPoolExecutor.shutdown();
     }
 
     /**
-     * Create ThreadPoolExecutor from ThreadPoolConfig.class.
+     * Create ThreadPoolExecutor.
+     *
+     * @param threadPoolConfig the config for the ThreadPoolExecutor
+     * @return the ThreadPoolExecutor entity
      */
-    private ThreadPoolExecutor createThreadPoolExecutor() {
-        ThreadPoolConfig threadPoolConfig = createThreadPoolConfig();
+    private ThreadPoolExecutor createThreadPoolExecutor(ThreadPoolConfig threadPoolConfig) {
         return new ThreadPoolExecutor(
                 threadPoolConfig.getCorePoolSize(),
                 MAXIMUM_POOL_SIZE,
@@ -56,13 +62,17 @@ public class ParalleFlowExecutorService {
     }
 
     /**
-     * Create ThreadPoolConfig from properties file.
+     * Configure ThreadPoolConfig from properties file.
+     *
+     * @return configured thread pool config
      */
-    private ThreadPoolConfig createThreadPoolConfig() {
+    private ThreadPoolConfig configureThreadPoolConfig() {
         var properties = new PropertiesConfig().getProperties(THREAD_POOL_PROPERTIES);
         var corePoolSize = Integer.parseInt(properties.getProperty(CORE_POOL_SIZE));
         var keepAliveTime = Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME));
+        threadPoolConfig.setCorePoolSize(corePoolSize);
+        threadPoolConfig.setKeepAliveTime(keepAliveTime);
 
-        return new ThreadPoolConfig(corePoolSize, keepAliveTime);
+        return threadPoolConfig;
     }
 }
