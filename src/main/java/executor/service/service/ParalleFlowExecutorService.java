@@ -30,7 +30,7 @@ public class ParalleFlowExecutorService {
                                       ThreadPoolConfig threadPoolConfig) {
         this.service = service;
         this.propertiesConfig = propertiesConfig;
-        this.threadPoolConfig = configureThreadPoolConfig(propertiesConfig, threadPoolConfig);
+        this.threadPoolConfig = configureThreadPoolConfig(this.propertiesConfig, threadPoolConfig);
         this.threadPoolExecutor = createThreadPoolExecutor(this.threadPoolConfig);
     }
 
