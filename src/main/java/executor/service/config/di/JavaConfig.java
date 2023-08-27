@@ -1,4 +1,4 @@
-package executor.service.service.di;
+package executor.service.config.di;
 
 import org.reflections.Reflections;
 

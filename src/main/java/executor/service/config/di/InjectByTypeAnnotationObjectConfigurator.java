@@ -1,4 +1,4 @@
-package executor.service.service.di;
+package executor.service.config.di;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

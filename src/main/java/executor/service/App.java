@@ -1,8 +1,8 @@
 package executor.service;
 
 import executor.service.service.ParalleFlowExecutorService;
-import executor.service.service.di.Application;
-import executor.service.service.di.ApplicationContext;
+import executor.service.config.di.Application;
+import executor.service.config.di.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
