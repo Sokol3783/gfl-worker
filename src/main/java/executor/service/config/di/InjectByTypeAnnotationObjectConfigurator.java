@@ -3,6 +3,8 @@ package executor.service.config.di;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.List;
 
 public class InjectByTypeAnnotationObjectConfigurator implements ObjectConfigurator {
 
@@ -24,17 +26,12 @@ public class InjectByTypeAnnotationObjectConfigurator implements ObjectConfigura
 
     private boolean isFieldNotPrimitiveOrWrapper(Field field) {
         Class<?> fieldType = field.getType();
-        return !fieldType.isPrimitive()
-                && fieldType != String.class
-                && fieldType != Boolean.class
-                && fieldType != Character.class
-                && fieldType != Byte.class
-                && fieldType != Short.class
-                && fieldType != Integer.class
-                && fieldType != Long.class
-                && fieldType != Float.class
-                && fieldType != Double.class
-                && fieldType != Void.class;
+        List<Class<?>> excludedClasses = Arrays.asList(
+                String.class, Boolean.class, Character.class,
+                Byte.class, Short.class, Integer.class,
+                Long.class, Float.class, Double.class, Void.class
+        );
+        return !fieldType.isPrimitive() && !excludedClasses.contains(fieldType);
     }
 
     private boolean isFieldInjectable(Object t, Field field) {
