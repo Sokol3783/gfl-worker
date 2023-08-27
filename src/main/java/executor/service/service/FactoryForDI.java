@@ -5,9 +5,9 @@ import executor.service.service.impl.*;
 public class FactoryForDI {
     private final WebDriverInitializer webDriverInitializer;
     private final ProxySourcesClient proxySourcesClient;
-    private final ScenarioSourceListener scenarioSourceListener;
-    private final ParalleFlowExecutorService paralleFlowExecutorService;
-    private final ExecutionService executionService;
+    //private final ScenarioSourceListener scenarioSourceListener;
+    //private final ParalleFlowExecutorService paralleFlowExecutorService;
+    //private final ExecutionService executionService;
     private final ScenarioExecutor scenarioExecutor;
     private final StepExecutionSleep stepExecutionSleep;
     private final StepExecutionClickXpath stepExecutionClickXpath;
@@ -17,9 +17,9 @@ public class FactoryForDI {
     public FactoryForDI() {
         webDriverInitializer = new WebDriverInitializer(null,null);
         proxySourcesClient = new ProxySourcesClientImpl();
-        scenarioSourceListener = new ScenarioSourceListenerImpl();
-        paralleFlowExecutorService = new ParalleFlowExecutorService(null,null);
-        executionService = new ExecutionServiceImpl();
+        //scenarioSourceListener = new ScenarioSourceListenerImpl(step);
+        //paralleFlowExecutorService = new ParalleFlowExecutorService(null,null);
+        //executionService = new ExecutionServiceImpl();
         scenarioExecutor = new ScenarioExecutorImpl();
         stepExecutionSleep = new StepExecutionSleepImpl();
         stepExecutionClickCss = new StepExecutionClickCssImpl();
@@ -34,17 +34,17 @@ public class FactoryForDI {
         return proxySourcesClient;
     }
 
-    public ScenarioSourceListener getScenarioSourceListener() {
-        return scenarioSourceListener;
-    }
+//    public ScenarioSourceListener getScenarioSourceListener() {
+//        return scenarioSourceListener;
+//    }
 
-    public ParalleFlowExecutorService getParalleFlowExecutorService() {
-        return paralleFlowExecutorService;
-    }
+//    public ParalleFlowExecutorService getParalleFlowExecutorService() {
+//        return paralleFlowExecutorService;
+//    }
 
-    public ExecutionService getExecutionService() {
-        return executionService;
-    }
+//    public ExecutionService getExecutionService() {
+//        return executionService;
+//    }
 
     public ScenarioExecutor getScenarioExecutor() {
         return scenarioExecutor;

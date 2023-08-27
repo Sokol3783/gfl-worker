@@ -21,12 +21,16 @@ public class ParalleFlowExecutorService {
     private static final int MAXIMUM_POOL_SIZE = 16;
 
     private final ExecutionService service;
+    private final PropertiesConfig propertiesConfig;
     private final ThreadPoolConfig threadPoolConfig;
     private final ExecutorService threadPoolExecutor;
 
-    public ParalleFlowExecutorService(ExecutionService service, ThreadPoolConfig threadPoolConfig) {
+    public ParalleFlowExecutorService(ExecutionService service,
+                                      PropertiesConfig propertiesConfig,
+                                      ThreadPoolConfig threadPoolConfig) {
         this.service = service;
-        this.threadPoolConfig = configureThreadPoolConfig(threadPoolConfig);
+        this.propertiesConfig = propertiesConfig;
+        this.threadPoolConfig = configureThreadPoolConfig(propertiesConfig, threadPoolConfig);
         this.threadPoolExecutor = createThreadPoolExecutor(this.threadPoolConfig);
     }
 
@@ -62,11 +66,12 @@ public class ParalleFlowExecutorService {
     /**
      * Configure ThreadPoolConfig from properties file.
      *
+     * @param propertiesConfig the properties from resources file
      * @param threadPoolConfig the ThreadPoolConfig entity
      * @return configured thread pool config
      */
-    private ThreadPoolConfig configureThreadPoolConfig(ThreadPoolConfig threadPoolConfig) {
-        var properties = new PropertiesConfig().getProperties(THREAD_POOL_PROPERTIES);
+    private ThreadPoolConfig configureThreadPoolConfig(PropertiesConfig propertiesConfig, ThreadPoolConfig threadPoolConfig) {
+        var properties = propertiesConfig.getProperties(THREAD_POOL_PROPERTIES);
         var corePoolSize = Integer.parseInt(properties.getProperty(CORE_POOL_SIZE));
         var keepAliveTime = Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME));
         threadPoolConfig.setCorePoolSize(corePoolSize);
