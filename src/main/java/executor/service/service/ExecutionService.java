@@ -1,6 +1,5 @@
 package executor.service.service;
 
-import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.Scenario;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
