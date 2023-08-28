@@ -23,14 +23,19 @@ public class ExecutionService {
 
     public void execute() {
         WebDriver webDriver = getWebDriverPrototype();
-        if (webDriver == null) {
-            log.error("WebDriver cannot be null");
-            throw new IllegalArgumentException("WebDriver cannot be null");
-        }
+
+        checkingWebDriverForNull(webDriver);
 
         List<Scenario> scenarios = scenarioSourceListener.execute();
 
         scenarios.forEach(scenario -> scenarioExecutor.execute(scenario, webDriver));
+    }
+
+    private void checkingWebDriverForNull(WebDriver webDriver) {
+        if (webDriver == null) {
+            log.error("WebDriver cannot be null");
+            throw new IllegalArgumentException("WebDriver cannot be null");
+        }
     }
 
     private WebDriver getWebDriverPrototype() {
