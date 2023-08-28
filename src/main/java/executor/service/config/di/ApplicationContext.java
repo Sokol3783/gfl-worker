@@ -37,4 +37,8 @@ public class ApplicationContext {
 
         return t;
     }
+
+    public void setObjectToCache(Object o) {
+        cache.put(o.getClass(), o);
+    }
 }
