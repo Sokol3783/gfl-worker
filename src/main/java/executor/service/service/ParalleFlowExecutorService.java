@@ -3,10 +3,7 @@ package executor.service.service;
 import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.ThreadPoolConfig;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static executor.service.config.properties.PropertiesConstants.*;
 
@@ -18,17 +15,21 @@ import static executor.service.config.properties.PropertiesConstants.*;
  */
 public class ParalleFlowExecutorService {
 
-    private static final int MAXIMUM_POOL_SIZE = 16;
+    private static final CountDownLatch CDL = new CountDownLatch(3);
 
     private final ExecutionService service;
+    private final ScenarioSourceListener scenarioSourceListener;
+    private final ProxySourcesClient proxySourcesClient;
     private final PropertiesConfig propertiesConfig;
     private final ThreadPoolConfig threadPoolConfig;
     private final ExecutorService threadPoolExecutor;
 
     public ParalleFlowExecutorService(ExecutionService service,
-                                      PropertiesConfig propertiesConfig,
+                                      ScenarioSourceListener scenarioSourceListener, ProxySourcesClient proxySourcesClient, PropertiesConfig propertiesConfig,
                                       ThreadPoolConfig threadPoolConfig) {
         this.service = service;
+        this.scenarioSourceListener = scenarioSourceListener;
+        this.proxySourcesClient = proxySourcesClient;
         this.propertiesConfig = propertiesConfig;
         this.threadPoolConfig = configureThreadPoolConfig(this.propertiesConfig, threadPoolConfig);
         this.threadPoolExecutor = createThreadPoolExecutor(this.threadPoolConfig);
@@ -38,14 +39,22 @@ public class ParalleFlowExecutorService {
      * Adds array of user scripts to ParalleFlowExecutorService.
      */
     public void execute() {
+        threadPoolExecutor.execute(scenarioSourceListener::execute);
+        CDL.countDown();
+        threadPoolExecutor.execute(proxySourcesClient::getProxy);
+        CDL.countDown();
         threadPoolExecutor.execute(service::execute);
+        CDL.countDown();
+        await();
+        threadPoolExecutor.shutdown();
     }
 
-    /**
-     * Shut down the ParallelFlowExecutorService.
-     */
-    public void shutdown() {
-        threadPoolExecutor.shutdown();
+    private void await() {
+        try {
+            CDL.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -57,7 +66,7 @@ public class ParalleFlowExecutorService {
     private ThreadPoolExecutor createThreadPoolExecutor(ThreadPoolConfig threadPoolConfig) {
         return new ThreadPoolExecutor(
                 threadPoolConfig.getCorePoolSize(),
-                MAXIMUM_POOL_SIZE,
+                defineMaximumAvailableProcessors(),
                 threadPoolConfig.getKeepAliveTime(),
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>());
@@ -78,5 +87,14 @@ public class ParalleFlowExecutorService {
         threadPoolConfig.setKeepAliveTime(keepAliveTime);
 
         return threadPoolConfig;
+    }
+
+    /**
+     * Get the number of available processor cores.
+     *
+     * @return the number of available processor core
+     */
+    private int defineMaximumAvailableProcessors() {
+        return Runtime.getRuntime().availableProcessors();
     }
 }
