@@ -24,7 +24,7 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
 
     private ChromeOptions getChromeOptions(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
         String host = proxyConfigHolder.getProxyNetworkConfig().getHostname();
-        int port = proxyConfigHolder.getProxyNetworkConfig().getPort();
+        Integer port = proxyConfigHolder.getProxyNetworkConfig().getPort();
         String username = proxyConfigHolder.getProxyCredentials().getUsername();
         String password = proxyConfigHolder.getProxyCredentials().getPassword();
         ChromeOptions chromeOptions = new ChromeOptions();
