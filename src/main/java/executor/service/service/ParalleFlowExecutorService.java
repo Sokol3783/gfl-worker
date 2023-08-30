@@ -39,7 +39,7 @@ public class ParalleFlowExecutorService {
      * Adds array of user scripts to ParalleFlowExecutorService.
      */
     public void execute() {
-        Future<?> submit = threadPoolExecutor.submit(scenarioSourceListener::execute);
+        Future<?> submit = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
         CDL.countDown();
         threadPoolExecutor.execute(proxySourcesClient::getProxy);
         CDL.countDown();
