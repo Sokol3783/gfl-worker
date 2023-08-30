@@ -17,9 +17,9 @@ public class FactoryForDI {
     public FactoryForDI() {
         webDriverInitializer = new WebDriverInitializer(null,null);
         proxySourcesClient = new ProxySourcesClientImpl();
-        scenarioSourceListener = new ScenarioSourceListenerImpl();
+        scenarioSourceListener = new ScenarioSourceListenerImpl(null);
         paralleFlowExecutorService = new ParalleFlowExecutorService(null,null);
-        executionService = new ExecutionServiceImpl();
+        executionService = null;
         scenarioExecutor = new ScenarioExecutorImpl();
         stepExecutionSleep = new StepExecutionSleepImpl();
         stepExecutionClickCss = new StepExecutionClickCssImpl();

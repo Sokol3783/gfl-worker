@@ -53,4 +53,13 @@ public class Scenario {
     public int hashCode() {
         return Objects.hash(name, site, steps);
     }
+
+    @Override
+    public String toString() {
+        return "Scenario{" +
+                "name='" + name + '\'' +
+                ", site='" + site + '\'' +
+                ", steps=" + steps +
+                '}';
+    }
 }
