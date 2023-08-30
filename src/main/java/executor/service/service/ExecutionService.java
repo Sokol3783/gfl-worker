@@ -1,9 +1,13 @@
 package executor.service.service;
 
+import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
+import executor.service.model.WebDriverConfig;
+import executor.service.service.impl.WebDriverInitializerImpl;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -21,13 +25,15 @@ public class ExecutionService {
     }
 
     public void execute() {
+        // todo read data for WebDriverConfig()
+
+        // todo create ProxyConfigHolder()
+
         WebDriver webDriver = getWebDriverPrototype();
 
         checkingWebDriverForNull(webDriver);
 
-        List<Scenario> scenarios = scenarioSourceListener.execute();
-
-        scenarios.forEach(scenario -> scenarioExecutor.execute(scenario, webDriver));
+        scenarioExecutor.execute(new Scenario(), webDriver);
     }
 
     private void checkingWebDriverForNull(WebDriver webDriver) {
@@ -38,7 +44,7 @@ public class ExecutionService {
     }
 
     private WebDriver getWebDriverPrototype() {
-        WebDriverInitializer webDriverInitializer = new WebDriverInitializer();
-        return webDriverInitializer.getInstance();
+        WebDriverInitializer webDriverInitializer = new WebDriverInitializerImpl();
+        return webDriverInitializer.getInstance(new WebDriverConfig(), new ProxyConfigHolder());
     }
 }

@@ -1,11 +1,10 @@
 package executor.service.service;
 
 import executor.service.model.Scenario;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface ScenarioSourceListener {
 
-    List<Scenario> execute();
+    Flux<Scenario> getScenarios();
 
 }
