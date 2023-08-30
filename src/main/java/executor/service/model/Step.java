@@ -42,4 +42,12 @@ public class Step {
     public int hashCode() {
         return Objects.hash(action, value);
     }
+
+    @Override
+    public String toString() {
+        return "Step{" +
+                "action='" + action + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }
