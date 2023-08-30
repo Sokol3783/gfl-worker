@@ -2,7 +2,7 @@ package executor.service.config.di;
 
 import java.util.Map;
 
-public class Application {
+public class FactoryForDI {
 
     public static ApplicationContext run(String packageToScan, Map<Class, Class> ifc2ImplClass) {
         JavaConfig config = new JavaConfig(packageToScan, ifc2ImplClass);
