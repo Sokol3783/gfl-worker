@@ -1,6 +1,7 @@
 package executor.service.service;
 
 import executor.service.config.properties.PropertiesConfig;
+import executor.service.model.ProxyConfigHolder;
 import executor.service.model.ThreadPoolConfig;
 
 import java.util.concurrent.*;
@@ -39,9 +40,9 @@ public class ParalleFlowExecutorService {
      * Adds array of user scripts to ParalleFlowExecutorService.
      */
     public void execute() {
-        Future<?> submit = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
+        Future<?> scenarios = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
         CDL.countDown();
-        threadPoolExecutor.execute(proxySourcesClient::getProxy);
+        Future<ProxyConfigHolder> proxies = threadPoolExecutor.submit(proxySourcesClient::getProxy);
         CDL.countDown();
         threadPoolExecutor.execute(service::execute);
         CDL.countDown();
