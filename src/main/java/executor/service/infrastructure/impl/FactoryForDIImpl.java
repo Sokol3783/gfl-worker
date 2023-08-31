@@ -1,5 +1,7 @@
-package executor.service.config.di;
+package executor.service.infrastructure.impl;
 
+import executor.service.infrastructure.ApplicationContext;
+import executor.service.infrastructure.Config;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -8,6 +10,11 @@ public class FactoryForDIImpl<T> implements FactoryForDI<T> {
   private final static Map<Class, Object> registry = new ConcurrentHashMap<>();
   private final ApplicationContext context;
   private final Config config;
+
+  public FactoryForDIImpl() {
+    config = null;
+    context = null;
+  }
 
   public FactoryForDIImpl(ApplicationContext context, Config config) {
     this.context = context;
@@ -26,15 +33,16 @@ public class FactoryForDIImpl<T> implements FactoryForDI<T> {
   public T getObject(Class<T> clazz) {
     return (T) registry.merge(clazz, getClazzObject(clazz), (oldClazz, newClazz) -> oldClazz);
   }
-
-
-  //TODO looking for interface's implementation or class;
+//TODO looking for interface's implementation or class;
 
 
   private Object getClazzObject(Class<T> clazz) {
     if (clazz.isInterface()) {
       return null;
     }
+
+    //config.getImplClass()
+
     return null;
   }
 

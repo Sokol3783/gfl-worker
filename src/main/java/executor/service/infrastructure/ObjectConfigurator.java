@@ -1,4 +1,4 @@
-package executor.service.config.di;
+package executor.service.infrastructure;
 
 public interface ObjectConfigurator {
 

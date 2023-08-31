@@ -1,4 +1,4 @@
-package executor.service.config.di;
+package executor.service.infrastructure;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

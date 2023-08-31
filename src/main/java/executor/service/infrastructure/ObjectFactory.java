@@ -1,4 +1,4 @@
-package executor.service.config.di;
+package executor.service.infrastructure;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
