@@ -1,49 +1,66 @@
 package executor.service.service;
 
+import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 import executor.service.model.WebDriverConfig;
 import executor.service.service.impl.WebDriverInitializerImpl;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
 
-import java.util.List;
 import java.util.Queue;
+
+import static executor.service.config.properties.PropertiesConstants.*;
 
 public class ExecutionService {
 
-    private static final Logger log = LoggerFactory.getLogger(ExecutionService.class);
-
-
-    private final ScenarioSourceListener scenarioSourceListener;
     private final ScenarioExecutor scenarioExecutor;
-    public ExecutionService(ScenarioSourceListener scenarioSourceListener,
-                            ScenarioExecutor scenarioExecutor) {
-        this.scenarioSourceListener = scenarioSourceListener;
+    private final PropertiesConfig propertiesConfig;
+    private final WebDriverConfig webDriverConfig;
+
+    public ExecutionService(ScenarioExecutor scenarioExecutor,
+                            PropertiesConfig propertiesConfig,
+                            WebDriverConfig webDriverConfig) {
         this.scenarioExecutor = scenarioExecutor;
+        this.propertiesConfig = propertiesConfig;
+        this.webDriverConfig = webDriverConfig;
     }
 
     public void execute(Queue<Scenario> scenarios, Queue<ProxyConfigHolder> proxies) {
-        // todo read data for WebDriverConfig()
+        WebDriverConfig configuredWebDriverConfig = configureWebDriverConfig(propertiesConfig, webDriverConfig);
 
-        WebDriver webDriver = getWebDriverPrototype();
+        for (Scenario scenario : scenarios) {
+            ProxyConfigHolder proxy = proxies.poll();
+            if (scenario == null || proxy == null) continue;
 
-        checkingWebDriverForNull(webDriver);
+            WebDriver webDriver = getWebDriverPrototype(configuredWebDriverConfig, proxy);
+            if (webDriver == null) continue;
 
-        scenarioExecutor.execute(new Scenario(), webDriver);
-    }
-
-    private void checkingWebDriverForNull(WebDriver webDriver) {
-        if (webDriver == null) {
-            log.error("WebDriver cannot be null");
-            throw new IllegalArgumentException("WebDriver cannot be null");
+            scenarioExecutor.execute(scenario, webDriver);
         }
     }
 
-    private WebDriver getWebDriverPrototype() {
+    /**
+     * Configure WebDriverConfig from properties file.
+     *
+     * @param propertiesConfig the properties from resources file
+     * @param webDriverConfig  the WebDriverConfig entity
+     */
+    private WebDriverConfig configureWebDriverConfig(PropertiesConfig propertiesConfig, WebDriverConfig webDriverConfig) {
+        var properties = propertiesConfig.getProperties(WEB_DRIVER);
+        var webDriverExecutable = properties.getProperty(WEB_DRIVER_EXECUTABLE);
+        var userAgent = properties.getProperty(USER_AGENT);
+        var pageLoadTimeout = Long.parseLong(properties.getProperty(PAGE_LOAD_TIMEOUT));
+        var implicitlyWait = Long.parseLong(properties.getProperty(IMPLICITLY_WAIT));
+        webDriverConfig.setWebDriverExecutable(webDriverExecutable);
+        webDriverConfig.setUserAgent(userAgent);
+        webDriverConfig.setPageLoadTimeout(pageLoadTimeout);
+        webDriverConfig.setImplicitlyWait(implicitlyWait);
+
+        return webDriverConfig;
+    }
+
+    private WebDriver getWebDriverPrototype(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
         WebDriverInitializer webDriverInitializer = new WebDriverInitializerImpl();
-        return webDriverInitializer.getInstance(new WebDriverConfig(), new ProxyConfigHolder());
+        return webDriverInitializer.getInstance(webDriverConfig, proxyConfigHolder);
     }
 }
