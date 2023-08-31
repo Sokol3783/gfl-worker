@@ -42,7 +42,8 @@ public class ParalleFlowExecutorService {
     }
 
     /**
-     * Adds array of user scripts to ParalleFlowExecutorService.
+     * Start ScenarioSourceListener, ProxySourcesClient, ExecutionService
+     * in parallel multi-threaded mode.
      */
     public void execute() {
         configureThreadPoolConfig(propertiesConfig, threadPoolConfig);
