@@ -11,6 +11,12 @@ import java.util.Queue;
 
 import static executor.service.config.properties.PropertiesConstants.*;
 
+/**
+ * The facade for execute ScenarioExecutor.
+ *
+ *  @author Oleksandr Tuleninov
+ *  @version 01
+ * */
 public class ExecutionService {
 
     private final ScenarioExecutor scenarioExecutor;
