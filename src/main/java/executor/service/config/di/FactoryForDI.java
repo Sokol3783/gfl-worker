@@ -1,14 +1,47 @@
 package executor.service.config.di;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.reflections.Reflections;
 
-public class FactoryForDI {
+public interface FactoryForDI<T> {
 
-    public static ApplicationContext run(String packageToScan, Map<Class, Class> ifc2ImplClass) {
-        JavaConfig config = new JavaConfig(packageToScan, ifc2ImplClass);
-        ApplicationContext context = new ApplicationContext(config);
-        ObjectFactory objectFactory = new ObjectFactory(context);
-        context.setFactory(objectFactory);
-        return context;
+  Reflections scanner = new Reflections("/src/java/executor/service/");
+
+   T getObject(Class<T> clazz);
+
+  static FactoryForDI runFactory() throws InstantiationException, IllegalAccessException {
+
+    Set<Class<? extends FactoryForDI>> subTypesOf = scanner.getSubTypesOf(FactoryForDI.class);
+
+    if (subTypesOf.isEmpty()) {
+      return getDefaultFactoryDI();
     }
+
+    List<Class> classes =new ArrayList<>();
+
+    for (Class clazz : subTypesOf) {
+      if (true) {
+        classes.add(clazz);
+      }
+    };
+
+    if (classes.size() > 1 || classes.isEmpty()) {
+      throw new InstantiationException("Несколько указателей фабрик!!");
+    };
+
+    return (FactoryForDI) classes.get(0).newInstance();
+
+  }
+
+  static FactoryForDI getDefaultFactoryDI() {
+    return new FactoryForDI() {
+      @Override
+      public Object getObject(Class clazz) {
+        return null;
+      }
+    };
+  }
+
 }
