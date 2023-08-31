@@ -1,11 +1,9 @@
 package executor.service.config.di;
 
-import org.reflections.Reflections;
 
+//TODO RENAME CLASS AND CHANGE HIS FUNCTIONALITY
 public interface Config {
 
     <T> Class<? extends T> getImplClass(Class<T> ifc);
-
-    Reflections getScanner();
 
 }
