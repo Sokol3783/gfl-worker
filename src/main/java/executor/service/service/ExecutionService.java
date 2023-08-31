@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Queue;
 
 public class ExecutionService {
 
@@ -24,10 +25,8 @@ public class ExecutionService {
         this.scenarioExecutor = scenarioExecutor;
     }
 
-    public void execute() {
+    public void execute(Queue<Scenario> scenarios, Queue<ProxyConfigHolder> proxies) {
         // todo read data for WebDriverConfig()
-
-        // todo create ProxyConfigHolder()
 
         WebDriver webDriver = getWebDriverPrototype();
 
