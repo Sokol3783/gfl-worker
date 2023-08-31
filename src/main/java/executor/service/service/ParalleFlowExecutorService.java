@@ -2,8 +2,10 @@ package executor.service.service;
 
 import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.ProxyConfigHolder;
+import executor.service.model.Scenario;
 import executor.service.model.ThreadPoolConfig;
 
+import java.util.Queue;
 import java.util.concurrent.*;
 
 import static executor.service.config.properties.PropertiesConstants.*;
@@ -16,36 +18,47 @@ import static executor.service.config.properties.PropertiesConstants.*;
  */
 public class ParalleFlowExecutorService {
 
-    private static final CountDownLatch CDL = new CountDownLatch(3);
+    private static final Queue<Scenario> SCENARIO_QUEUE = new ConcurrentLinkedQueue<>();
+    private static final Queue<ProxyConfigHolder> PROXY_QUEUE = new ConcurrentLinkedQueue<>();
+    private static final int NUMBER_TIMES = 3;
+    private static final CountDownLatch CDL = new CountDownLatch(NUMBER_TIMES);
 
     private final ExecutionService service;
     private final ScenarioSourceListener scenarioSourceListener;
     private final ProxySourcesClient proxySourcesClient;
     private final PropertiesConfig propertiesConfig;
     private final ThreadPoolConfig threadPoolConfig;
-    private final ExecutorService threadPoolExecutor;
 
     public ParalleFlowExecutorService(ExecutionService service,
-                                      ScenarioSourceListener scenarioSourceListener, ProxySourcesClient proxySourcesClient, PropertiesConfig propertiesConfig,
+                                      ScenarioSourceListener scenarioSourceListener,
+                                      ProxySourcesClient proxySourcesClient,
+                                      PropertiesConfig propertiesConfig,
                                       ThreadPoolConfig threadPoolConfig) {
         this.service = service;
         this.scenarioSourceListener = scenarioSourceListener;
         this.proxySourcesClient = proxySourcesClient;
         this.propertiesConfig = propertiesConfig;
-        this.threadPoolConfig = configureThreadPoolConfig(this.propertiesConfig, threadPoolConfig);
-        this.threadPoolExecutor = createThreadPoolExecutor(this.threadPoolConfig);
+        this.threadPoolConfig = threadPoolConfig;
     }
 
     /**
      * Adds array of user scripts to ParalleFlowExecutorService.
      */
     public void execute() {
-        Future<?> scenarios = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
+        configureThreadPoolConfig(propertiesConfig, threadPoolConfig);
+        ExecutorService threadPoolExecutor = createThreadPoolExecutor(threadPoolConfig);
+
+        Future<?> scenario = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
+        SCENARIO_QUEUE.add((Scenario) scenario);
         CDL.countDown();
-        Future<ProxyConfigHolder> proxies = threadPoolExecutor.submit(proxySourcesClient::getProxy);
+
+        Future<ProxyConfigHolder> proxy = threadPoolExecutor.submit(proxySourcesClient::getProxy);
+        PROXY_QUEUE.add((ProxyConfigHolder) proxy);
         CDL.countDown();
-        threadPoolExecutor.execute(service::execute);
+
+        threadPoolExecutor.execute(service.execute(SCENARIO_QUEUE, PROXY_QUEUE));
         CDL.countDown();
+
         await();
         threadPoolExecutor.shutdown();
     }
@@ -78,16 +91,13 @@ public class ParalleFlowExecutorService {
      *
      * @param propertiesConfig the properties from resources file
      * @param threadPoolConfig the ThreadPoolConfig entity
-     * @return configured thread pool config
      */
-    private ThreadPoolConfig configureThreadPoolConfig(PropertiesConfig propertiesConfig, ThreadPoolConfig threadPoolConfig) {
+    private void configureThreadPoolConfig(PropertiesConfig propertiesConfig, ThreadPoolConfig threadPoolConfig) {
         var properties = propertiesConfig.getProperties(THREAD_POOL_PROPERTIES);
         var corePoolSize = Integer.parseInt(properties.getProperty(CORE_POOL_SIZE));
         var keepAliveTime = Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME));
         threadPoolConfig.setCorePoolSize(corePoolSize);
         threadPoolConfig.setKeepAliveTime(keepAliveTime);
-
-        return threadPoolConfig;
     }
 
     /**
