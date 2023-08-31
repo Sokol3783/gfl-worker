@@ -25,6 +25,12 @@ public class ExecutionService {
         this.webDriverConfig = webDriverConfig;
     }
 
+    /**
+     * Execute ScenarioExecutor.
+     *
+     * @param scenarios the queue with scenarios
+     * @param proxies   the queue with proxies
+     */
     public void execute(Queue<Scenario> scenarios, Queue<ProxyConfigHolder> proxies) {
         WebDriverConfig configuredWebDriverConfig = configureWebDriverConfig(propertiesConfig, webDriverConfig);
 
@@ -59,6 +65,12 @@ public class ExecutionService {
         return webDriverConfig;
     }
 
+    /**
+     * Get WebDriver as Prototype.
+     *
+     * @param webDriverConfig   the WebDriverConfig entity
+     * @param proxyConfigHolder the ProxyConfigHolder entity
+     */
     private WebDriver getWebDriverPrototype(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
         WebDriverInitializer webDriverInitializer = new WebDriverInitializerImpl();
         return webDriverInitializer.getInstance(webDriverConfig, proxyConfigHolder);
