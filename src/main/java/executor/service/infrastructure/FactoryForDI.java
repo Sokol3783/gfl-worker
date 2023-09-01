@@ -35,7 +35,7 @@ public interface FactoryForDI<T> {
     //TODO make mark or rule for choose the necessary class
     List<Class> classes = new ArrayList<>();
     for (Class clazz : subTypesOf) {
-
+      //TODO
       return (FactoryForDI) clazz.getDeclaredConstructor().newInstance();
 
     }
@@ -67,7 +67,7 @@ public interface FactoryForDI<T> {
       }
     }
 
-    public Factory() throws InstantiationException, IllegalAccessException {
+    public Factory() {
     }
   }
 

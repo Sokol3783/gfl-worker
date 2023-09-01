@@ -27,9 +27,7 @@ public class ApplicationContextImp implements ApplicationContext {
     if (registry.isEmpty()) {
       return type.getDeclaredConstructor().newInstance();
     }
-
-    return (T) registry.get(0).getClass(type);
-
+    return registry.get(0).getClass(type).getDeclaredConstructor().newInstance();
 
   }
 }
