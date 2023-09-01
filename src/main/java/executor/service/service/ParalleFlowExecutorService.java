@@ -53,18 +53,32 @@ public class ParalleFlowExecutorService {
         configureThreadPoolConfig(propertiesConfig, threadPoolConfig);
         ExecutorService threadPoolExecutor = createThreadPoolExecutor(threadPoolConfig);
 
-        Future<Flux<Scenario>> scenariosFuture = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
-        Flux<Scenario> scenariosFlux= getScenariosFlux(scenariosFuture);
-        scenariosFlux.subscribe(SCENARIO_QUEUE::add);
-        CDL.countDown();
+        threadPoolExecutor.execute(() -> {
+            Flux<Scenario> scenariosFlux = scenarioSourceListener.getScenarios();
+            scenariosFlux.subscribe(SCENARIO_QUEUE::add);
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            CDL.countDown();
+        });
 
-        Future<Flux<ProxyConfigHolder>> proxiesFuture = threadPoolExecutor.submit(proxySourcesClient::getProxies);
-        Flux<ProxyConfigHolder> proxiesFlux= getProxiesFlux(proxiesFuture);
-        proxiesFlux.subscribe(PROXY_QUEUE::add);
-        CDL.countDown();
+        threadPoolExecutor.execute(() -> {
+            Flux<ProxyConfigHolder> proxiesFlux = proxySourcesClient.getProxies();
+            proxiesFlux.subscribe(PROXY_QUEUE::add);
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            CDL.countDown();
+        });
 
-        threadPoolExecutor.execute(() -> service.execute(SCENARIO_QUEUE, PROXY_QUEUE));
-        CDL.countDown();
+        threadPoolExecutor.execute(() -> {
+            service.execute(SCENARIO_QUEUE, PROXY_QUEUE);
+            CDL.countDown();
+        });
 
         await();
         threadPoolExecutor.shutdown();
