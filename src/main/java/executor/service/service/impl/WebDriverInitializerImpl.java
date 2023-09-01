@@ -16,9 +16,6 @@ import java.util.zip.ZipOutputStream;
 
 public class WebDriverInitializerImpl implements WebDriverInitializer {
 
-    public WebDriverInitializerImpl() {
-    }
-
     @Override
     public WebDriver getInstance(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
         ChromeDriver driver = new ChromeDriver(getChromeOptions(webDriverConfig, proxyConfigHolder));
