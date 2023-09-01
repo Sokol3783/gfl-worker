@@ -53,7 +53,7 @@ public class ParalleFlowExecutorService {
         SCENARIO_QUEUE.add((Scenario) scenario);
         CDL.countDown();
 
-        Future<ProxyConfigHolder> proxy = threadPoolExecutor.submit(proxySourcesClient::getProxy);
+        Future<ProxyConfigHolder> proxy = threadPoolExecutor.submit(proxySourcesClient::getProxies);
         PROXY_QUEUE.add((ProxyConfigHolder) proxy);
         CDL.countDown();
 
