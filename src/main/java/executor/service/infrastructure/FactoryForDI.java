@@ -1,4 +1,4 @@
-package executor.service.infrastructure.impl;
+package executor.service.infrastructure;
 
 import static executor.service.infrastructure.ClassScannerUtil.getClassScanner;
 
@@ -10,19 +10,29 @@ import java.util.Set;
 public interface FactoryForDI<T> {
 
   static FactoryForDI runFactory()
+      throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+    return getFactory("");
+  }
+
+  static FactoryForDI runFactory(String path)
+      throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+    return getFactory(path);
+  }
+
+  private static FactoryForDI getFactory(String path)
       throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
     //TODO SETTING PATH FROM properties
-    Set<Class<? extends FactoryForDI>> subTypesOf = getClassScanner(null).getSubTypesOf(
+    Set<Class<? extends FactoryForDI>> subTypesOf = getClassScanner(path).getSubTypesOf(
         FactoryForDI.class);
 
     if (subTypesOf.isEmpty()) {
       if (Factory.factory == null) {
-        return AbstractFactoryDI.getDefaultFactoryDI();
+        return FactoryDIAbstract.getDefaultFactoryDI();
       }
       return Factory.factory;
     }
 
-    //TODO make mark or rule for mark the necessary class
+    //TODO make mark or rule for choose the necessary class
     List<Class> classes = new ArrayList<>();
     for (Class clazz : subTypesOf) {
 
@@ -34,9 +44,10 @@ public interface FactoryForDI<T> {
       throw new InstantiationException("Несколько указателей фабрик!!");
     }
     return (FactoryForDI) classes.get(0).getDeclaredConstructor().newInstance();
+
   }
 
-  T getObject(Class<T> clazz);
+  T getObject(Class<T> clazz) throws Exception;
 
   final class Factory {
 

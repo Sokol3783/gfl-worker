@@ -1,6 +1,5 @@
-package executor.service.infrastructure.impl;
+package executor.service.infrastructure;
 
-import executor.service.infrastructure.ClassScannerUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import org.reflections.Reflections;
 
-class AbstractFactoryDI {
+class FactoryDIAbstract {
 
   private final static Object sync = new Object();
   private final static Reflections scanner = ClassScannerUtil.getClassScanner("");
