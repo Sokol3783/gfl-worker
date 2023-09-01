@@ -63,7 +63,7 @@ public class ParalleFlowExecutorService {
         proxiesFlux.subscribe(PROXY_QUEUE::add);
         CDL.countDown();
 
-        threadPoolExecutor.execute(service.execute(SCENARIO_QUEUE, PROXY_QUEUE));
+        threadPoolExecutor.execute(() -> service.execute(SCENARIO_QUEUE, PROXY_QUEUE));
         CDL.countDown();
 
         await();
