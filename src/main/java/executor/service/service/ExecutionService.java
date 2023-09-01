@@ -81,7 +81,6 @@ public class ExecutionService {
      * @param proxyConfigHolder the ProxyConfigHolder entity
      */
     private WebDriver getWebDriverPrototype(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
-        WebDriverInitializer webDriverInitializer = new WebDriverInitializerImpl();
-        return webDriverInitializer.getInstance(webDriverConfig, proxyConfigHolder);
+        return new WebDriverInitializerImpl().getInstance(webDriverConfig, proxyConfigHolder);
     }
 }
