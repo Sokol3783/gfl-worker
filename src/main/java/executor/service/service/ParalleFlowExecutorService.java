@@ -23,11 +23,14 @@ public class ParalleFlowExecutorService {
     private static final int NUMBER_TIMES = 3;
     private static final CountDownLatch CDL = new CountDownLatch(NUMBER_TIMES);
 
-    private final ExecutionService service;
-    private final ScenarioSourceListener scenarioSourceListener;
-    private final ProxySourcesClient proxySourcesClient;
-    private final PropertiesConfig propertiesConfig;
-    private final ThreadPoolConfig threadPoolConfig;
+    private ExecutionService service;
+    private ScenarioSourceListener scenarioSourceListener;
+    private ProxySourcesClient proxySourcesClient;
+    private PropertiesConfig propertiesConfig;
+    private ThreadPoolConfig threadPoolConfig;
+
+    public ParalleFlowExecutorService() {
+    }
 
     public ParalleFlowExecutorService(ExecutionService service,
                                       ScenarioSourceListener scenarioSourceListener,
