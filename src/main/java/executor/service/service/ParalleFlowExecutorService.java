@@ -68,11 +68,7 @@ public class ParalleFlowExecutorService {
         return () -> {
             Flux<Scenario> scenariosFlux = scenarioSourceListener.getScenarios();
             scenariosFlux.subscribe(SCENARIO_QUEUE::add);
-            try {
-                TimeUnit.SECONDS.sleep(DELAY);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            getDelay();
             CDL.countDown();
         };
     }
@@ -81,13 +77,17 @@ public class ParalleFlowExecutorService {
         return () -> {
             Flux<ProxyConfigHolder> proxiesFlux = proxySourcesClient.getProxies();
             proxiesFlux.subscribe(PROXY_QUEUE::add);
-            try {
-                TimeUnit.SECONDS.sleep(DELAY);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            getDelay();
             CDL.countDown();
         };
+    }
+
+    private void getDelay() {
+        try {
+            TimeUnit.SECONDS.sleep(DELAY);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Runnable getExecutionServiceRunnable() {
