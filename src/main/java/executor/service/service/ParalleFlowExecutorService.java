@@ -4,6 +4,7 @@ import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 import executor.service.model.ThreadPoolConfig;
+import reactor.core.publisher.Flux;
 
 import java.util.Queue;
 import java.util.concurrent.*;
@@ -52,12 +53,14 @@ public class ParalleFlowExecutorService {
         configureThreadPoolConfig(propertiesConfig, threadPoolConfig);
         ExecutorService threadPoolExecutor = createThreadPoolExecutor(threadPoolConfig);
 
-        Future<?> scenario = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
-        SCENARIO_QUEUE.add((Scenario) scenario);
+        Future<Flux<Scenario>> scenariosFuture = threadPoolExecutor.submit(scenarioSourceListener::getScenarios);
+        Flux<Scenario> scenariosFlux= getScenariosFlux(scenariosFuture);
+        scenariosFlux.subscribe(SCENARIO_QUEUE::add);
         CDL.countDown();
 
-        Future<ProxyConfigHolder> proxy = threadPoolExecutor.submit(proxySourcesClient::getProxies);
-        PROXY_QUEUE.add((ProxyConfigHolder) proxy);
+        Future<Flux<ProxyConfigHolder>> proxiesFuture = threadPoolExecutor.submit(proxySourcesClient::getProxies);
+        Flux<ProxyConfigHolder> proxiesFlux= getProxiesFlux(proxiesFuture);
+        proxiesFlux.subscribe(PROXY_QUEUE::add);
         CDL.countDown();
 
         threadPoolExecutor.execute(service.execute(SCENARIO_QUEUE, PROXY_QUEUE));
@@ -65,6 +68,26 @@ public class ParalleFlowExecutorService {
 
         await();
         threadPoolExecutor.shutdown();
+    }
+
+    private Flux<Scenario> getScenariosFlux(Future<Flux<Scenario>> scenariosFuture) {
+        Flux<Scenario> scenariosFlux;
+        try {
+            scenariosFlux = scenariosFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        return scenariosFlux;
+    }
+
+    private Flux<ProxyConfigHolder> getProxiesFlux(Future<Flux<ProxyConfigHolder>> proxiesFuture) {
+        Flux<ProxyConfigHolder> proxiesFlux;
+        try {
+            proxiesFlux = proxiesFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        return proxiesFlux;
     }
 
     private void await() {
