@@ -19,9 +19,12 @@ import static executor.service.config.properties.PropertiesConstants.*;
  * */
 public class ExecutionService {
 
-    private final ScenarioExecutor scenarioExecutor;
-    private final PropertiesConfig propertiesConfig;
-    private final WebDriverConfig webDriverConfig;
+    private ScenarioExecutor scenarioExecutor;
+    private PropertiesConfig propertiesConfig;
+    private WebDriverConfig webDriverConfig;
+
+    public ExecutionService() {
+    }
 
     public ExecutionService(ScenarioExecutor scenarioExecutor,
                             PropertiesConfig propertiesConfig,
