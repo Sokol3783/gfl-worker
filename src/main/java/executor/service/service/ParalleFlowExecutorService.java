@@ -23,6 +23,7 @@ public class ParalleFlowExecutorService {
     private static final Queue<ProxyConfigHolder> PROXY_QUEUE = new ConcurrentLinkedQueue<>();
     private static final int NUMBER_TIMES = 3;
     private static final CountDownLatch CDL = new CountDownLatch(NUMBER_TIMES);
+    private static final int DELAY = 3;
 
     private ExecutionService service;
     private ScenarioSourceListener scenarioSourceListener;
@@ -68,7 +69,7 @@ public class ParalleFlowExecutorService {
             Flux<Scenario> scenariosFlux = scenarioSourceListener.getScenarios();
             scenariosFlux.subscribe(SCENARIO_QUEUE::add);
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(DELAY);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -81,7 +82,7 @@ public class ParalleFlowExecutorService {
             Flux<ProxyConfigHolder> proxiesFlux = proxySourcesClient.getProxies();
             proxiesFlux.subscribe(PROXY_QUEUE::add);
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(DELAY);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
