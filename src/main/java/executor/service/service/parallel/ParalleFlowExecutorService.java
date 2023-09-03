@@ -24,7 +24,7 @@ public class ParalleFlowExecutorService {
     private static final Queue<Scenario> SCENARIO_QUEUE = new ConcurrentLinkedQueue<>();
     private static final Queue<ProxyConfigHolder> PROXY_QUEUE = new ConcurrentLinkedQueue<>();
     private static final int NUMBER_TIMES = 3;
-    private static final CountDownLatch CDL = new CountDownLatch(NUMBER_TIMES);
+    private static final CountDownLatch cdlParallelFlow = new CountDownLatch(NUMBER_TIMES);
 
     private final ExecutorService threadPoolExecutor;
     private final ExecutionService service;
@@ -46,11 +46,11 @@ public class ParalleFlowExecutorService {
      * in parallel multi-threaded mode.
      */
     public void execute() {
-        threadPoolExecutor.execute(new ScenarioTask(scenarioSourceListener, SCENARIO_QUEUE, CDL));
+        threadPoolExecutor.execute(new TaskWorker<>(scenarioSourceListener.getScenarios(), SCENARIO_QUEUE, cdlParallelFlow));
 
-        threadPoolExecutor.execute(new ProxyTask(proxySourcesClient, PROXY_QUEUE, CDL));
+        threadPoolExecutor.execute(new TaskWorker<>(proxySourcesClient.getProxy(), PROXY_QUEUE, cdlParallelFlow));
 
-        threadPoolExecutor.execute(new ExecutionTask(service, SCENARIO_QUEUE, PROXY_QUEUE, CDL));
+        threadPoolExecutor.execute(new ExecutionWorker(service, SCENARIO_QUEUE, PROXY_QUEUE, cdlParallelFlow));
 
         await();
         threadPoolExecutor.shutdown();
@@ -58,7 +58,7 @@ public class ParalleFlowExecutorService {
 
     private void await() {
         try {
-            CDL.await();
+            cdlParallelFlow.await();
         } catch (InterruptedException e) {
             log.info("Thread was interrupted by await");
             Thread.currentThread().interrupt();
