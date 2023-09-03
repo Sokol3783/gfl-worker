@@ -48,7 +48,7 @@ public class ParalleFlowExecutorService {
     public void execute() {
         threadPoolExecutor.execute(new TaskWorker<>(scenarioSourceListener.getScenarios(), SCENARIO_QUEUE, cdlParallelFlow));
 
-        threadPoolExecutor.execute(new TaskWorker<>(proxySourcesClient.getProxy(), PROXY_QUEUE, cdlParallelFlow));
+        threadPoolExecutor.execute(new TaskWorker<>(proxySourcesClient.getProxies(), PROXY_QUEUE, cdlParallelFlow));
 
         threadPoolExecutor.execute(new ExecutionWorker(service, SCENARIO_QUEUE, PROXY_QUEUE, cdlParallelFlow));
 
