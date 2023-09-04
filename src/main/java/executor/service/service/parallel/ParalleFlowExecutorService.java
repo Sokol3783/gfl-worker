@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Start ExecutionService in parallel multi-threaded mode.
@@ -24,7 +26,7 @@ public class ParalleFlowExecutorService {
     private static final Queue<Scenario> SCENARIO_QUEUE = new ConcurrentLinkedQueue<>();
     private static final Queue<ProxyConfigHolder> PROXY_QUEUE = new ConcurrentLinkedQueue<>();
     private static final int NUMBER_TIMES = 3;
-    private static final CountDownLatch cdlParallelFlow = new CountDownLatch(NUMBER_TIMES);
+    private static final CountDownLatch COUNTER = new CountDownLatch(NUMBER_TIMES);
 
     private final ExecutorService threadPoolExecutor;
     private final ExecutionService service;
@@ -46,11 +48,14 @@ public class ParalleFlowExecutorService {
      * in parallel multi-threaded mode.
      */
     public void execute() {
-        threadPoolExecutor.execute(new TaskWorker<>(scenarioSourceListener.getScenarios(), SCENARIO_QUEUE, cdlParallelFlow));
+        threadPoolExecutor.execute(new TaskWorker<>(scenarioSourceListener.getScenarios(), SCENARIO_QUEUE));
+        COUNTER.countDown();
 
-        threadPoolExecutor.execute(new TaskWorker<>(proxySourcesClient.getProxies(), PROXY_QUEUE, cdlParallelFlow));
+        threadPoolExecutor.execute(new TaskWorker<>(proxySourcesClient.getProxies(), PROXY_QUEUE));
+        COUNTER.countDown();
 
-        threadPoolExecutor.execute(new ExecutionWorker(service, SCENARIO_QUEUE, PROXY_QUEUE, cdlParallelFlow));
+        threadPoolExecutor.execute(new ExecutionWorker(service, SCENARIO_QUEUE, PROXY_QUEUE));
+        COUNTER.countDown();
 
         await();
         threadPoolExecutor.shutdown();
@@ -61,7 +66,7 @@ public class ParalleFlowExecutorService {
      */
     private void await() {
         try {
-            cdlParallelFlow.await();
+            COUNTER.await();
         } catch (InterruptedException e) {
             log.info("Thread was interrupted by await");
             Thread.currentThread().interrupt();
