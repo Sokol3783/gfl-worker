@@ -2,7 +2,7 @@ package executor.service.service.parallel;
 
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
-import executor.service.service.ExecutionService;
+import executor.service.service.impl.ExecutionServiceImpl;
 
 import java.util.Queue;
 
@@ -14,11 +14,11 @@ import java.util.Queue;
  */
 public class ExecutionWorker implements Runnable {
 
-    private final ExecutionService service;
+    private final ExecutionServiceImpl service;
     private final Queue<Scenario> scenarioQueue;
     private final Queue<ProxyConfigHolder> proxyQueue;
 
-    public ExecutionWorker(ExecutionService service,
+    public ExecutionWorker(ExecutionServiceImpl service,
                            Queue<Scenario> scenarioQueue,
                            Queue<ProxyConfigHolder> proxyQueue) {
         this.service = service;
