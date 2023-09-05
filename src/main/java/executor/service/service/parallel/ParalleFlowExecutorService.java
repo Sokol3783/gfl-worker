@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -25,8 +24,6 @@ public class ParalleFlowExecutorService {
 
     private static final Queue<Scenario> SCENARIO_QUEUE = new ConcurrentLinkedQueue<>();
     private static final Queue<ProxyConfigHolder> PROXY_QUEUE = new ConcurrentLinkedQueue<>();
-    private static final int NUMBER_TIMES = 3;
-    private static final CountDownLatch COUNTER = new CountDownLatch(NUMBER_TIMES);
 
     private final ExecutorService threadPoolExecutor;
     private final ExecutionService service;
