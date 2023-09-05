@@ -49,27 +49,17 @@ public class ParalleFlowExecutorService {
      */
     public void execute() {
         threadPoolExecutor.execute(new TaskWorker<>(scenarioSourceListener.getScenarios(), SCENARIO_QUEUE));
-        COUNTER.countDown();
 
         threadPoolExecutor.execute(new TaskWorker<>(proxySourcesClient.getProxies(), PROXY_QUEUE));
-        COUNTER.countDown();
 
         threadPoolExecutor.execute(new ExecutionWorker(service, SCENARIO_QUEUE, PROXY_QUEUE));
-        COUNTER.countDown();
-
-        await();
-        threadPoolExecutor.shutdown();
     }
 
     /**
-     * Wait for the Workers threads to complete.
-     */
-    private void await() {
-        try {
-            COUNTER.await();
-        } catch (InterruptedException e) {
-            log.info("Thread was interrupted by await");
-            Thread.currentThread().interrupt();
-        }
+     * Initiates an orderly shutdown in which previously submitted tasks are executed,
+     * but no new tasks will be accepted.
+     * */
+    public void shutdown() {
+        threadPoolExecutor.shutdown();
     }
 }
