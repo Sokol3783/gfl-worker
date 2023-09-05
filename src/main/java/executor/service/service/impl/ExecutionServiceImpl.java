@@ -24,7 +24,7 @@ public class ExecutionServiceImpl implements ExecutionService {
 
     private final ScenarioExecutor scenarioExecutor;
     private final WebDriverConfig webDriverConfig;
-    private ProxyConfigHolder defaultProxy;
+    private final ProxyConfigHolder defaultProxy;
 
     public ExecutionServiceImpl(ScenarioExecutor scenarioExecutor,
                                 WebDriverConfig webDriverConfig, ProxyConfigHolder defaultProxy) {
