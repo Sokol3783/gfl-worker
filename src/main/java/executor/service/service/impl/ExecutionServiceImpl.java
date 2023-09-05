@@ -24,11 +24,13 @@ public class ExecutionServiceImpl implements ExecutionService {
 
     private final ScenarioExecutor scenarioExecutor;
     private final WebDriverConfig webDriverConfig;
+    private ProxyConfigHolder defaultProxy;
 
     public ExecutionServiceImpl(ScenarioExecutor scenarioExecutor,
-                                WebDriverConfig webDriverConfig) {
+                                WebDriverConfig webDriverConfig, ProxyConfigHolder defaultProxy) {
         this.scenarioExecutor = scenarioExecutor;
         this.webDriverConfig = webDriverConfig;
+        this.defaultProxy = defaultProxy;
     }
 
     /**
@@ -40,10 +42,15 @@ public class ExecutionServiceImpl implements ExecutionService {
     @Override
     public void execute(BlockingQueue<Scenario> scenarios,
                         BlockingQueue<ProxyConfigHolder> proxies) {
+        ProxyConfigHolder proxy = defaultProxy;
         while (true) {
             try {
                 Scenario scenario = scenarios.take();
-                ProxyConfigHolder proxy = proxies.take();
+
+                ProxyConfigHolder newProxy = proxies.poll();
+                if (newProxy != null) {
+                    proxy = newProxy;
+                }
 
                 WebDriver webDriver = getWebDriverPrototype(webDriverConfig, proxy);
                 if (webDriver == null) continue;
