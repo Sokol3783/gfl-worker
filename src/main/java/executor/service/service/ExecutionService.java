@@ -3,10 +3,10 @@ package executor.service.service;
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 public interface ExecutionService {
 
-    void execute(Queue<Scenario> scenarios, Queue<ProxyConfigHolder> proxies);
+    void execute(BlockingQueue<Scenario> scenarios, BlockingQueue<ProxyConfigHolder> proxies);
 
 }

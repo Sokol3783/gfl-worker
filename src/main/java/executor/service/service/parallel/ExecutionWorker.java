@@ -4,7 +4,7 @@ import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 import executor.service.service.impl.ExecutionServiceImpl;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Execution task.
@@ -15,12 +15,12 @@ import java.util.Queue;
 public class ExecutionWorker implements Runnable {
 
     private final ExecutionServiceImpl service;
-    private final Queue<Scenario> scenarioQueue;
-    private final Queue<ProxyConfigHolder> proxyQueue;
+    private final BlockingQueue<Scenario> scenarioQueue;
+    private final BlockingQueue<ProxyConfigHolder> proxyQueue;
 
     public ExecutionWorker(ExecutionServiceImpl service,
-                           Queue<Scenario> scenarioQueue,
-                           Queue<ProxyConfigHolder> proxyQueue) {
+                           BlockingQueue<Scenario> scenarioQueue,
+                           BlockingQueue<ProxyConfigHolder> proxyQueue) {
         this.service = service;
         this.scenarioQueue = scenarioQueue;
         this.proxyQueue = proxyQueue;
