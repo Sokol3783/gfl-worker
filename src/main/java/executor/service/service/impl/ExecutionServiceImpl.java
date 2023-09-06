@@ -57,7 +57,7 @@ public class ExecutionServiceImpl implements ExecutionService {
 
                 scenarioExecutor.execute(scenario, webDriver);
             } catch (InterruptedException e) {
-                log.info("Thread was interrupted in ExecutionServiceImpl.class");
+                log.error("Thread was interrupted in ExecutionServiceImpl.class");
                 Thread.currentThread().interrupt();
             }
         }
