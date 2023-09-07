@@ -7,10 +7,6 @@ import executor.service.service.ExecutionService;
 import executor.service.service.ScenarioExecutor;
 import executor.service.service.WebDriverInitializer;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.BlockingQueue;
 
 /**
  * The facade for execute ScenarioExecutor.
@@ -20,47 +16,27 @@ import java.util.concurrent.BlockingQueue;
  * */
 public class ExecutionServiceImpl implements ExecutionService {
 
-    private static final Logger log = LoggerFactory.getLogger(ExecutionServiceImpl.class);
-
     private final ScenarioExecutor scenarioExecutor;
     private final WebDriverConfig webDriverConfig;
-    private final ProxyConfigHolder defaultProxy;
 
     public ExecutionServiceImpl(ScenarioExecutor scenarioExecutor,
-                                WebDriverConfig webDriverConfig, ProxyConfigHolder defaultProxy) {
+                                WebDriverConfig webDriverConfig) {
         this.scenarioExecutor = scenarioExecutor;
         this.webDriverConfig = webDriverConfig;
-        this.defaultProxy = defaultProxy;
     }
 
     /**
      * Execute ScenarioExecutor.
      *
-     * @param scenarios the queue with scenarios
-     * @param proxies   the queue with proxies
+     * @param scenario the scenario
+     * @param proxy    the proxy
      */
     @Override
-    public void execute(BlockingQueue<Scenario> scenarios,
-                        BlockingQueue<ProxyConfigHolder> proxies) {
-        ProxyConfigHolder proxy = defaultProxy;
-        while (true) {
-            try {
-                Scenario scenario = scenarios.take();
+    public void execute(Scenario scenario, ProxyConfigHolder proxy) {
+        WebDriver webDriver = getWebDriverPrototype(webDriverConfig, proxy);
+        if (webDriver == null) return;
 
-                ProxyConfigHolder newProxy = proxies.poll();
-                if (newProxy != null) {
-                    proxy = newProxy;
-                }
-
-                WebDriver webDriver = getWebDriverPrototype(webDriverConfig, proxy);
-                if (webDriver == null) continue;
-
-                scenarioExecutor.execute(scenario, webDriver);
-            } catch (InterruptedException e) {
-                log.error("Thread was interrupted in ExecutionServiceImpl.class", e);
-                Thread.currentThread().interrupt();
-            }
-        }
+        scenarioExecutor.execute(scenario, webDriver);
     }
 
     /**
