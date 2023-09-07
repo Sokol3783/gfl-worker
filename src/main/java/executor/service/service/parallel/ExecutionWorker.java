@@ -2,9 +2,7 @@ package executor.service.service.parallel;
 
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
-import executor.service.service.impl.ExecutionServiceImpl;
-
-import java.util.concurrent.BlockingQueue;
+import executor.service.service.impl.ExecutionService;
 
 /**
  * Execution task.
@@ -14,20 +12,20 @@ import java.util.concurrent.BlockingQueue;
  */
 public class ExecutionWorker implements Runnable {
 
-    private final ExecutionServiceImpl service;
-    private final BlockingQueue<Scenario> scenarioQueue;
-    private final BlockingQueue<ProxyConfigHolder> proxyQueue;
+    private final ExecutionService service;
+    private final Scenario scenario;
+    private final ProxyConfigHolder proxy;
 
-    public ExecutionWorker(ExecutionServiceImpl service,
-                           BlockingQueue<Scenario> scenarioQueue,
-                           BlockingQueue<ProxyConfigHolder> proxyQueue) {
+    public ExecutionWorker(ExecutionService service,
+                           Scenario scenario,
+                           ProxyConfigHolder proxy) {
         this.service = service;
-        this.scenarioQueue = scenarioQueue;
-        this.proxyQueue = proxyQueue;
+        this.scenario = scenario;
+        this.proxy = proxy;
     }
 
     @Override
     public void run() {
-        service.execute(scenarioQueue, proxyQueue);
+        service.execute(scenario, proxy);
     }
 }

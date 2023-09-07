@@ -5,7 +5,8 @@ import executor.service.model.Scenario;
 import executor.service.service.ParallelFlowExecutorService;
 import executor.service.service.ProxySourcesClient;
 import executor.service.service.ScenarioSourceListener;
-import executor.service.service.impl.ExecutionServiceImpl;
+import executor.service.service.ThreadFactory;
+import executor.service.service.impl.ExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,14 +29,14 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
     private static boolean FLAG = true;
 
     private final ExecutorService threadPoolExecutor;
-    private final ExecutionServiceImpl service;
+    private final ExecutionService service;
     private final ScenarioSourceListener scenarioSourceListener;
     private final ProxySourcesClient proxySourcesClient;
     private final ThreadFactory threadFactory;
     private ProxyConfigHolder defaultProxy;
 
     public ParallelFlowExecutorServiceImpl(ExecutorService threadPoolExecutor,
-                                           ExecutionServiceImpl service,
+                                           ExecutionService service,
                                            ScenarioSourceListener scenarioSourceListener,
                                            ProxySourcesClient proxySourcesClient,
                                            ThreadFactory threadFactory,

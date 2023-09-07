@@ -1,39 +1,37 @@
 package executor.service.service.parallel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
+import executor.service.service.ItemHandler;
+import executor.service.service.Listener;
+import executor.service.service.ScenarioSourceListener;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 public class TaskWorker<T> implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskWorker.class);
-    private static final long TIME = 3000;
+    private final Listener listener;
+    private final BlockingQueue<T> queue;
 
-    private final Flux<T> flux;
-    private final Queue<T> queue;
-
-    public TaskWorker(Flux<T> flux, Queue<T> queue) {
-        this.flux = flux;
+    public TaskWorker(Listener listener, BlockingQueue<T> queue) {
+        this.listener = listener;
         this.queue = queue;
     }
 
     @Override
     public void run() {
-        flux.subscribe(queue::add);
-        threadSleep();
+        if(listener instanceof ScenarioSourceListener) {
+            listener.execute(getItemHandler());
+        } else {
+            listener.execute(getItemHandler());
+        }
     }
 
-    /**
-     * Wait for the Flux thread to start executing.
-     */
-    private void threadSleep() {
-        try {
-            Thread.sleep(TIME);
-        } catch (InterruptedException e) {
-            log.info("Thread was interrupted");
-            Thread.currentThread().interrupt();
-        }
+    private ItemHandler getItemHandler() {
+        return items -> {
+            try {
+                queue.put((T) items);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        };
     }
 }
