@@ -7,15 +7,15 @@ import java.util.List;
 
 public class StepExecutionFactory implements StepExecutionFabric {
 
-  private final List<StepExecution> stepExecutors;
+  private final List<StepExecution> stepExecutions;
 
-  public StepExecutionFactory(List<StepExecution> stepExecutors) {
-    this.stepExecutors = stepExecutors;
+  public StepExecutionFactory(List<StepExecution> stepExecutions) {
+    this.stepExecutions = stepExecutions;
   }
 
   @Override
   public StepExecution getStepExecutor(String stepAction) {
-    return stepExecutors.stream().filter(s -> s.getStepAction().compareTo(stepAction) == 0)
+    return stepExecutions.stream().filter(s -> s.getStepAction().compareTo(stepAction) == 0)
         .findFirst().orElseThrow(() -> new StepExecutionException("Unsupported type execution!"));
   }
 
