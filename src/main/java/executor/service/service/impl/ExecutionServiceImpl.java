@@ -43,7 +43,7 @@ public class ExecutionServiceImpl implements ExecutionService {
         List<Step> steps = scenario.getSteps();
         for (Step step : steps) {
             StepExecution stepExecutor = stepExecutionFactory.getStepExecutor(step.getAction().getName());
-
+            stepExecutor.step(webDriver, step);
         }
     }
 
