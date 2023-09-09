@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 
 public interface ThreadFactory<T> {
 
-    Runnable createTaskWorker(Listener listener, BlockingQueue<T> items);
+    Runnable createTaskWorker(T listener, BlockingQueue<T> items);
 
     Runnable createExecutionWorker(ExecutionService service,
                                    Scenario scenario,
