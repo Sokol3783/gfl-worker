@@ -2,10 +2,7 @@ package executor.service.service.parallel;
 
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
-import executor.service.service.ParallelFlowExecutorService;
-import executor.service.service.ProxySourcesClient;
-import executor.service.service.ScenarioSourceListener;
-import executor.service.service.ThreadFactory;
+import executor.service.service.*;
 import executor.service.service.impl.ExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,19 +31,21 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
     private final ProxySourcesClient proxySourcesClient;
     private final ThreadFactory threadFactory;
     private ProxyConfigHolder defaultProxy;
+    private final ProxyValidator proxyValidator;
 
     public ParallelFlowExecutorServiceImpl(ExecutorService threadPoolExecutor,
                                            ExecutionService service,
                                            ScenarioSourceListener scenarioSourceListener,
                                            ProxySourcesClient proxySourcesClient,
                                            ThreadFactory threadFactory,
-                                           ProxyConfigHolder defaultProxy) {
+                                           ProxyConfigHolder defaultProxy, ProxyValidator proxyValidator) {
         this.threadPoolExecutor = threadPoolExecutor;
         this.service = service;
         this.scenarioSourceListener = scenarioSourceListener;
         this.proxySourcesClient = proxySourcesClient;
         this.threadFactory = threadFactory;
         this.defaultProxy = defaultProxy;
+        this.proxyValidator = proxyValidator;
     }
 
     /**
@@ -90,7 +89,7 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
         while (FLAG) {
             scenario = SCENARIO_QUEUE.take();
             proxy = PROXY_QUEUE.poll();
-            if (proxy != null) defaultProxy = proxy;
+            if (proxy != null && proxyValidator.isValid(proxy)) defaultProxy = proxy;
             threadPoolExecutor.execute(threadFactory.createExecutionWorker(service, scenario, defaultProxy));
         }
     }
