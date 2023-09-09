@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadPool {
 
+    private static final int MAXIMUM_POOL_SIZE = 5;
+
     private final ThreadPoolConfig threadPoolConfig;
 
     public ThreadPool(ThreadPoolConfig threadPoolConfig) {
@@ -28,19 +30,9 @@ public class ThreadPool {
     public ThreadPoolExecutor createThreadPoolExecutor() {
         return new ThreadPoolExecutor(
                 threadPoolConfig.getCorePoolSize(),
-                defineMaximumAvailableProcessors(),
+                MAXIMUM_POOL_SIZE,
                 threadPoolConfig.getKeepAliveTime(),
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>());
-    }
-
-
-    /**
-     * Get the number of available processor cores.
-     *
-     * @return the number of available processor core
-     */
-    private int defineMaximumAvailableProcessors() {
-        return Runtime.getRuntime().availableProcessors();
     }
 }
