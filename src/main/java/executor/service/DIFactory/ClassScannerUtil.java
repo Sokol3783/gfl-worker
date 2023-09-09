@@ -1,4 +1,4 @@
-package executor.service.infrastructure;
+package executor.service.DIFactory;
 
 import org.reflections.Reflections;
 
