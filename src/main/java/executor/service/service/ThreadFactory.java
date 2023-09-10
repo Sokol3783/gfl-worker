@@ -2,7 +2,6 @@ package executor.service.service;
 
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
-import executor.service.service.impl.ExecutionService;
 
 import java.util.concurrent.BlockingQueue;
 

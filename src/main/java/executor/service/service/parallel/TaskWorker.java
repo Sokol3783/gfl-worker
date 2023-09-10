@@ -5,7 +5,14 @@ import executor.service.service.ProxySourcesClient;
 import executor.service.service.ScenarioSourceListener;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Consumer;
 
+/**
+ * Application`s constants.
+ *
+ * @author Oleksandr Tuleninov, Yurii Kotsiuba.
+ * @version 01
+ * */
 public class TaskWorker<T> implements Runnable {
 
     private final T listener;
@@ -18,20 +25,22 @@ public class TaskWorker<T> implements Runnable {
 
     @Override
     public void run() {
-        if(listener instanceof ScenarioSourceListener) {
-            ((ScenarioSourceListener) listener).execute(getItemHandler());
-        } else {
-            ((ProxySourcesClient) listener).execute(getItemHandler());
-        }
-    }
-
-    private ItemHandler getItemHandler() {
-        return items -> {
+        Consumer<T> itemHandlerConsumer = items -> {
             try {
-                queue.put((T) items);
+                queue.put(items);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         };
+
+        if (listener instanceof ScenarioSourceListener) {
+            ((ScenarioSourceListener) listener).execute(createItemHandler(itemHandlerConsumer));
+        } else if (listener instanceof ProxySourcesClient) {
+            ((ProxySourcesClient) listener).execute(createItemHandler(itemHandlerConsumer));
+        }
+    }
+
+    private ItemHandler createItemHandler(Consumer<T> consumer) {
+        return items -> consumer.accept((T) items);
     }
 }

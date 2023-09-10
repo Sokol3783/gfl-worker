@@ -3,6 +3,7 @@ package executor.service.service.impl;
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 import executor.service.model.WebDriverConfig;
+import executor.service.service.ExecutionService;
 import executor.service.service.ScenarioExecutor;
 import executor.service.service.WebDriverInitializer;
 import org.openqa.selenium.WebDriver;
@@ -17,14 +18,14 @@ import java.util.concurrent.BlockingQueue;
  *  @author Oleksandr Tuleninov
  *  @version 01
  * */
-public class ExecutionService implements executor.service.service.ExecutionService {
+public class ExecutionServiceImpl implements ExecutionService {
 
     private static final Logger log = LoggerFactory.getLogger(ExecutionService.class);
 
     private final ScenarioExecutor scenarioExecutor;
     private final WebDriverConfig webDriverConfig;
 
-    public ExecutionService(ScenarioExecutor scenarioExecutor,
+    public ExecutionServiceImpl(ScenarioExecutor scenarioExecutor,
                             WebDriverConfig webDriverConfig) {
         this.scenarioExecutor = scenarioExecutor;
         this.webDriverConfig = webDriverConfig;

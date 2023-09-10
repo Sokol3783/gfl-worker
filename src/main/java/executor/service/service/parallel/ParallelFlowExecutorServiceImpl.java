@@ -3,7 +3,6 @@ package executor.service.service.parallel;
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 import executor.service.service.*;
-import executor.service.service.impl.ExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

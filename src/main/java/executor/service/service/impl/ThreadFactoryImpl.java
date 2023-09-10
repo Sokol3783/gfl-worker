@@ -2,6 +2,7 @@ package executor.service.service.impl;
 
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
+import executor.service.service.ExecutionService;
 import executor.service.service.ThreadFactory;
 import executor.service.service.parallel.ExecutionWorker;
 import executor.service.service.parallel.TaskWorker;
