@@ -2,30 +2,26 @@ package executor.service.service.impl;
 
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
-import executor.service.model.Step;
 import executor.service.model.WebDriverConfig;
 import executor.service.service.ExecutionService;
 import executor.service.service.ScenarioExecutor;
-import executor.service.service.StepExecution;
 import executor.service.service.WebDriverInitializer;
 import org.openqa.selenium.WebDriver;
-
-import java.util.List;
 
 /**
  * The facade for execute ScenarioExecutor.
  *
- *  @author Oleksandr Tuleninov
- *  @version 01
- * */
+ * @author Oleksandr Tuleninov
+ * @version 01
+ */
 public class ExecutionServiceImpl implements ExecutionService {
 
-    private final StepExecutionFactory stepExecutionFactory;
+    private final ScenarioExecutor scenarioExecutor;
     private final WebDriverConfig webDriverConfig;
 
-    public ExecutionServiceImpl(StepExecutionFactory stepExecutionFactory,
+    public ExecutionServiceImpl(ScenarioExecutor scenarioExecutor,
                                 WebDriverConfig webDriverConfig) {
-        this.stepExecutionFactory = stepExecutionFactory;
+        this.scenarioExecutor = scenarioExecutor;
         this.webDriverConfig = webDriverConfig;
     }
 
@@ -40,11 +36,7 @@ public class ExecutionServiceImpl implements ExecutionService {
         WebDriver webDriver = getWebDriverPrototype(webDriverConfig, proxy);
         if (webDriver == null) return;
 
-        List<Step> steps = scenario.getSteps();
-        for (Step step : steps) {
-            StepExecution stepExecutor = stepExecutionFactory.getStepExecutor(step.getAction().getName());
-            stepExecutor.step(webDriver, step);
-        }
+        scenarioExecutor.execute(scenario, webDriver);
     }
 
     /**
