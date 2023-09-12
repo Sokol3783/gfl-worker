@@ -9,7 +9,7 @@ import executor.service.service.WebDriverInitializer;
 import org.openqa.selenium.WebDriver;
 
 /**
- * The facade for execute ScenarioExecutor.
+ * ExecutionService facade.
  *
  * @author Oleksandr Tuleninov
  * @version 01

@@ -4,7 +4,7 @@ import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 
 /**
- * The facade for execute ScenarioExecutor.
+ * ExecutionService facade.
  *
  * @author Oleksandr Tuleninov
  * @version 01
