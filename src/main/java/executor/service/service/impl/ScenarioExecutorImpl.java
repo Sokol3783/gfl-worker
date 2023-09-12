@@ -30,6 +30,8 @@ public class ScenarioExecutorImpl implements ScenarioExecutor {
 
     @Override
     public void execute(Scenario scenario, WebDriver webDriver) {
+        webDriver.get(scenario.getSite());
+
         for (Step step : scenario.getSteps()) {
             String action = step.getAction().getName();
             switch (action) {
