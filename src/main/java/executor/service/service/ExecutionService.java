@@ -13,6 +13,6 @@ public class ExecutionService {
     }
 
     public void execute() {
-        scenarioSourceListener.getScenarios();
+
     }
 }
