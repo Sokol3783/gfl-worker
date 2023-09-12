@@ -3,7 +3,7 @@ package executor.service.service.impl;
 import executor.service.exceptions.StepExecutionException;
 import executor.service.model.Step;
 import executor.service.model.StepTypes;
-import executor.service.service.StepExecutionSleep;
+
 import java.util.Random;
 import org.openqa.selenium.WebDriver;
 

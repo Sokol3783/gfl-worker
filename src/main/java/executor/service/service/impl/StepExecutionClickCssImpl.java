@@ -2,7 +2,6 @@ package executor.service.service.impl;
 
 import executor.service.model.Step;
 import executor.service.model.StepTypes;
-import executor.service.service.StepExecutionClickCss;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
