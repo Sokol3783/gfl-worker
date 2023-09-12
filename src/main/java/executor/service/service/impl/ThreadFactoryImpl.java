@@ -8,6 +8,12 @@ import executor.service.service.parallel.TaskWorker;
 
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Thread factory implementation.
+ *
+ * @author Oleksandr Tuleninov
+ * @version 01
+ */
 public class ThreadFactoryImpl<T> implements ThreadFactory<T> {
 
     @Override

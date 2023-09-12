@@ -6,7 +6,7 @@ import executor.service.model.Scenario;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Start ExecutionService in parallel multi-threaded mode.
+ * Thread factory.
  *
  * @author Oleksandr Tuleninov
  * @version 01
