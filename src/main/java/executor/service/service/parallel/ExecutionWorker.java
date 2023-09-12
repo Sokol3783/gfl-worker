@@ -4,7 +4,7 @@ import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 
 /**
- * Execution task.
+ * Execution tasks.
  *
  * @author Oleksandr Tuleninov
  * @version 01

@@ -1,7 +1,7 @@
 package executor.service.service;
 
 /**
- * Start ExecutionService in parallel multi-threaded mode.
+ * Item Retrieval Function.
  *
  * @author Oleksandr Tuleninov
  * @version 01
