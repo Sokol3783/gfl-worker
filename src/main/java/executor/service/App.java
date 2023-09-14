@@ -14,7 +14,6 @@ public class App {
                 getPackageName(),
                 new HashMap<>(Map.of(ParalleFlowExecutorService.class, ParalleFlowExecutorService.class)));
         ParalleFlowExecutorService service = context.getObject(ParalleFlowExecutorService.class);
-        service.execute();
     }
 
     private static String getPackageName() {

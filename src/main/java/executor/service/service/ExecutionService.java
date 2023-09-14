@@ -12,5 +12,4 @@ import executor.service.model.Scenario;
 public interface ExecutionService {
 
     void execute(Scenario scenario, ProxyConfigHolder proxy);
-
 }
