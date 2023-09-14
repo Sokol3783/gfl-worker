@@ -34,7 +34,6 @@ public class ExecutionServiceImpl implements ExecutionService {
     @Override
     public void execute(Scenario scenario, ProxyConfigHolder proxy) {
         WebDriver webDriver = getWebDriverPrototype(webDriverConfig, proxy);
-        if (webDriver == null) return;
 
         scenarioExecutor.execute(scenario, webDriver);
     }
