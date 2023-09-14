@@ -4,7 +4,6 @@ import java.lang.reflect.*;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,21 +20,17 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
     private enum Singleton implements ObjectFactory {
         INSTANCE;
-        private static final Map<Class, Object> context = new ConcurrentHashMap<>();
 
         private final Reflections scanner = ClassScannerUtil.getClassScanner("executor.service");
+        private final Map<Class, Object> context = new ConcurrentHashMap<>();
 
         @Override
         public <T> T create(Class<T> clazz) {
-            return create(clazz, () -> createInstance(clazz));
-        }
-
-        private <T> T create(Class<T> clazz, Supplier<T> instanceSupplier) {
-            Object object = context.computeIfAbsent(clazz, key -> instanceSupplier.get());
+            Object object = context.computeIfAbsent(clazz, key -> createInstance(clazz));
             return clazz.cast(object);
         }
 
-        private <T> T createInstance(Class<T> clazz) {
+        private synchronized <T> T createInstance(Class<T> clazz) {
             try {
                 Constructor<T> constructor = findSuitableConstructor(clazz);
                 if (constructor != null) {
@@ -92,4 +87,5 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
     }
 }
+
 
