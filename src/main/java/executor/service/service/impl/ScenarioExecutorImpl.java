@@ -9,7 +9,7 @@ import executor.service.service.StepExecutionSleep;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Class for reading properties from properties file.
+ * ScenarioExecutor implementation.
  *
  *  @author Oleksandr Tuleninov
  *  @version 01
