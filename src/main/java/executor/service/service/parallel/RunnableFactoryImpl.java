@@ -1,8 +1,9 @@
-package executor.service.service.impl;
+package executor.service.service.parallel;
 
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
-import executor.service.service.ThreadFactory;
+import executor.service.service.ExecutionService;
+import executor.service.service.RunnableFactory;
 import executor.service.service.parallel.ExecutionWorker;
 import executor.service.service.parallel.TaskWorker;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
  * @author Oleksandr Tuleninov
  * @version 01
  */
-public class ThreadFactoryImpl<T> implements ThreadFactory<T> {
+public class RunnableFactoryImpl<T> implements RunnableFactory<T> {
 
     @Override
     public Runnable createTaskWorker(T listener, BlockingQueue<T> items) {

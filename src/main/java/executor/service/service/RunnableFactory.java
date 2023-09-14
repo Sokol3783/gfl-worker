@@ -6,12 +6,12 @@ import executor.service.model.Scenario;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Thread factory.
+ * Runnable factory.
  *
  * @author Oleksandr Tuleninov
  * @version 01
  */
-public interface ThreadFactory<T> {
+public interface RunnableFactory<T> {
 
     Runnable createTaskWorker(T listener, BlockingQueue<T> items);
 

@@ -28,7 +28,7 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
     private final ExecutionService service;
     private final ScenarioSourceListener scenarioSourceListener;
     private final ProxySourcesClient proxySourcesClient;
-    private final ThreadFactory threadFactory;
+    private final RunnableFactory runnableFactory;
     private ProxyConfigHolder defaultProxy;
     private final ProxyValidator proxyValidator;
 
@@ -36,13 +36,13 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
                                            ExecutionService service,
                                            ScenarioSourceListener scenarioSourceListener,
                                            ProxySourcesClient proxySourcesClient,
-                                           ThreadFactory threadFactory,
+                                           RunnableFactory runnableFactory,
                                            ProxyConfigHolder defaultProxy, ProxyValidator proxyValidator) {
         this.threadPoolExecutor = threadPoolExecutor;
         this.service = service;
         this.scenarioSourceListener = scenarioSourceListener;
         this.proxySourcesClient = proxySourcesClient;
-        this.threadFactory = threadFactory;
+        this.runnableFactory = runnableFactory;
         this.defaultProxy = defaultProxy;
         this.proxyValidator = proxyValidator;
     }
@@ -53,9 +53,9 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
      */
     @Override
     public void execute() {
-        threadPoolExecutor.execute(threadFactory.createTaskWorker(scenarioSourceListener, SCENARIO_QUEUE));
+        threadPoolExecutor.execute(runnableFactory.createTaskWorker(scenarioSourceListener, SCENARIO_QUEUE));
 
-        threadPoolExecutor.execute(threadFactory.createTaskWorker(proxySourcesClient, PROXY_QUEUE));
+        threadPoolExecutor.execute(runnableFactory.createTaskWorker(proxySourcesClient, PROXY_QUEUE));
 
         executeScenarioAndProxy();
     }
@@ -89,7 +89,7 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
             scenario = SCENARIO_QUEUE.take();
             proxy = PROXY_QUEUE.poll();
             if (proxy != null && proxyValidator.isValid(proxy)) defaultProxy = proxy;
-            threadPoolExecutor.execute(threadFactory.createExecutionWorker(service, scenario, defaultProxy));
+            threadPoolExecutor.execute(runnableFactory.createExecutionWorker(service, scenario, defaultProxy));
         }
     }
 }
