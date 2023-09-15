@@ -47,7 +47,7 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
 
     /**
      * Start ScenarioSourceListener, ProxySourcesClient, ExecutionService
-     * in parallel multi-threaded mode.
+     * in parallel multithreading mode.
      */
     @Override
     public void execute() {
