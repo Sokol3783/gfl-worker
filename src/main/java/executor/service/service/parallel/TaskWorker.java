@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
 
 /**
- * Worker tasks.
+ * Worker task.
  *
  * @author Oleksandr Tuleninov, Yurii Kotsiuba.
  * @version 01

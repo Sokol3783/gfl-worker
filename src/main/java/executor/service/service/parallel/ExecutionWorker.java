@@ -5,7 +5,7 @@ import executor.service.model.Scenario;
 import executor.service.service.ExecutionService;
 
 /**
- * Execution tasks.
+ * Execution task.
  *
  * @author Oleksandr Tuleninov
  * @version 01
