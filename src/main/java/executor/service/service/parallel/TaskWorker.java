@@ -40,7 +40,7 @@ public class TaskWorker<T> implements Runnable {
         }
     }
 
-    private ItemHandler createItemHandler(Consumer<T> consumer) {
-        return items -> consumer.accept((T) items);
+    private ItemHandler<T> createItemHandler(Consumer<T> consumer) {
+        return consumer::accept;
     }
 }
