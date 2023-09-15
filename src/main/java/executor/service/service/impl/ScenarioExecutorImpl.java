@@ -1,7 +1,6 @@
 package executor.service.service.impl;
 
 import executor.service.model.Scenario;
-import executor.service.model.Step;
 import executor.service.service.ScenarioExecutor;
 import executor.service.service.StepExecutionClickCss;
 import executor.service.service.StepExecutionClickXpath;
