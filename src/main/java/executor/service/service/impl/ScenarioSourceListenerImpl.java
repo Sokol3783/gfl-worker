@@ -1,6 +1,7 @@
 package executor.service.service.impl;
 
 import executor.service.handler.ScenarioHandler;
+import executor.service.handler.TerminatorListener;
 import executor.service.model.Scenario;
 import executor.service.service.ScenarioProvider;
 import executor.service.service.ScenarioSourceListener;
@@ -22,9 +23,13 @@ public class ScenarioSourceListenerImpl implements ScenarioSourceListener {
 
     @Override
     public void execute(ScenarioHandler handler) {
+        execute(handler, () -> false);
+    }
+
+    public void execute(ScenarioHandler handler, TerminatorListener terminator) {
         List<Scenario> scenarioList = provider.readScenarios();
         validateScenarios(scenarioList);
-        listen(scenarioList, handler);
+        listen(scenarioList, handler, terminator);
     }
 
     private void validateScenarios(List<Scenario> scenarios) {
@@ -34,9 +39,9 @@ public class ScenarioSourceListenerImpl implements ScenarioSourceListener {
         }
     }
 
-    private void listen(List<Scenario> scenarioList, ScenarioHandler handler) {
+    private void listen(List<Scenario> scenarioList, ScenarioHandler handler, TerminatorListener terminator) {
         int currentIndex = 0;
-        while(true){
+        while(!terminator.shouldTerminate()){
             Scenario scenario = scenarioList.get(currentIndex);
             handler.onScenarioReceived(scenario);
             currentIndex = (currentIndex + 1) % scenarioList.size();
