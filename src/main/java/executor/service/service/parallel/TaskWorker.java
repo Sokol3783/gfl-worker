@@ -1,6 +1,7 @@
 package executor.service.service.parallel;
 
-import executor.service.handler.ItemHandler;
+import executor.service.handler.ProxyHandler;
+import executor.service.handler.ScenarioHandler;
 import executor.service.service.ProxySourcesClient;
 import executor.service.service.ScenarioSourceListener;
 
@@ -34,13 +35,17 @@ public class TaskWorker<T> implements Runnable {
         };
 
         if (listener instanceof ScenarioSourceListener) {
-            ((ScenarioSourceListener) listener).execute(createItemHandler(itemHandlerConsumer));
+            ((ScenarioSourceListener) listener).execute(createScenarioHandler(itemHandlerConsumer));
         } else if (listener instanceof ProxySourcesClient) {
-            ((ProxySourcesClient) listener).execute(createItemHandler(itemHandlerConsumer));
+            ((ProxySourcesClient) listener).execute(createProxyHandler(itemHandlerConsumer));
         }
     }
 
-    private ItemHandler<T> createItemHandler(Consumer<T> consumer) {
-        return consumer::accept;
+    private ScenarioHandler createScenarioHandler(Consumer<T> consumer) {
+        return item -> consumer.accept((T) item);
+    }
+
+    private ProxyHandler createProxyHandler(Consumer<T> consumer) {
+        return item -> consumer.accept((T) item);
     }
 }
