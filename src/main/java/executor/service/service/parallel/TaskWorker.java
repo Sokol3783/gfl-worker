@@ -1,6 +1,6 @@
 package executor.service.service.parallel;
 
-import executor.service.service.ItemHandler;
+import executor.service.handler.ItemHandler;
 import executor.service.service.ProxySourcesClient;
 import executor.service.service.ScenarioSourceListener;
 
