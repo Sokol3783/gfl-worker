@@ -3,23 +3,21 @@ package executor.service.service.parallel;
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 import executor.service.service.ExecutionService;
-import executor.service.service.RunnableFactory;
-import executor.service.service.parallel.ExecutionWorker;
-import executor.service.service.parallel.TaskWorker;
+import executor.service.service.TasksFactory;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 /**
- * Thread factory implementation.
+ * Callable, Runnable Factory.
  *
  * @author Oleksandr Tuleninov
  * @version 01
  */
-public class RunnableFactoryImpl<T> implements RunnableFactory<T> {
+public class TasksFactoryImpl<T> implements TasksFactory<T> {
 
     @Override
-    public Runnable createTaskWorker(T listener, BlockingQueue<T> items) {
-        return new TaskWorker<>(listener, items);
+    public Callable<T> createTaskWorker(T listener) {
+        return new TaskWorker<>(listener);
     }
 
     @Override

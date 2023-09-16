@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Future;
 
 /**
  * Start ExecutionService in parallel multi-threaded mode.
@@ -19,16 +20,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorService {
 
     private static final Logger log = LoggerFactory.getLogger(ParallelFlowExecutorServiceImpl.class);
-
-    private static final BlockingQueue<Scenario> SCENARIO_QUEUE = new LinkedBlockingQueue<>();
-    private static final BlockingQueue<ProxyConfigHolder> PROXY_QUEUE = new LinkedBlockingQueue<>();
     private static boolean FLAG = true;
 
     private final ExecutorService threadPoolExecutor;
     private final ExecutionService service;
     private final ScenarioSourceListener scenarioSourceListener;
     private final ProxySourcesClient proxySourcesClient;
-    private final RunnableFactory runnableFactory;
+    private final TasksFactory tasksFactory;
     private ProxyConfigHolder defaultProxy;
     private final ProxyValidator proxyValidator;
 
@@ -36,13 +34,13 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
                                            ExecutionService service,
                                            ScenarioSourceListener scenarioSourceListener,
                                            ProxySourcesClient proxySourcesClient,
-                                           RunnableFactory runnableFactory,
+                                           TasksFactory tasksFactory,
                                            ProxyConfigHolder defaultProxy, ProxyValidator proxyValidator) {
         this.threadPoolExecutor = threadPoolExecutor;
         this.service = service;
         this.scenarioSourceListener = scenarioSourceListener;
         this.proxySourcesClient = proxySourcesClient;
-        this.runnableFactory = runnableFactory;
+        this.tasksFactory = tasksFactory;
         this.defaultProxy = defaultProxy;
         this.proxyValidator = proxyValidator;
     }
@@ -53,11 +51,13 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
      */
     @Override
     public void execute() {
-        threadPoolExecutor.execute(runnableFactory.createTaskWorker(scenarioSourceListener, SCENARIO_QUEUE));
+        Future<BlockingQueue<Scenario>> futureScenarios
+                = threadPoolExecutor.submit(tasksFactory.createTaskWorker(scenarioSourceListener));
 
-        threadPoolExecutor.execute(runnableFactory.createTaskWorker(proxySourcesClient, PROXY_QUEUE));
+        Future<BlockingQueue<ProxyConfigHolder>> futureProxies
+                = threadPoolExecutor.submit(tasksFactory.createTaskWorker(proxySourcesClient));
 
-        executeScenarioAndProxy();
+        executeScenarioAndProxy(futureScenarios, futureProxies);
     }
 
     /**
@@ -70,10 +70,11 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
         threadPoolExecutor.shutdown();
     }
 
-    private void executeScenarioAndProxy() {
+    private void executeScenarioAndProxy(Future<BlockingQueue<Scenario>> futureScenarios,
+                                         Future<BlockingQueue<ProxyConfigHolder>> futureProxies) {
         try {
-            executeParallel();
-        } catch (InterruptedException e) {
+            executeParallel(futureScenarios, futureProxies);
+        } catch (InterruptedException | ExecutionException e) {
             log.error("Thread was interrupted in ParallelFlowExecutorServiceImpl.class", e);
             Thread.currentThread().interrupt();
         }
@@ -81,15 +82,22 @@ public class ParallelFlowExecutorServiceImpl implements ParallelFlowExecutorServ
 
     /**
      * Execute the scenario and proxy in parallel mode.
+     *
+     * @param futureScenarios queue with scenarios
+     * @param futureProxies queue with proxies
      */
-    private void executeParallel() throws InterruptedException {
+    private void executeParallel(Future<BlockingQueue<Scenario>> futureScenarios,
+                                 Future<BlockingQueue<ProxyConfigHolder>> futureProxies)
+            throws InterruptedException, ExecutionException {
+        BlockingQueue<Scenario> scenarios = futureScenarios.get();
+        BlockingQueue<ProxyConfigHolder> proxies = futureProxies.get();
         Scenario scenario;
         ProxyConfigHolder proxy;
         while (FLAG) {
-            scenario = SCENARIO_QUEUE.take();
-            proxy = PROXY_QUEUE.poll();
+            scenario = scenarios.take();
+            proxy = proxies.poll();
             if (proxy != null && proxyValidator.isValid(proxy)) defaultProxy = proxy;
-            threadPoolExecutor.execute(runnableFactory.createExecutionWorker(service, scenario, defaultProxy));
+            threadPoolExecutor.execute(tasksFactory.createExecutionWorker(service, scenario, defaultProxy));
         }
     }
 }

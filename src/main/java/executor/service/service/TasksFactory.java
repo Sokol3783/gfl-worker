@@ -3,17 +3,17 @@ package executor.service.service;
 import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 /**
- * Runnable factory.
+ * Callable, Runnable Factory.
  *
  * @author Oleksandr Tuleninov
  * @version 01
  */
-public interface RunnableFactory<T> {
+public interface TasksFactory<T> {
 
-    Runnable createTaskWorker(T listener, BlockingQueue<T> items);
+    Callable<T> createTaskWorker(T listener);
 
     Runnable createExecutionWorker(ExecutionService service,
                                    Scenario scenario,

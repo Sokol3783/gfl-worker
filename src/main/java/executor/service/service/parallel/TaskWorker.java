@@ -6,6 +6,8 @@ import executor.service.service.ProxySourcesClient;
 import executor.service.service.ScenarioSourceListener;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.Consumer;
 
 /**
@@ -14,18 +16,17 @@ import java.util.function.Consumer;
  * @author Oleksandr Tuleninov, Yurii Kotsiuba.
  * @version 01
  * */
-public class TaskWorker<T> implements Runnable {
+public class TaskWorker<T> implements Callable<T> {
 
     private final T listener;
-    private final BlockingQueue<T> queue;
 
-    public TaskWorker(T listener, BlockingQueue<T> queue) {
+    public TaskWorker(T listener) {
         this.listener = listener;
-        this.queue = queue;
     }
 
     @Override
-    public void run() {
+    public T call() {
+        BlockingQueue<T> queue = new LinkedBlockingDeque<>();
         Consumer<T> itemHandlerConsumer = items -> {
             try {
                 queue.put(items);
@@ -39,6 +40,7 @@ public class TaskWorker<T> implements Runnable {
         } else if (listener instanceof ProxySourcesClient) {
             ((ProxySourcesClient) listener).execute(createProxyHandler(itemHandlerConsumer));
         }
+        return (T) queue;
     }
 
     private ScenarioHandler createScenarioHandler(Consumer<T> consumer) {
