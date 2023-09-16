@@ -2,7 +2,9 @@ package executor.service.service.impl;
 
 import executor.service.model.Step;
 import executor.service.model.StepTypes;
+import executor.service.service.StepExecutionClickCss;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -15,7 +17,12 @@ public class StepExecutionClickCssImpl implements StepExecutionClickCss {
 
   @Override
   public void step(WebDriver webDriver, Step step) {
-    WebElement element = webDriver.findElement(By.cssSelector(step.getValue()));
-    element.click();
+    try {
+      WebElement element = webDriver.findElement(By.cssSelector(step.getValue()));
+      element.click();
+    } catch (NoSuchElementException e ) {
+      System.out.println("this is error");
+    }
+
   }
 }
