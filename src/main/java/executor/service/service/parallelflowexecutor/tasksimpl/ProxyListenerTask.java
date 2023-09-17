@@ -1,8 +1,8 @@
-package executor.service.service.impl;
+package executor.service.service.parallelflowexecutor.tasksimpl;
 
-import executor.service.model.ProxyQueue;
-import executor.service.service.ProxySourcesClient;
-import executor.service.service.Task;
+import executor.service.queue.ProxyQueue;
+import executor.service.service.parallelflowexecutor.Task;
+import executor.service.service.proxy.ProxySourcesClient;
 
 public class ProxyListenerTask implements Task {
     private final ProxyQueue proxyQueue;

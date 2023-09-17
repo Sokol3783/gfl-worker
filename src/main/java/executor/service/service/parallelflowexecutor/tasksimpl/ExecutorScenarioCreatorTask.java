@@ -1,12 +1,10 @@
-package executor.service.service.impl;
+package executor.service.service.parallelflowexecutor.tasksimpl;
 
-import executor.service.model.ProxyConfigHolder;
-import executor.service.model.ProxyQueue;
-import executor.service.model.Scenario;
-import executor.service.model.ScenarioQueue;
-import executor.service.service.ParallelFlowExecutorService;
-import executor.service.service.ScenarioExecutor;
-import executor.service.service.Task;
+import executor.service.queue.ProxyQueue;
+import executor.service.queue.ScenarioQueue;
+import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
+import executor.service.service.parallelflowexecutor.Task;
+import executor.service.service.scenarios.ScenarioExecutor;
 
 public class ExecutorScenarioCreatorTask implements Task {
     private final ScenarioQueue scenarioQueue;

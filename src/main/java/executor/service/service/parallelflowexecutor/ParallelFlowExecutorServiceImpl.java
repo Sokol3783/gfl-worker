@@ -1,7 +1,4 @@
-package executor.service.service.impl;
-
-import executor.service.service.ParallelFlowExecutorService;
-import executor.service.service.Task;
+package executor.service.service.parallelflowexecutor;
 
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
