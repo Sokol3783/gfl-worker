@@ -1,7 +1,7 @@
 package executor.service.service.proxy.impl;
 
 import executor.service.handler.ProxyHandler;
-import executor.service.model.ProxyConfigHolder;
+import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.service.proxy.ProxyProvider;
 import executor.service.service.proxy.ProxySourcesClient;
 import executor.service.service.proxy.ProxyValidator;

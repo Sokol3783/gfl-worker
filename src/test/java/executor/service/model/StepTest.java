@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import executor.service.model.scenario.Step;
+import executor.service.model.scenario.StepTypes;
 import org.junit.jupiter.api.Test;
 
 public class StepTest {

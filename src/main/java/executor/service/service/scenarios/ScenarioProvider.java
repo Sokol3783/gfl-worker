@@ -1,6 +1,6 @@
 package executor.service.service.scenarios;
 
-import executor.service.model.Scenario;
+import executor.service.model.scenario.Scenario;
 
 import java.util.List;
 

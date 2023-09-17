@@ -1,7 +1,7 @@
 package executor.service.service.scenarios.impl;
 
 import executor.service.handler.ScenarioHandler;
-import executor.service.model.Scenario;
+import executor.service.model.scenario.Scenario;
 import executor.service.service.scenarios.ScenarioProvider;
 import executor.service.service.scenarios.ScenarioSourceListener;
 import org.slf4j.Logger;

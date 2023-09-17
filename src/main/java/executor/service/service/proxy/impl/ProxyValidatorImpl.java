@@ -1,7 +1,7 @@
 package executor.service.service.proxy.impl;
 
 import executor.service.config.properties.PropertiesConstants;
-import executor.service.model.ProxyConfigHolder;
+import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.service.proxy.ProxyValidator;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;

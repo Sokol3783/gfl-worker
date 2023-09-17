@@ -1,8 +1,7 @@
 package executor.service.service.webdriver;
 
-import executor.service.model.ProxyConfigHolder;
-import executor.service.model.WebDriverConfig;
-import executor.service.service.webdriver.WebDriverInitializer;
+import executor.service.model.proxy.ProxyConfigHolder;
+import executor.service.model.configs.WebDriverConfig;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;

@@ -1,4 +1,6 @@
-package executor.service.model;
+package executor.service.queue;
+
+import executor.service.model.scenario.Scenario;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;

@@ -1,4 +1,4 @@
-package executor.service.model;
+package executor.service.model.scenario;
 
 public enum StepTypes {
   CLICK_CSS("clickCss"),

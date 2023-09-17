@@ -1,7 +1,7 @@
 package executor.service.service.stepexecution.impl;
 
-import executor.service.model.Step;
-import executor.service.model.StepTypes;
+import executor.service.model.scenario.Step;
+import executor.service.model.scenario.StepTypes;
 import executor.service.service.stepexecution.StepExecutionClickCss;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
