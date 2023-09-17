@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class Step {
     private StepTypes action;
+    //Artem said use number
     private String value;
 
     public Step() {

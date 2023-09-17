@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+//TODO re-read
 public class WebDriverInitializerImpl implements WebDriverInitializer {
 
     @Override
