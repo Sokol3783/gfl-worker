@@ -1,4 +1,4 @@
-package executor.service.service.parallelflowexecutor.tasksimpl;
+package executor.service.service.parallelflowexecutor.impls;
 
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.TaskKeeper;
