@@ -2,6 +2,7 @@ package executor.service.model;
 
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
+import executor.service.model.scenario.StepTypes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,16 +26,16 @@ public class ScenarioTest {
     @BeforeEach
     public void setUp() {
         steps1 = new ArrayList<>();
-        steps1.add(new Step("sleep", "5000:15000"));
-        steps1.add(new Step("clickcss", "body > ul > li:nth-child(1) > a"));
+        steps1.add(new Step(StepTypes.valueOf("sleep"), "5000:15000"));
+        steps1.add(new Step(StepTypes.valueOf("clickcss"), "body > ul > li:nth-child(1) > a"));
 
         steps2 = new ArrayList<>();
-        steps2.add(new Step("sleep", "5000:15000"));
-        steps2.add(new Step("clickcss", "body > ul > li:nth-child(1) > a"));
+        steps2.add(new Step(StepTypes.valueOf("sleep"), "5000:15000"));
+        steps2.add(new Step(StepTypes.valueOf("clickcss"), "body > ul > li:nth-child(1) > a"));
 
         steps3 = new ArrayList<>();
-        steps3.add(new Step("sleep", "5000:15000"));
-        steps3.add(new Step("click", "body"));
+        steps3.add(new Step(StepTypes.valueOf("sleep"), "5000:15000"));
+        steps3.add(new Step(StepTypes.valueOf("click"), "body"));
     }
 
     @AfterEach
