@@ -1,9 +1,9 @@
-package executor.service.service.impl;
+package executor.service.service.proxy.impl;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import executor.service.model.ProxyConfigHolder;
-import executor.service.service.ProxyProvider;
+import executor.service.service.proxy.ProxyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

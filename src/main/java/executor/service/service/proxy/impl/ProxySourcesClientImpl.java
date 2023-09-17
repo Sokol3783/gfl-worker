@@ -1,10 +1,10 @@
-package executor.service.service.impl;
+package executor.service.service.proxy.impl;
 
 import executor.service.handler.ProxyHandler;
 import executor.service.model.ProxyConfigHolder;
-import executor.service.service.ProxyProvider;
-import executor.service.service.ProxySourcesClient;
-import executor.service.service.ProxyValidator;
+import executor.service.service.proxy.ProxyProvider;
+import executor.service.service.proxy.ProxySourcesClient;
+import executor.service.service.proxy.ProxyValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
