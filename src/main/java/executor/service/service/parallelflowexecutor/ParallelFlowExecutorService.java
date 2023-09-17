@@ -1,14 +1,6 @@
 package executor.service.service.parallelflowexecutor;
 
-/**
- * Start ExecutionService in parallel multi-threaded mode.
- *
- * @author Oleksandr Tuleninov
- * @version 01
- */
-public interface ParallelFlowExecutorService {
+import java.util.concurrent.ExecutorService;
 
-    void submit(Thread thread);
-    void execute(Thread thread);
-
+public interface ParallelFlowExecutorService extends ExecutorService {
 }
