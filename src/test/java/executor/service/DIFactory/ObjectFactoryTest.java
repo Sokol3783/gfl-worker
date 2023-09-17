@@ -8,9 +8,13 @@ import executor.service.service.*;
 
 import java.lang.reflect.Field;
 
-import executor.service.service.impl.ScenarioSourceListenerImpl;
+import executor.service.service.scenarios.impl.ScenarioSourceListenerImpl;
+import executor.service.service.scenarios.ScenarioExecutor;
+import executor.service.service.scenarios.ScenarioProvider;
+import executor.service.service.scenarios.ScenarioSourceListener;
 import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import executor.service.service.stepexecution.StepExecutionSleep;
+import executor.service.service.webdriver.WebDriverInitializer;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 

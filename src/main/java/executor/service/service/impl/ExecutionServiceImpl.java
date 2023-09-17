@@ -4,8 +4,9 @@ import executor.service.model.ProxyConfigHolder;
 import executor.service.model.Scenario;
 import executor.service.model.WebDriverConfig;
 import executor.service.service.ExecutionService;
-import executor.service.service.ScenarioExecutor;
-import executor.service.service.WebDriverInitializer;
+import executor.service.service.scenarios.ScenarioExecutor;
+import executor.service.service.webdriver.WebDriverInitializer;
+import executor.service.service.webdriver.WebDriverInitializerImpl;
 import org.openqa.selenium.WebDriver;
 
 /**
