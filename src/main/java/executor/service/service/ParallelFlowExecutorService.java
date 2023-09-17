@@ -8,16 +8,7 @@ package executor.service.service;
  */
 public interface ParallelFlowExecutorService {
 
-    /**
-     * Start ScenarioSourceListener, ProxySourcesClient, ExecutionService
-     * in parallel multi-threaded mode.
-     */
-    void execute();
-
-    /**
-     * Initiates an orderly shutdown in which previously submitted tasks are executed,
-     * but no new tasks will be accepted.
-     */
-    void shutdown();
+    void submit(Thread thread);
+    void execute(Thread thread);
 
 }
