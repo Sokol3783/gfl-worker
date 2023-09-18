@@ -1,4 +1,4 @@
-package executor.service.model;
+package executor.service.model.scenario;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
