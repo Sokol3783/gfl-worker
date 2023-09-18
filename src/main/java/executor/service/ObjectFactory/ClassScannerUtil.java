@@ -1,4 +1,4 @@
-package executor.service.DIFactory;
+package executor.service.ObjectFactory;
 
 import org.reflections.Reflections;
 

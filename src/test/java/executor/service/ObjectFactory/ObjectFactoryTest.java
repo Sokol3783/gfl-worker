@@ -1,4 +1,4 @@
-package executor.service.DIFactory;
+package executor.service.ObjectFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

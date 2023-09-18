@@ -1,4 +1,4 @@
-package executor.service.DIFactory;
+package executor.service.ObjectFactory;
 
 import java.lang.reflect.*;
 import java.util.Map;
