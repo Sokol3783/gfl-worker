@@ -50,6 +50,12 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
     }
 
     @Override
+    public void execute(Runnable command) {
+        keepAliveTaskThreads();
+        super.execute(command);
+    }
+
+    @Override
     public void setThreadFactory(ThreadFactory threadFactory) {
         throw  new UnsupportedOperationException();
     }
