@@ -1,6 +1,5 @@
 package executor.service.model.configs;
 
-import executor.service.model.configs.WebDriverConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

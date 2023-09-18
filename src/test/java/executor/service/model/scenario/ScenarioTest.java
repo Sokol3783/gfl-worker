@@ -1,8 +1,5 @@
 package executor.service.model.scenario;
 
-import executor.service.model.scenario.Scenario;
-import executor.service.model.scenario.Step;
-import executor.service.model.scenario.StepTypes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

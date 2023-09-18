@@ -1,23 +1,20 @@
 package executor.service.ObjectFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
-import executor.service.service.*;
-
-import java.lang.reflect.Field;
-
+import executor.service.service.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.scenarios.impl.ScenarioSourceListenerImpl;
 import executor.service.service.scenarios.ScenarioExecutor;
 import executor.service.service.scenarios.ScenarioProvider;
 import executor.service.service.scenarios.ScenarioSourceListener;
-import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
+import executor.service.service.scenarios.impl.ScenarioSourceListenerImpl;
 import executor.service.service.stepexecution.StepExecutionSleep;
+import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import executor.service.service.webdriver.WebDriverInitializer;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
+
+import java.lang.reflect.Field;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectFactoryTest {
 
