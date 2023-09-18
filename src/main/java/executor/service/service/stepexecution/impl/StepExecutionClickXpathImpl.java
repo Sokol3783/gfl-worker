@@ -7,13 +7,13 @@ import org.openqa.selenium.WebDriver;
 
 public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
 
-  @Override
-  public String getStepAction() {
-    return StepTypes.CLICK_XPATH.getName();
-  }
+    @Override
+    public String getStepAction() {
+        return StepTypes.CLICK_XPATH.getName();
+    }
 
-  @Override
-  public void step(WebDriver webDriver, Step step) {
+    @Override
+    public void step(WebDriver webDriver, Step step) {
 
-  }
+    }
 }

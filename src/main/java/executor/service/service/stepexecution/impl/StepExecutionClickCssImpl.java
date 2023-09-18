@@ -10,19 +10,19 @@ import org.openqa.selenium.WebElement;
 
 public class StepExecutionClickCssImpl implements StepExecutionClickCss {
 
-  @Override
-  public String getStepAction() {
-    return StepTypes.CLICK_CSS.getName();
-  }
-
-  @Override
-  public void step(WebDriver webDriver, Step step) {
-    try {
-      WebElement element = webDriver.findElement(By.cssSelector(step.getValue()));
-      element.click();
-    } catch (NoSuchElementException e ) {
-      System.out.println("this is error");
+    @Override
+    public String getStepAction() {
+        return StepTypes.CLICK_CSS.getName();
     }
 
-  }
+    @Override
+    public void step(WebDriver webDriver, Step step) {
+        try {
+            WebElement element = webDriver.findElement(By.cssSelector(step.getValue()));
+            element.click();
+        } catch (NoSuchElementException e) {
+            System.out.println("this is error");
+        }
+
+    }
 }
