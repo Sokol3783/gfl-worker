@@ -1,7 +1,8 @@
-package executor.service.service.impl;
+package executor.service.service.publishers;
 
-import executor.service.model.ProxyQueue;
-import executor.service.service.ProxySourcesClient;
+
+import executor.service.queue.ProxyQueue;
+import executor.service.service.proxy.ProxySourcesClient;
 
 public class ProxyPublisher implements Runnable {
     private final ProxyQueue proxyQueue;

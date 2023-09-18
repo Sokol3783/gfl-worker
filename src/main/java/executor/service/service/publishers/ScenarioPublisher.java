@@ -1,7 +1,8 @@
-package executor.service.service.impl;
+package executor.service.service.publishers;
 
-import executor.service.model.ScenarioQueue;
-import executor.service.service.ScenarioSourceListener;
+
+import executor.service.queue.ScenarioQueue;
+import executor.service.service.scenarios.ScenarioSourceListener;
 
 public class ScenarioPublisher implements Runnable {
     private final ScenarioQueue scenarioQueue;

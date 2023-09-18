@@ -1,9 +1,9 @@
-package executor.service.service.impl;
+package executor.service.service.subscribers;
 
-import executor.service.model.ProxyConfigHolder;
-import executor.service.model.ProxyQueue;
-import executor.service.model.Scenario;
-import executor.service.model.ScenarioQueue;
+import executor.service.model.proxy.ProxyConfigHolder;
+import executor.service.model.scenario.Scenario;
+import executor.service.queue.ProxyQueue;
+import executor.service.queue.ScenarioQueue;
 import executor.service.service.ExecutionService;
 
 import java.util.concurrent.ExecutorService;
