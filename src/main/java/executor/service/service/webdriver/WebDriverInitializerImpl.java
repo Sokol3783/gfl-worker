@@ -37,8 +37,10 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
         }
 
         chromeOptions.addArguments("--remote-allow-origins=*");
-        chromeOptions.setBinary(webDriverConfig.getWebDriverExecutable());
         chromeOptions.addArguments("user-agent=" + webDriverConfig.getUserAgent());
+
+        chromeOptions.setBinary(webDriverConfig.getWebDriverExecutable());
+
         chromeOptions.setImplicitWaitTimeout(Duration.ofMillis(webDriverConfig.getImplicitlyWait()));
         chromeOptions.setPageLoadTimeout(Duration.ofMillis(webDriverConfig.getPageLoadTimeout()));
 
@@ -46,8 +48,8 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
     }
 
     private File createProxyPlugin(String host, int port, String username, String password) {
-        String manifestJson = generateManifestJson();
-        String backgroundJs = generateBackgroundJs(host, port, username, password);
+        String manifestJson = returnManifestJson();
+        String backgroundJs = returnBackgroundJs(host, port, username, password);
 
         try {
             File zipFile = new File("proxy_auth_plugin.zip");
@@ -62,7 +64,7 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
         }
     }
 
-    private String generateManifestJson() {
+    private String returnManifestJson() {
         return """
         {
           "version": "1.0.0",
@@ -85,7 +87,7 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
         """;
     }
 
-    private String generateBackgroundJs(String host, int port, String username, String password) {
+    private String returnBackgroundJs(String host, int port, String username, String password) {
         return String.format("""
         var config = {
           mode: "fixed_servers",

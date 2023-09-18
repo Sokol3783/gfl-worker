@@ -12,7 +12,7 @@ public interface TaskKeeper {
         final Task task;
         Thread thread;
 
-        TaskNode(Task task) {
+        public TaskNode(Task task) {
             this.task = task;
         }
 
