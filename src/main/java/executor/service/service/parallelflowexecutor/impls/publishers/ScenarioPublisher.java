@@ -1,4 +1,4 @@
-package executor.service.service.publishers;
+package executor.service.service.parallelflowexecutor.impls.publishers;
 
 
 import executor.service.queue.ScenarioQueue;
