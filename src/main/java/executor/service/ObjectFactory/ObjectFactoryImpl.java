@@ -1,14 +1,12 @@
 package executor.service.ObjectFactory;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.sql.Time;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class ObjectFactoryImpl implements ObjectFactory {
 
@@ -38,21 +36,26 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     return createInstanceWithConstructor(constructor);
                 } else if (clazz.isInterface()) {
                     Set<Class<? extends T>> subTypesOf = scanner.getSubTypesOf(clazz);
-                    // Не знаю як зробити щоб через рефлексію підключало ChromeDriver,тому така "заглушка"
-                    if (WebDriver.class.isAssignableFrom(clazz)) {
-                        subTypesOf.add((Class<? extends T>) ChromeDriver.class);
-                    }
-                    //
                     if (!subTypesOf.isEmpty()) {
                         clazz = (Class<T>) subTypesOf.iterator().next();
                         return createInstance(clazz);
                     } else {
-                        throw new InstantiationException("No implementation found for interface: " + clazz.getName());
+                        // Получаеться сюда идут наши костыли,то есть классы которые не в пакете service
+                        if (ThreadFactory.class.isAssignableFrom(clazz)) {
+                            return (T) Executors.defaultThreadFactory();
+                        } else if (BlockingQueue.class.isAssignableFrom(clazz)) {
+                            return (T) new ArrayBlockingQueue(300, true);
+                        } else if (List.class.isAssignableFrom(clazz)) {
+                            return (T) new ArrayList<>();
+                        } else {
+                            throw new InstantiationException("No implementation found for interface: " + clazz.getName());
+                        }
                     }
                 } else {
                     throw new InstantiationException("No suitable constructor found for class: " + clazz.getName());
                 }
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -79,10 +82,28 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 Object[] params = new Object[constructor.getParameterCount()];
                 for (int i = 0; i < params.length; i++) {
                     Class<?> paramType = constructor.getParameterTypes()[i];
-                    params[i] = create(paramType);
+                    if (paramType.isPrimitive() || paramType.isEnum()) {
+                        if (paramType.isPrimitive()) {
+                            /* Сюда что-то рандомное пока что поставил что бы инициализировалось,а вообще
+                            Было бы неплохо что бы примитивы с пропертей инициализировались или с нужного
+                            класса
+                            */
+                            try {
+                                params[i] = 10000;
+                            } catch (IllegalFormatConversionException e) {
+                                params[i] = "str";
+                            }
+                        } else if (paramType.isEnum()) {
+                            // Костыль для енамов
+                            params[i] = TimeUnit.SECONDS;
+                        }
+                    } else {
+                        params[i] = create(paramType);
+                    }
                 }
                 return constructor.newInstance(params);
             } else {
+                System.out.println(constructor.getName());
                 return constructor.newInstance();
             }
         }
