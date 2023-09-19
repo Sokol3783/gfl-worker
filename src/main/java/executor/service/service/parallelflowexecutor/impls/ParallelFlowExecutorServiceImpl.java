@@ -42,9 +42,13 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
         if (keeper.taskNotAlive()) {
             keeper.nodes().stream().filter(s -> s.getThread() == null ||
                             s.getThread().isAlive()).
-                    forEach(s -> s.setThread(super.getThreadFactory()
-                            .newThread(s.getTask()))
+                    forEach(s -> {
+                                Thread thread = super.getThreadFactory().newThread(s.getTask());
+                                thread.start();
+                                s.setThread(thread);
+                            }
                     );
+            keeper.nodes().forEach(s -> s.getThread().start());
 
         }
     }
@@ -57,6 +61,6 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
 
     @Override
     public void setThreadFactory(ThreadFactory threadFactory) {
-        throw  new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 }
