@@ -18,6 +18,7 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
 
     @Override
     public WebDriver getInstance(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
+        //System.setProperty("webdriver.chrome.driver", "~\\opt\\chromedriver_linux64");
         ChromeDriver driver = new ChromeDriver(getChromeOptions(webDriverConfig, proxyConfigHolder));
         new File("proxy_auth_plugin.zip").delete();
         return driver;
