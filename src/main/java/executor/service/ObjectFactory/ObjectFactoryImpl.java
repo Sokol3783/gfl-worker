@@ -1,10 +1,23 @@
 package executor.service.ObjectFactory;
 
+import executor.service.config.properties.PropertiesConstants;
+import executor.service.queue.ProxyQueue;
+import executor.service.queue.ScenarioQueue;
+import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
+import executor.service.service.parallelflowexecutor.TaskKeeper;
+import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
+import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
+import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
+import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
+import executor.service.service.proxy.impl.JSONFileProxyProvider;
+import executor.service.service.proxy.impl.ProxySourcesClientImpl;
+import executor.service.service.proxy.impl.ProxyValidatorImpl;
+import executor.service.service.scenarios.impl.JSONFileScenarioProvider;
+import executor.service.service.scenarios.impl.ScenarioSourceListenerImpl;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -29,31 +42,52 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return clazz.cast(object);
         }
 
+        private <T> boolean isNotAutoconfigure(Class<T> clazz) {
+            if (ParallelFlowExecutorService.class.isAssignableFrom(clazz)) {
+                return true;
+            }
+            return false;
+        }
+        private <T> T createNotAutoConfigureClass(Class<T> clazz) {
+            if (clazz.isAssignableFrom(ParallelFlowExecutorService.class)) {
+                ProxyQueue proxyQueue = new ProxyQueue();
+                ScenarioQueue scenarioQueue = new ScenarioQueue();
+                ProxyPublisher proxyPublisher = new ProxyPublisher(proxyQueue,
+                        new ProxySourcesClientImpl(new JSONFileProxyProvider(), new ProxyValidatorImpl()));
+                ScenarioPublisher scenarioPublisher = new ScenarioPublisher(scenarioQueue,
+                        new ScenarioSourceListenerImpl(new JSONFileScenarioProvider()));
+                List<TaskKeeper.TaskNode> taskNodes = new ArrayList<>();
+                taskNodes.add(new TaskKeeper.TaskNode(proxyPublisher));
+                taskNodes.add(new TaskKeeper.TaskNode(scenarioPublisher));
+                TaskKeeper taskKeeper = new TaskKeeperImpl(taskNodes);
+                return (T) new ParallelFlowExecutorServiceImpl(6
+                        ,24,
+                        100,
+                        TimeUnit.SECONDS,
+                        Executors.defaultThreadFactory(),
+                        new ArrayBlockingQueue(300, true),
+                        taskKeeper);
+            }
+            return null;
+        }
+
         private synchronized <T> T createInstance(Class<T> clazz) {
             try {
-                Constructor<T> constructor = findSuitableConstructor(clazz);
-                if (constructor != null) {
-                    return createInstanceWithConstructor(constructor);
-                } else if (clazz.isInterface()) {
-                    Set<Class<? extends T>> subTypesOf = scanner.getSubTypesOf(clazz);
-                    if (!subTypesOf.isEmpty()) {
-                        clazz = (Class<T>) subTypesOf.iterator().next();
-                        return createInstance(clazz);
-                    } else {
-                        // Получаеться сюда идут наши костыли,то есть классы которые не в пакете service
-                        if (ThreadFactory.class.isAssignableFrom(clazz)) {
-                            return (T) Executors.defaultThreadFactory();
-                        } else if (BlockingQueue.class.isAssignableFrom(clazz)) {
-                            return (T) new ArrayBlockingQueue(300, true);
-                        } else if (List.class.isAssignableFrom(clazz)) {
-                            return (T) new ArrayList<>();
-                        } else {
-                            throw new InstantiationException("No implementation found for interface: " + clazz.getName());
+                if (isNotAutoconfigure(clazz)) {
+                    return createNotAutoConfigureClass(clazz);
+                } else {
+                    Constructor<T> constructor = findSuitableConstructor(clazz);
+                    if (constructor != null) {
+                        return createInstanceWithConstructor(constructor);
+                    } else if (clazz.isInterface()) {
+                        Set<Class<? extends T>> subTypesOf = scanner.getSubTypesOf(clazz);
+                        if (!subTypesOf.isEmpty()) {
+                            clazz = (Class<T>) subTypesOf.iterator().next();
+                            return createInstance(clazz);
                         }
                     }
-                } else {
-                    throw new InstantiationException("No suitable constructor found for class: " + clazz.getName());
                 }
+                throw new InstantiationException("No suitable constructor found for class: " + clazz.getName());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new RuntimeException(e);
@@ -82,24 +116,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 Object[] params = new Object[constructor.getParameterCount()];
                 for (int i = 0; i < params.length; i++) {
                     Class<?> paramType = constructor.getParameterTypes()[i];
-                    if (paramType.isPrimitive() || paramType.isEnum()) {
-                        if (paramType.isPrimitive()) {
-                            /* Сюда что-то рандомное пока что поставил что бы инициализировалось,а вообще
-                            Было бы неплохо что бы примитивы с пропертей инициализировались или с нужного
-                            класса
-                            */
-                            try {
-                                params[i] = 10000;
-                            } catch (IllegalFormatConversionException e) {
-                                params[i] = "str";
-                            }
-                        } else if (paramType.isEnum()) {
-                            // Костыль для енамов
-                            params[i] = TimeUnit.SECONDS;
-                        }
-                    } else {
                         params[i] = create(paramType);
-                    }
                 }
                 return constructor.newInstance(params);
             } else {
