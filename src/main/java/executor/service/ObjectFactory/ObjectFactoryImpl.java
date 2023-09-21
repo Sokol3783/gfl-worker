@@ -26,6 +26,7 @@ import executor.service.service.webdriver.WebDriverInitializer;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,11 +42,12 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
     private static final String PATH_TO_THREAD_PROPERTIES = "thread-pool.properties";
 
-
-
     @Override
     public <T> T create(Class<T> clazz) {
-        return INSTANCE.create(clazz);
+        System.out.println("Entry point factory ->" + clazz);
+        synchronized (ObjectFactoryImpl.class){
+            return INSTANCE.create(clazz);
+        }
     }
 
     private enum Singleton implements ObjectFactory {
@@ -56,7 +58,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         @Override
         public <T> T create(Class<T> clazz) {
+            System.out.println("entry point ENUM ->" + clazz.getName());
+            //Object object = context.computeIfAbsent(clazz, createInstance(clazz));
+            //Object object = context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
             Object object = context.computeIfAbsent(clazz, key -> createInstance(clazz));
+            System.out.println("create point ENUM ->" + clazz.getName());
             return clazz.cast(object);
         }
 
@@ -65,11 +71,15 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     TaskKeeper.class, Scenario.class, Step.class, ProxyConfigHolder.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class, WebDriverInitializer.class, StepExecutionFabric.class
                     , StepExecutionClickCss.class, StepExecutionClickXpath.class, StepExecutionFabric.class, StepExecutionSleep.class,
-                    ExecutionSubscriber.class);
-            return list.stream().anyMatch(s -> s.equals(clazz));
+                    ExecutionSubscriber.class,
+                    ProxyQueue.class);
+            boolean bool = list.stream().anyMatch(s -> s.equals(clazz));
+            System.out.println(clazz.getName() + " -> " + bool);
+            return  bool;
         }
 
-        private <T> T createNotAutoConfigureClass(Class<T> clazz) throws InstantiationException {
+        private <T> T createNotAutoConfigureClass(Class<T> clazz) throws InstantiationException, NoSuchFieldException, IllegalAccessException {
+            System.out.println("Create not autoconfig");
             if (clazz.isAssignableFrom(ParallelFlowExecutorService.class)) {
                 return createParallelFlowExecutorService();
             } else if (clazz.isAssignableFrom(TaskKeeper.class)) {
@@ -78,6 +88,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createThreadPoolConfig();
             } else if (clazz.isAssignableFrom(ExecutionSubscriber.class)) {
                 return createExecutionSubscriber();
+            } else if (clazz.isAssignableFrom(clazz)) {
+                return (T) new ProxyQueue();
+            } else if (clazz.isAssignableFrom(ProxyConfigHolder.class)) {
+                //TODO
+                return (T) new ProxyConfigHolder();
             }
 
             throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
@@ -108,15 +123,18 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createTaskKeeper() {
             List<TaskKeeper.TaskNode> nodes = new ArrayList<>();
             TaskKeeper.TaskNode publisherTask = new TaskKeeper.TaskNode(create(ProxyPublisher.class));
+            System.out.println("Publisher is create");
             nodes.add(publisherTask);
             TaskKeeper.TaskNode scenarioTask = new TaskKeeper.TaskNode(create(ScenarioPublisher.class));
+            System.out.println("Scenario is create");
             nodes.add(scenarioTask);
             TaskKeeper.TaskNode executor = new TaskKeeper.TaskNode(create(ExecutionSubscriber.class));
+            System.out.println("Executor is create");
             nodes.add(executor);
             return (T) new TaskKeeperImpl(nodes);
         }
 
-        private <T> T createParallelFlowExecutorService() {
+        private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
             TaskKeeper taskKeeper = create(TaskKeeper.class);
             ThreadPoolConfig config = create(ThreadPoolConfig.class);
             ParallelFlowExecutorServiceImpl parallelFlowExecutorService = new ParallelFlowExecutorServiceImpl(config.getCorePoolSize()
@@ -131,15 +149,19 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) parallelFlowExecutorService;
         }
 
-        private void injectParallelFlowInCreateExecutionSubscriber(ParallelFlowExecutorServiceImpl parallelFlowExecutorService) {
-
+        private void injectParallelFlowInCreateExecutionSubscriber(ParallelFlowExecutorServiceImpl parallelFlowExecutorService) throws NoSuchFieldException, IllegalAccessException {
+            ExecutionService executionService = create(ExecutionService.class);
+            Field parallelFlow = executionService.getClass().getDeclaredField("parallelFlow");
+            parallelFlow.setAccessible(true);
+            parallelFlow.set(executionService, parallelFlowExecutorService);
         }
 
-        private synchronized <T> T createInstance(Class<T> clazz) {
+        private <T> T createInstance(Class<T> clazz) {
             try {
                 if (isNotAutoconfigure(clazz)) {
                     return createNotAutoConfigureClass(clazz);
                 } else {
+                    System.out.println("Create autoconfig -> " + clazz.getName());
                     Constructor<T> constructor = findSuitableConstructor(clazz);
                     if (constructor != null) {
                         return createInstanceWithConstructor(constructor);
@@ -152,7 +174,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     }
                 }
                 throw new InstantiationException("No suitable constructor found for class: " + clazz.getName());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchFieldException |
                      NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
