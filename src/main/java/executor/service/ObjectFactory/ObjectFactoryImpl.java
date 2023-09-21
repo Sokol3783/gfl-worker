@@ -12,6 +12,7 @@ import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
 import executor.service.service.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
+import executor.service.service.parallelflowexecutor.Task;
 import executor.service.service.parallelflowexecutor.TaskKeeper;
 import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
 import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
@@ -59,20 +60,17 @@ public class ObjectFactoryImpl implements ObjectFactory {
         @Override
         public <T> T create(Class<T> clazz) {
             System.out.println("entry point ENUM ->" + clazz.getName());
-            //Object object = context.computeIfAbsent(clazz, createInstance(clazz));
-            //Object object = context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
-            Object object = context.computeIfAbsent(clazz, key -> createInstance(clazz));
+            Object object = context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
             System.out.println("create point ENUM ->" + clazz.getName());
             return clazz.cast(object);
         }
 
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
-            List<Class> list = List.of(ParallelFlowExecutorService.class, WebDriverConfig.class,
+            List<Class> list = List.of(ParallelFlowExecutorService.class, WebDriverConfig.class, Task.class,
                     TaskKeeper.class, Scenario.class, Step.class, ProxyConfigHolder.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class, WebDriverInitializer.class, StepExecutionFabric.class
                     , StepExecutionClickCss.class, StepExecutionClickXpath.class, StepExecutionFabric.class, StepExecutionSleep.class,
-                    ExecutionSubscriber.class,
-                    ProxyQueue.class);
+                    ExecutionSubscriber.class);
             boolean bool = list.stream().anyMatch(s -> s.equals(clazz));
             System.out.println(clazz.getName() + " -> " + bool);
             return  bool;
@@ -88,12 +86,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createThreadPoolConfig();
             } else if (clazz.isAssignableFrom(ExecutionSubscriber.class)) {
                 return createExecutionSubscriber();
-            } else if (clazz.isAssignableFrom(clazz)) {
-                return (T) new ProxyQueue();
-            } else if (clazz.isAssignableFrom(ProxyConfigHolder.class)) {
-                //TODO
-                return (T) new ProxyConfigHolder();
+            } /*else if (clazz.isAssignableFrom(ProxyConfigHolder.class)) {
+
             }
+             */
 
             throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
         }
@@ -150,10 +146,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private void injectParallelFlowInCreateExecutionSubscriber(ParallelFlowExecutorServiceImpl parallelFlowExecutorService) throws NoSuchFieldException, IllegalAccessException {
-            ExecutionService executionService = create(ExecutionService.class);
-            Field parallelFlow = executionService.getClass().getDeclaredField("parallelFlow");
-            parallelFlow.setAccessible(true);
-            parallelFlow.set(executionService, parallelFlowExecutorService);
+            ExecutionSubscriber executionService = create(ExecutionSubscriber.class);
+
+            Field field = executionService.getClass().getDeclaredField("parallelFlow");
+            field.setAccessible(true);
+            field.set(executionService, parallelFlowExecutorService);
         }
 
         private <T> T createInstance(Class<T> clazz) {
@@ -164,12 +161,16 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     System.out.println("Create autoconfig -> " + clazz.getName());
                     Constructor<T> constructor = findSuitableConstructor(clazz);
                     if (constructor != null) {
-                        return createInstanceWithConstructor(constructor);
+                        T instanceWithConstructor = createInstanceWithConstructor(constructor);
+                        System.out.println(clazz.getName() + " instanceWithConstructor -> " + instanceWithConstructor.hashCode());
+                        return instanceWithConstructor;
                     } else if (clazz.isInterface()) {
                         Set<Class<? extends T>> subTypesOf = scanner.getSubTypesOf(clazz);
                         if (!subTypesOf.isEmpty()) {
                             clazz = (Class<T>) subTypesOf.iterator().next();
-                            return createInstance(clazz);
+                            T instanceWithConstructor = createInstance(clazz);
+                            System.out.println(clazz.getName() + " instanceWithoutConstructor -> " + instanceWithConstructor.hashCode());
+                            return instanceWithConstructor;
                         }
                     }
                 }
@@ -180,20 +181,27 @@ public class ObjectFactoryImpl implements ObjectFactory {
             }
         }
 
-        private <T> Constructor<T> findSuitableConstructor(Class<T> clazz) throws NoSuchMethodException {
-            Constructor<T> constructor = null;
-            try {
-                constructor = clazz.getDeclaredConstructor();
-            } catch (NoSuchMethodException ignored) {
-                Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-                for (Constructor<?> c : constructors) {
-                    if (c.getParameterCount() > 0) {
-                        constructor = (Constructor<T>) c;
-                        break;
-                    }
-                }
+        private <T> Constructor<T> findSuitableConstructor(Class<T> clazz) throws NoSuchMethodException, InstantiationException {
+
+
+            Constructor<?>[] declaredConstructors = clazz.getDeclaredConstructors();
+            for (Constructor<?> constructor : declaredConstructors) {
+                System.out.println(constructor.hashCode() + " size -> " + constructor.getParameterCount());
             }
-            return constructor;
+            Object[] array = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).toArray();
+            System.out.println(array.length);
+            Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
+            if (first.isEmpty()) {
+                return (Constructor<T>) findEmptyConstructor(clazz);
+            }
+            return (Constructor<T>) first.get();
+
+        }
+
+        private <T> Constructor<?> findEmptyConstructor(Class<T> clazz) throws InstantiationException {
+            return Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() == 0).findFirst().orElseThrow(
+                    () -> new InstantiationException(clazz.getName() + " can't find constructor")
+            );
         }
 
         private <T> T createInstanceWithConstructor(Constructor<T> constructor) throws IllegalAccessException,
