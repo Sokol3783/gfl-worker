@@ -2,15 +2,14 @@ package executor.service.service.stepexecution.impl;
 
 import executor.service.exceptions.StepExecutionException;
 import executor.service.service.stepexecution.StepExecution;
-import executor.service.service.stepexecution.StepExecutionFabric;
 
 import java.util.List;
 
-public class StepExecutionFactory implements StepExecutionFabric {
+public class StepExecutionFabric implements executor.service.service.stepexecution.StepExecutionFabric {
 
     private final List<StepExecution> stepExecutions;
 
-    public StepExecutionFactory(List<StepExecution> stepExecutions) {
+    public StepExecutionFabric(List<StepExecution> stepExecutions) {
         this.stepExecutions = stepExecutions;
     }
 

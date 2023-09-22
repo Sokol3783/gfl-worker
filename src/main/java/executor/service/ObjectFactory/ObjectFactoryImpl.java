@@ -3,7 +3,6 @@ package executor.service.ObjectFactory;
 import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.configs.ThreadPoolConfig;
 import executor.service.model.configs.WebDriverConfig;
-import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.proxy.ProxyCredentials;
 import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
@@ -21,11 +20,10 @@ import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPu
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
 import executor.service.service.scenarios.ScenarioExecutor;
 import executor.service.service.scenarios.impl.ScenarioExecutorImpl;
-import executor.service.service.stepexecution.StepExecutionClickCss;
-import executor.service.service.stepexecution.StepExecutionClickXpath;
-import executor.service.service.stepexecution.StepExecutionFabric;
-import executor.service.service.stepexecution.StepExecutionSleep;
-import executor.service.service.webdriver.WebDriverInitializer;
+import executor.service.service.stepexecution.*;
+import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
+import executor.service.service.stepexecution.impl.StepExecutionFabric;
+import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
@@ -69,18 +67,16 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
-            List<Class> list = List.of(ParallelFlowExecutorService.class, WebDriverConfig.class, Task.class,
-                    TaskKeeper.class, Scenario.class, Step.class, ProxyCredentials.class,
-                    ProxyNetworkConfig.class, ThreadPoolConfig.class, StepExecutionFabric.class
-                    , StepExecutionClickCss.class, StepExecutionClickXpath.class, StepExecutionFabric.class, StepExecutionSleep.class,
-                    ExecutionSubscriber.class, ScenarioExecutor.class);
-            boolean bool = list.stream().anyMatch(s -> s.equals(clazz));
-            System.out.println(clazz.getName() + " -> " + bool);
-            return  bool;
+            List<Class> list = List.of(ParallelFlowExecutorService.class, TaskKeeper.class, Task.class,
+                    WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
+                    ProxyNetworkConfig.class, ThreadPoolConfig.class,
+                    executor.service.service.stepexecution.StepExecutionFabric.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
+                    ExecutionSubscriber.class);
+            return list.stream().anyMatch(s -> s.equals(clazz));
+
         }
 
         private <T> T createNotAutoConfigureClass(Class<T> clazz) throws InstantiationException, NoSuchFieldException, IllegalAccessException {
-            System.out.println("Create not autoconfig");
             if (clazz.isAssignableFrom(ParallelFlowExecutorService.class)) {
                 return createParallelFlowExecutorService();
             } else if (clazz.isAssignableFrom(TaskKeeper.class)) {
@@ -93,9 +89,19 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createScenarioExecutor();
             } else if (clazz.isAssignableFrom(WebDriverConfig.class)) {
                 return createWebDriverConfig();
+            } else if (clazz.isAssignableFrom(executor.service.service.stepexecution.StepExecutionFabric.class)) {
+                return createStepExecutionFabrice();
             }
 
             throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
+        }
+
+        private <T> T createStepExecutionFabrice() {
+            List<StepExecution> stepExecutions = new ArrayList<>();
+            stepExecutions.add(new StepExecutionClickCssImpl());
+            stepExecutions.add(new StepExecutionClickCssImpl());
+            stepExecutions.add(new StepExecutionSleepImpl());
+            return (T) new StepExecutionFabric(stepExecutions);
         }
 
         private <T> T createWebDriverConfig() {

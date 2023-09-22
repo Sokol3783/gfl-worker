@@ -42,10 +42,11 @@ public class ProxySourcesClientImpl implements ProxySourcesClient {
         int currentIndex = 0;
         while(true){
             ProxyConfigHolder proxy = proxies.get(currentIndex);
-            if(validator.isValid(proxy)) {
+            //TODO don't work
+            /*if(validator.isValid(proxy)) {
                 handler.onProxyReceived(proxy);
             }
-
+             */
             currentIndex = (currentIndex + 1) % proxies.size();
             sleep();
         }

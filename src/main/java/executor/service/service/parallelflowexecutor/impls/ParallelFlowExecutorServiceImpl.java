@@ -48,7 +48,7 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
                                 s.setThread(thread);
                             }
                     );
-            keeper.nodes().forEach(s -> s.getThread().start());
+
 
         }
     }
