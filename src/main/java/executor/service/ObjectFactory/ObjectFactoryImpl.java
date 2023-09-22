@@ -19,6 +19,8 @@ import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
+import executor.service.service.scenarios.ScenarioExecutor;
+import executor.service.service.scenarios.impl.ScenarioExecutorImpl;
 import executor.service.service.stepexecution.StepExecutionClickCss;
 import executor.service.service.stepexecution.StepExecutionClickXpath;
 import executor.service.service.stepexecution.StepExecutionFabric;
@@ -70,7 +72,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     TaskKeeper.class, Scenario.class, Step.class, ProxyConfigHolder.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class, WebDriverInitializer.class, StepExecutionFabric.class
                     , StepExecutionClickCss.class, StepExecutionClickXpath.class, StepExecutionFabric.class, StepExecutionSleep.class,
-                    ExecutionSubscriber.class);
+                    ExecutionSubscriber.class, ScenarioExecutor.class);
             boolean bool = list.stream().anyMatch(s -> s.equals(clazz));
             System.out.println(clazz.getName() + " -> " + bool);
             return  bool;
@@ -86,12 +88,15 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createThreadPoolConfig();
             } else if (clazz.isAssignableFrom(ExecutionSubscriber.class)) {
                 return createExecutionSubscriber();
-            } /*else if (clazz.isAssignableFrom(ProxyConfigHolder.class)) {
-
+            } else if (clazz.isAssignableFrom(ScenarioExecutor.class)) {
+                return createScenarioExecutor();
             }
-             */
 
             throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
+        }
+
+        private <T> T createScenarioExecutor() {
+            return (T) new ScenarioExecutorImpl();
         }
 
         private <T> T createExecutionSubscriber() {
@@ -159,12 +164,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     return createNotAutoConfigureClass(clazz);
                 } else {
                     System.out.println("Create autoconfig -> " + clazz.getName());
-                    Constructor<T> constructor = findSuitableConstructor(clazz);
-                    if (constructor != null) {
-                        T instanceWithConstructor = createInstanceWithConstructor(constructor);
-                        System.out.println(clazz.getName() + " instanceWithConstructor -> " + instanceWithConstructor.hashCode());
-                        return instanceWithConstructor;
-                    } else if (clazz.isInterface()) {
+                    if (clazz.isInterface()) {
                         Set<Class<? extends T>> subTypesOf = scanner.getSubTypesOf(clazz);
                         if (!subTypesOf.isEmpty()) {
                             clazz = (Class<T>) subTypesOf.iterator().next();
@@ -172,7 +172,15 @@ public class ObjectFactoryImpl implements ObjectFactory {
                             System.out.println(clazz.getName() + " instanceWithoutConstructor -> " + instanceWithConstructor.hashCode());
                             return instanceWithConstructor;
                         }
+                    } else {
+                        Constructor<T> constructor = findSuitableConstructor(clazz);
+                        if (constructor != null) {
+                            T instanceWithConstructor = createInstanceWithConstructor(constructor);
+                            System.out.println(clazz.getName() + " instanceWithConstructor -> " + instanceWithConstructor.hashCode());
+                            return instanceWithConstructor;
+                        }
                     }
+
                 }
                 throw new InstantiationException("No suitable constructor found for class: " + clazz.getName());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchFieldException |
@@ -198,10 +206,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         }
 
-        private <T> Constructor<?> findEmptyConstructor(Class<T> clazz) throws InstantiationException {
-            return Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() == 0).findFirst().orElseThrow(
-                    () -> new InstantiationException(clazz.getName() + " can't find constructor")
-            );
+        private <T> Constructor<?> findEmptyConstructor(Class<T> clazz){
+
+            return Arrays.stream(clazz.getDeclaredConstructors()).findFirst().get();
+
         }
 
         private <T> T createInstanceWithConstructor(Constructor<T> constructor) throws IllegalAccessException,
