@@ -19,7 +19,6 @@ import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPubli
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
 import executor.service.service.scenarios.ScenarioExecutor;
-import executor.service.service.scenarios.impl.ScenarioExecutorImpl;
 import executor.service.service.stepexecution.*;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
 import executor.service.service.stepexecution.impl.StepExecutionFabric;
@@ -46,7 +45,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
     @Override
     public <T> T create(Class<T> clazz) {
-        System.out.println("Entry point factory ->" + clazz);
         synchronized (ObjectFactoryImpl.class){
             return INSTANCE.create(clazz);
         }
@@ -60,10 +58,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         @Override
         public <T> T create(Class<T> clazz) {
-            System.out.println("entry point ENUM ->" + clazz.getName());
-            Object object = context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
-            System.out.println("create point ENUM ->" + clazz.getName());
-            return clazz.cast(object);
+            return (T) context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
         }
 
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
@@ -85,8 +80,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createThreadPoolConfig();
             } else if (clazz.isAssignableFrom(ExecutionSubscriber.class)) {
                 return createExecutionSubscriber();
-            } else if (clazz.isAssignableFrom(ScenarioExecutor.class)) {
-                return createScenarioExecutor();
             } else if (clazz.isAssignableFrom(WebDriverConfig.class)) {
                 return createWebDriverConfig();
             } else if (clazz.isAssignableFrom(executor.service.service.stepexecution.StepExecutionFabric.class)) {
@@ -120,10 +113,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) driver;
         }
 
-        private <T> T createScenarioExecutor() {
-            return (T) new ScenarioExecutorImpl();
-        }
-
         private <T> T createExecutionSubscriber() {
             return (T) new ExecutionSubscriber(create(ProxyQueue.class)
                     ,create(ScenarioQueue.class)
@@ -149,13 +138,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createTaskKeeper() {
             List<TaskKeeper.TaskNode> nodes = new ArrayList<>();
             TaskKeeper.TaskNode publisherTask = new TaskKeeper.TaskNode(create(ProxyPublisher.class));
-            System.out.println("Publisher is create");
             nodes.add(publisherTask);
             TaskKeeper.TaskNode scenarioTask = new TaskKeeper.TaskNode(create(ScenarioPublisher.class));
-            System.out.println("Scenario is create");
             nodes.add(scenarioTask);
             TaskKeeper.TaskNode executor = new TaskKeeper.TaskNode(create(ExecutionSubscriber.class));
-            System.out.println("Executor is create");
             nodes.add(executor);
             return (T) new TaskKeeperImpl(nodes);
         }
@@ -188,21 +174,16 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 if (isNotAutoconfigure(clazz)) {
                     return createNotAutoConfigureClass(clazz);
                 } else {
-                    System.out.println("Create autoconfig -> " + clazz.getName());
                     if (clazz.isInterface()) {
                         Set<Class<? extends T>> subTypesOf = scanner.getSubTypesOf(clazz);
                         if (!subTypesOf.isEmpty()) {
                             clazz = (Class<T>) subTypesOf.iterator().next();
-                            T instanceWithConstructor = createInstance(clazz);
-                            System.out.println(clazz.getName() + " instanceWithoutConstructor -> " + instanceWithConstructor.hashCode());
-                            return instanceWithConstructor;
+                            return createInstance(clazz);
                         }
                     } else {
                         Constructor<T> constructor = findSuitableConstructor(clazz);
                         if (constructor != null) {
-                            T instanceWithConstructor = createInstanceWithConstructor(constructor);
-                            System.out.println(clazz.getName() + " instanceWithConstructor -> " + instanceWithConstructor.hashCode());
-                            return instanceWithConstructor;
+                            return createInstanceWithConstructor(constructor);
                         }
                     }
 
@@ -215,14 +196,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private <T> Constructor<T> findSuitableConstructor(Class<T> clazz) throws NoSuchMethodException, InstantiationException {
-
-
-            Constructor<?>[] declaredConstructors = clazz.getDeclaredConstructors();
-            for (Constructor<?> constructor : declaredConstructors) {
-                System.out.println(constructor.hashCode() + " size -> " + constructor.getParameterCount());
-            }
-            Object[] array = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).toArray();
-            System.out.println(array.length);
             Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
             if (first.isEmpty()) {
                 return (Constructor<T>) findEmptyConstructor(clazz);
@@ -247,7 +220,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 }
                 return constructor.newInstance(params);
             } else {
-                System.out.println(constructor.getName());
                 return constructor.newInstance();
             }
         }
