@@ -17,6 +17,8 @@ import org.apache.http.impl.client.HttpClients;
 
 
 public class ProxyValidatorImpl implements ProxyValidator {
+    private final static String TARGET_URL = "https://www.google.com/";
+    private final static int CONNECTION_TIMEOUT = 10000;
 
     public Boolean isValid(ProxyConfigHolder proxyConfigHolder) {
         int responseCode = 0;
@@ -25,7 +27,7 @@ public class ProxyValidatorImpl implements ProxyValidator {
             CredentialsProvider credentialsProvider = getCredentialsProvider(proxyConfigHolder);
             CloseableHttpClient httpClient = getHttpClient(proxyConfigHolder, credentialsProvider);
 
-            HttpGet httpGet = new HttpGet(PropertiesConstants.PROXY_VALIDATOR_TARGET_URL);
+            HttpGet httpGet = new HttpGet(TARGET_URL);
             CloseableHttpResponse response = httpClient.execute(httpGet);
             responseCode = response.getStatusLine().getStatusCode();
 
@@ -53,8 +55,8 @@ public class ProxyValidatorImpl implements ProxyValidator {
                 .setProxy(new HttpHost(proxyConfig.getProxyNetworkConfig().getHostname(),
                         proxyConfig.getProxyNetworkConfig().getPort()))
                 .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectTimeout(PropertiesConstants.PROXY_VALIDATOR_CONNECTION_TIMEOUT)
-                        .setSocketTimeout(PropertiesConstants.PROXY_VALIDATOR_CONNECTION_TIMEOUT)
+                        .setConnectTimeout(CONNECTION_TIMEOUT)
+                        .setSocketTimeout(CONNECTION_TIMEOUT)
                         .build())
                 .build();
     }

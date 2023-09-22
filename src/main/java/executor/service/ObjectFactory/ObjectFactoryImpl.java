@@ -70,7 +70,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
             List<Class> list = List.of(ParallelFlowExecutorService.class, WebDriverConfig.class, Task.class,
-                    TaskKeeper.class, Scenario.class, Step.class, ProxyConfigHolder.class, ProxyCredentials.class,
+                    TaskKeeper.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class, StepExecutionFabric.class
                     , StepExecutionClickCss.class, StepExecutionClickXpath.class, StepExecutionFabric.class, StepExecutionSleep.class,
                     ExecutionSubscriber.class, ScenarioExecutor.class);
@@ -108,7 +108,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 driver.setImplicitlyWait(Long.valueOf(properties.getProperty("implicitly-wait","5000")));
                 driver.setPageLoadTimeout(Long.valueOf(properties.getProperty("page-load-timeout","15000")));
             } catch (Exception e) {
-                driver =   new WebDriverConfig("\\chromedriver.exe","default",5000L, 15000L);
+                driver = new WebDriverConfig("\\chromedriver.exe","default",5000L, 15000L);
             }
 
             return (T) driver;
