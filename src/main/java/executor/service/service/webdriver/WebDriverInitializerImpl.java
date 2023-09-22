@@ -1,159 +1,56 @@
-package executor.service.service.webdriver;
+package executor.service.service.impl;
 
-import executor.service.model.configs.WebDriverConfig;
-import executor.service.model.proxy.ProxyConfigHolder;
-import executor.service.model.proxy.ProxyCredentials;
-import executor.service.model.proxy.ProxyNetworkConfig;
+import executor.service.model.ProxyConfigHolder;
+import executor.service.model.WebDriverConfig;
+import executor.service.service.WebDriverInitializer;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.time.Duration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
 
 public class WebDriverInitializerImpl implements WebDriverInitializer {
 
-    private final static String PATH_AUTH_PLUGIN = "proxy_auth_plugin.zip";
-    private final WebDriverConfig webDriverConfig;
-
-    public WebDriverInitializerImpl(WebDriverConfig webDriverConfig) {
-        this.webDriverConfig = webDriverConfig;
-    }
-
     @Override
-    public WebDriver getInstance(ProxyConfigHolder proxyConfigHolder) {
-        ChromeOptions chromeOptions = getChromeOptions(webDriverConfig, proxyConfigHolder);
-        ChromeDriver driver = new ChromeDriver(chromeOptions);
-        removeProxyPlugin();
+    public WebDriver getInstance(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
+        String host = proxyConfigHolder.getProxyNetworkConfig().getHostname();
+        Integer port = proxyConfigHolder.getProxyNetworkConfig().getPort();
+        String username = proxyConfigHolder.getProxyCredentials().getUsername();
+        String password = proxyConfigHolder.getProxyCredentials().getPassword();
+        File proxyPlugin = null;
+        ChromeOptions options = configureChromeOptions(webDriverConfig);
+
+        if (!Strings.isNullOrEmpty(host)) {
+            if (!Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password)) {
+                proxyPlugin = ChromeProxyPlugin.generate(host, port, username, password);
+                options.addExtensions(proxyPlugin);
+            } else {
+                options.addArguments("--proxy-server=" + host + ":" + port);
+            }
+        }
+
+        ChromeDriver driver = new ChromeDriver(options);
+        if (proxyPlugin != null) {
+            proxyPlugin.delete();
+        }
+
         return driver;
     }
 
-    private void removeProxyPlugin() {
-        File file = new File(PATH_AUTH_PLUGIN);
-        if (file.exists()) {
-            file.delete();
-        }
-    }
-
-    private ChromeOptions getChromeOptions(WebDriverConfig webDriverConfig, ProxyConfigHolder holder) {
-
+    private ChromeOptions configureChromeOptions(WebDriverConfig webDriverConfig) {
         ChromeOptions chromeOptions = new ChromeOptions();
-        setChromeHostAndUser(chromeOptions, holder.getProxyNetworkConfig(), holder.getProxyCredentials());
-        chromeOptions.addArguments("user-agent=" + getUserAgent(webDriverConfig.getUserAgent()));
+
+        chromeOptions.setBinary(PropertiesConstants.CHROME_EXECUTABLE);
+        chromeOptions.setBrowserVersion(PropertiesConstants.CHROME_VERSION);
         chromeOptions.addArguments("--remote-allow-origins=*");
         chromeOptions.setBinary(webDriverConfig.getWebDriverExecutable());
-
+        chromeOptions.addArguments("user-agent=" + webDriverConfig.getUserAgent());
         chromeOptions.setImplicitWaitTimeout(Duration.ofMillis(webDriverConfig.getImplicitlyWait()));
         chromeOptions.setPageLoadTimeout(Duration.ofMillis(webDriverConfig.getPageLoadTimeout()));
+        System.setProperty("webdriver.chrome.driver", webDriverConfig.getWebDriverExecutable());
 
         return chromeOptions;
-    }
-
-    private void setChromeHostAndUser(ChromeOptions chromeOptions, ProxyNetworkConfig proxyNetworkConfig, ProxyCredentials proxyCredentials) {
-        String host = proxyNetworkConfig.getHostname();
-        Integer port = proxyNetworkConfig.getPort();
-        String username = proxyCredentials.getUsername();
-        String password = proxyCredentials.getPassword();
-
-        if (host == null && username == null) {
-        } else {
-            if (username != null && !username.isBlank()) {
-                chromeOptions.addExtensions(createProxyPlugin(host, port, username, password));
-            } else if (host != null && !host.isBlank()) {
-                chromeOptions.addArguments("--proxy-server=" + host + ":" + port);
-            }
-        }
-    }
-
-    private String getUserAgent(String userAgent) {
-        if (webDriverConfig.getUserAgent().compareToIgnoreCase("default") == 0){
-            ChromeDriver chromeDriver = new ChromeDriver();
-            userAgent = chromeDriver.executeScript("return navigator.userAgent").toString();
-            chromeDriver.close();
-        }
-        return userAgent;
-    }
-
-    private File createProxyPlugin(String host, int port, String username, String password) {
-        String manifestJson = returnManifestJson();
-        String backgroundJs = returnBackgroundJs(host, port, username, password);
-
-        try {
-            File zipFile = new File("proxy_auth_plugin.zip");
-            try (FileOutputStream fos = new FileOutputStream(zipFile);
-                 ZipOutputStream zipOS = new ZipOutputStream(fos)) {
-                writeToZipFile(zipOS, "manifest.json", manifestJson);
-                writeToZipFile(zipOS, "background.js", backgroundJs);
-            }
-            return zipFile;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String returnManifestJson() {
-        return """
-        {
-          "version": "1.0.0",
-          "manifest_version": 2,
-          "name": "Chrome Proxy",
-          "permissions": [
-            "proxy",
-            "tabs",
-            "unlimitedStorage",
-            "storage",
-            "<all_urls>",
-            "webRequest",
-            "webRequestBlocking"
-          ],
-          "background": {
-            "scripts": ["background.js"]
-          },
-          "minimum_chrome_version": "22.0.0"
-        }
-        """;
-    }
-
-    private String returnBackgroundJs(String host, int port, String username, String password) {
-        return String.format("""
-        var config = {
-          mode: "fixed_servers",
-          rules: {
-            singleProxy: {
-              scheme: "http",
-              host: "%s",
-              port: %d
-            },
-            bypassList: ["localhost"]
-          }
-        };
-    
-        chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
-    
-        function callbackFn(details) {
-          return {
-            authCredentials: {
-              username: "%s",
-              password: "%s"
-            }
-          };
-        }
-    
-        chrome.webRequest.onAuthRequired.addListener(
-          callbackFn,
-          {urls: ["<all_urls>"]},
-          ['blocking']
-        );
-        """, host, port, username, password);
-    }
-
-    private void writeToZipFile(ZipOutputStream zipStream, String entryName, String content) throws IOException {
-        zipStream.putNextEntry(new ZipEntry(entryName));
-        zipStream.write(content.getBytes());
-        zipStream.closeEntry();
     }
 }
