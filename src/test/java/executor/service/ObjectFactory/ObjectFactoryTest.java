@@ -1,6 +1,5 @@
 package executor.service.ObjectFactory;
 
-import executor.service.service.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
 import executor.service.service.scenarios.ScenarioExecutor;
@@ -11,7 +10,6 @@ import executor.service.service.stepexecution.StepExecutionSleep;
 import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import executor.service.service.webdriver.WebDriverInitializer;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Field;
 

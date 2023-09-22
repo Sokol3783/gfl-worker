@@ -4,7 +4,7 @@ import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.scenario.Scenario;
 import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
-import executor.service.service.ExecutionService;
+import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.Task;
 

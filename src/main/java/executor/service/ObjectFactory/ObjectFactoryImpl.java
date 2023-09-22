@@ -10,7 +10,7 @@ import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
 import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
-import executor.service.service.ExecutionService;
+import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.Task;
 import executor.service.service.parallelflowexecutor.TaskKeeper;
@@ -44,6 +44,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
     private static final Singleton INSTANCE = Singleton.INSTANCE;
 
     private static final String PATH_TO_THREAD_PROPERTIES = "thread-pool.properties";
+    private static final String PATH_TO_WEBDRIVER_PROPERTIES = "web-driver.properties";
 
     @Override
     public <T> T create(Class<T> clazz) {
@@ -70,7 +71,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
             List<Class> list = List.of(ParallelFlowExecutorService.class, WebDriverConfig.class, Task.class,
                     TaskKeeper.class, Scenario.class, Step.class, ProxyConfigHolder.class, ProxyCredentials.class,
-                    ProxyNetworkConfig.class, ThreadPoolConfig.class, WebDriverInitializer.class, StepExecutionFabric.class
+                    ProxyNetworkConfig.class, ThreadPoolConfig.class, StepExecutionFabric.class
                     , StepExecutionClickCss.class, StepExecutionClickXpath.class, StepExecutionFabric.class, StepExecutionSleep.class,
                     ExecutionSubscriber.class, ScenarioExecutor.class);
             boolean bool = list.stream().anyMatch(s -> s.equals(clazz));
@@ -90,9 +91,27 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createExecutionSubscriber();
             } else if (clazz.isAssignableFrom(ScenarioExecutor.class)) {
                 return createScenarioExecutor();
+            } else if (clazz.isAssignableFrom(WebDriverConfig.class)) {
+                return createWebDriverConfig();
             }
 
             throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
+        }
+
+        private <T> T createWebDriverConfig() {
+
+            WebDriverConfig driver = new WebDriverConfig();
+            try {
+                Properties properties = PropertiesConfig.getProperties(PATH_TO_WEBDRIVER_PROPERTIES);
+                driver.setWebDriverExecutable(properties.getProperty("webDriver-executable", "\\chromedriver.exe"));
+                driver.setUserAgent(properties.getProperty("user-agent","default"));
+                driver.setImplicitlyWait(Long.valueOf(properties.getProperty("implicitly-wait","5000")));
+                driver.setPageLoadTimeout(Long.valueOf(properties.getProperty("page-load-timeout","15000")));
+            } catch (Exception e) {
+                driver =   new WebDriverConfig("\\chromedriver.exe","default",5000L, 15000L);
+            }
+
+            return (T) driver;
         }
 
         private <T> T createScenarioExecutor() {
