@@ -17,10 +17,12 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
     private final WebDriverConfig webDriverConfig;
     public WebDriverInitializerImpl(WebDriverConfig webDriverConfig, WebDriverConfig webDriverConfig1) {
         this.webDriverConfig = webDriverConfig1;
+
     }
 
     @Override
     public WebDriver getInstance(ProxyConfigHolder proxyConfigHolder) {
+        System.setProperty("webdriver.chrome.driver", "F://chromedriver-win64//chromedriver.exe");
         String host = proxyConfigHolder.getProxyNetworkConfig().getHostname();
         Integer port = proxyConfigHolder.getProxyNetworkConfig().getPort();
         String username = proxyConfigHolder.getProxyCredentials().getUsername();
@@ -37,7 +39,7 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
             }
         }
 
-        ChromeDriver driver = new ChromeDriver(options);
+        ChromeDriver driver = new ChromeDriver();
         if (proxyPlugin != null) {
             proxyPlugin.delete();
         }
