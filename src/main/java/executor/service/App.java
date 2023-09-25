@@ -13,7 +13,7 @@ public class App {
     mainService.execute(new Runnable() {
       @Override
       public void run() {
-        System.out.println("Run, Fedya, run");
+        System.out.println("Worker successfully run!");
       }
     });
   }
