@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ExecutionSubscriber implements Task {
-    private static long DELAY = 5000L;
+    private static long DELAY = 10000L;
     private final ProxyQueue proxyQueue;
     private final ScenarioQueue scenarioQueue;
     private final ExecutionService executionService;
@@ -30,7 +30,7 @@ public class ExecutionSubscriber implements Task {
 
     @Override
     public void run() {
-        System.out.println(getClass().getSimpleName() + "-> we are execute");
+
         try {
             while (true) {
 
@@ -40,7 +40,6 @@ public class ExecutionSubscriber implements Task {
                 pair.forEach(s ->
                                 parallelFlow.execute(() -> executionService.execute(s.getScenario(), s.getProxy()))
                         );
-                ;
                 sleep();
             }
         } catch (InterruptedException e) {
