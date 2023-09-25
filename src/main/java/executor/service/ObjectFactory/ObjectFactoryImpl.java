@@ -29,10 +29,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static executor.service.config.properties.PropertiesConstants.*;
 
@@ -127,9 +124,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 Properties properties = PropertiesConfig.getProperties(PATH_TO_THREAD_PROPERTIES);
                 pool.setCorePoolSize(Integer.parseInt(properties.getProperty(CORE_POOL_SIZE, "2")));
                 pool.setKeepAliveTime(Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME, "2")));
-                pool.setTimeUnit(TimeUnit.valueOf(properties.getProperty(TIMEUNIT,"SECONDS")));
+                pool.setTimeUnit(TimeUnit.valueOf(properties.getProperty(TIMEUNIT,"MILLISECONDS")));
             } catch (Exception e) {
-                pool =   new ThreadPoolConfig(2, 100L, TimeUnit.SECONDS);
+                pool =   new ThreadPoolConfig(2, 100L, TimeUnit.MILLISECONDS);
             }
 
             return (T) pool;
@@ -149,13 +146,14 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
             TaskKeeper taskKeeper = create(TaskKeeper.class);
             ThreadPoolConfig config = create(ThreadPoolConfig.class);
-            ParallelFlowExecutorServiceImpl parallelFlowExecutorService = new ParallelFlowExecutorServiceImpl(config.getCorePoolSize()
+            ParallelFlowExecutorServiceImpl parallelFlowExecutorService = new ParallelFlowExecutorServiceImpl((Integer) config.getCorePoolSize()
                     , config.getCorePoolSize(),
                     config.getKeepAliveTime(),
                     config.getTimeUnit(),
                     Executors.defaultThreadFactory(),
                     new LinkedBlockingDeque<>(),
                     taskKeeper);
+
             injectParallelFlowInCreateExecutionSubscriber(parallelFlowExecutorService);
 
             return (T) parallelFlowExecutorService;
