@@ -4,14 +4,15 @@ import executor.service.model.proxy.ProxyConfigHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+
 
 public class ProxyQueue {
     private BlockingQueue<ProxyConfigHolder> proxies;
 
     public ProxyQueue() {
-        this.proxies = new LinkedBlockingDeque<>();
+        this.proxies = new ArrayBlockingQueue<>(300,true);
     }
 
     public void addProxy(ProxyConfigHolder proxy) {

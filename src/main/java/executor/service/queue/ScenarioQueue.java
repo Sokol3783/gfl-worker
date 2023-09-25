@@ -1,18 +1,17 @@
 package executor.service.queue;
 
-import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.scenario.Scenario;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class ScenarioQueue {
     private BlockingQueue<Scenario> scenarios;
 
     public ScenarioQueue() {
-        this.scenarios = new LinkedBlockingDeque<>();
+        this.scenarios = new ArrayBlockingQueue<>(300,true);
     }
 
     public void addScenario(Scenario scenario) {
