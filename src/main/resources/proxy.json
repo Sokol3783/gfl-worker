@@ -14,19 +14,19 @@
       "hostname": "host2",
       "port": 8088
     },
-    "credentials": {
+    "proxyCredentials": {
       "username": "user22",
       "password": "pass2"
     }
   },
   {
     "proxyNetworkConfig": {
-      "hostname": "host3",
-      "port": 8089
+      "hostname": "",
+      "port": 0
     },
-    "credentials": {
-      "username": "user33",
-      "password": "pass3"
+    "proxyCredentials": {
+      "username": "",
+      "password": ""
     }
   }
 ]

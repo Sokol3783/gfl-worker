@@ -12,7 +12,7 @@ public class ChromeProxyPlugin {
         String backgroundJs = generateBackgroundJs(host, port, username, password);
 
         try {
-            File zipFile = new File("proxy_auth_plugin.zip");
+            File zipFile = new File(generateRandomName());
             try (FileOutputStream fos = new FileOutputStream(zipFile);
                  ZipOutputStream zipOS = new ZipOutputStream(fos)) {
                 writeToZipFile(zipOS, "manifest.json", manifestJson);
@@ -78,6 +78,10 @@ public class ChromeProxyPlugin {
           ['blocking']
         );
         """, host, port, username, password);
+    }
+
+    public static String generateRandomName() {
+        return "proxy_auth_plugin" + (int)(Math.random() * 100000000) + ".zip";
     }
 
     private static void writeToZipFile(ZipOutputStream zipStream, String entryName, String content) throws IOException {

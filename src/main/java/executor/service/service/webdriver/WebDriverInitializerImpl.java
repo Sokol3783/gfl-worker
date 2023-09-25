@@ -15,14 +15,14 @@ import java.time.Duration;
 public class WebDriverInitializerImpl implements WebDriverInitializer {
 
     private final WebDriverConfig webDriverConfig;
-    public WebDriverInitializerImpl(WebDriverConfig webDriverConfig, WebDriverConfig webDriverConfig1) {
-        this.webDriverConfig = webDriverConfig1;
+    public WebDriverInitializerImpl(WebDriverConfig webDriverConfig) {
+        this.webDriverConfig = webDriverConfig;
 
     }
 
     @Override
     public WebDriver getInstance(ProxyConfigHolder proxyConfigHolder) {
-        System.setProperty("webdriver.chrome.driver", "F://chromedriver-win64//chromedriver.exe");
+        //will fall if ProxyNetworkConfig or ProxyCredentials are themselves null
         String host = proxyConfigHolder.getProxyNetworkConfig().getHostname();
         Integer port = proxyConfigHolder.getProxyNetworkConfig().getPort();
         String username = proxyConfigHolder.getProxyCredentials().getUsername();
@@ -53,7 +53,6 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
         chromeOptions.setBinary(PropertiesConstants.CHROME_EXECUTABLE);
         chromeOptions.setBrowserVersion(PropertiesConstants.CHROME_VERSION);
         chromeOptions.addArguments("--remote-allow-origins=*");
-        chromeOptions.setBinary(webDriverConfig.getWebDriverExecutable());
         chromeOptions.addArguments("user-agent=" + webDriverConfig.getUserAgent());
         chromeOptions.setImplicitWaitTimeout(Duration.ofMillis(webDriverConfig.getImplicitlyWait()));
         chromeOptions.setPageLoadTimeout(Duration.ofMillis(webDriverConfig.getPageLoadTimeout()));
