@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Step {
     private StepTypes action;
-    //Artem said use number
+    //Artem said use number for sle
     private String value;
 
     public Step() {
