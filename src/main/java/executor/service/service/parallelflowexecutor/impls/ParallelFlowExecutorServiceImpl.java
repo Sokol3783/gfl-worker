@@ -41,7 +41,7 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
     private void keepAliveTaskThreads() {
         if (keeper.taskNotAlive()) {
             keeper.nodes().stream().filter(s -> s.getThread() == null ||
-                            s.getThread().isAlive()).
+                            !s.getThread().isAlive()).
                     forEach(s -> {
                                 Thread thread = super.getThreadFactory().newThread(s.getTask());
                                 thread.start();
