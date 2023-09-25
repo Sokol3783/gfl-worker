@@ -162,11 +162,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private void injectParallelFlowInCreateExecutionSubscriber(ParallelFlowExecutorServiceImpl parallelFlowExecutorService) throws NoSuchFieldException, IllegalAccessException {
-            ExecutionSubscriber executionService = create(ExecutionSubscriber.class);
+            ExecutionSubscriber subscriber = create(ExecutionSubscriber.class);
 
-            Field field = executionService.getClass().getDeclaredField("parallelFlow");
+            Field field = subscriber.getClass().getDeclaredField("parallelFlow");
             field.setAccessible(true);
-            field.set(executionService, parallelFlowExecutorService);
+            field.set(subscriber, parallelFlowExecutorService);
         }
 
         private <T> T createInstance(Class<T> clazz) {
