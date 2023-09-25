@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JSONFileProxyProvider implements ProxyProvider {
@@ -21,7 +22,7 @@ public class JSONFileProxyProvider implements ProxyProvider {
 
     @Override
     public List<ProxyConfigHolder> readProxy() {
-        List<ProxyConfigHolder> proxies = null;
+        List<ProxyConfigHolder> proxies = new ArrayList<>();
         try (InputStream inputStream = getClass().getResourceAsStream(FILE_NAME);
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             proxies = parseScenariosFromJson(reader);

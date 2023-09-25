@@ -2,7 +2,6 @@ package executor.service.service.proxy.impl;
 
 import executor.service.handler.ProxyHandler;
 import executor.service.model.proxy.ProxyConfigHolder;
-import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.service.proxy.ProxyProvider;
 import executor.service.service.proxy.ProxySourcesClient;
 import executor.service.service.proxy.ProxyValidator;
@@ -47,6 +46,7 @@ public class ProxySourcesClientImpl implements ProxySourcesClient {
                 handler.onProxyReceived(proxy);
             }
              */
+            handler.onProxyReceived(proxy);
             currentIndex = (currentIndex + 1) % proxies.size();
             sleep();
         }
