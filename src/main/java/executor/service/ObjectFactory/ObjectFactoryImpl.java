@@ -18,10 +18,10 @@ import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
-import executor.service.service.scenarios.ScenarioExecutor;
 import executor.service.service.stepexecution.*;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
-import executor.service.service.stepexecution.impl.StepExecutionFabric;
+import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
+import executor.service.service.stepexecution.impl.StepExecutionFabricimpl;
 import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import org.reflections.Reflections;
 
@@ -92,9 +92,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createStepExecutionFabrice() {
             List<StepExecution> stepExecutions = new ArrayList<>();
             stepExecutions.add(new StepExecutionClickCssImpl());
-            stepExecutions.add(new StepExecutionClickCssImpl());
+            stepExecutions.add(new StepExecutionClickXpathImpl());
             stepExecutions.add(new StepExecutionSleepImpl());
-            return (T) new StepExecutionFabric(stepExecutions);
+            return (T) new StepExecutionFabricimpl(stepExecutions);
         }
 
         private <T> T createWebDriverConfig() {
@@ -126,7 +126,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             try {
                 Properties properties = PropertiesConfig.getProperties(PATH_TO_THREAD_PROPERTIES);
                 pool.setCorePoolSize(Integer.parseInt(properties.getProperty(CORE_POOL_SIZE, "2")));
-                pool.setKeepAliveTime(Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME, "100")));
+                pool.setKeepAliveTime(Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME, "2")));
                 pool.setTimeUnit(TimeUnit.valueOf(properties.getProperty(TIMEUNIT,"SECONDS")));
             } catch (Exception e) {
                 pool =   new ThreadPoolConfig(2, 100L, TimeUnit.SECONDS);
