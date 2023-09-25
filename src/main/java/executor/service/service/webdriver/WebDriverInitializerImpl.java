@@ -41,7 +41,10 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
 
         ChromeDriver driver = new ChromeDriver();
         if (proxyPlugin != null) {
-            proxyPlugin.delete();
+            boolean delete = proxyPlugin.delete();
+            if (!delete){
+                System.out.println(proxyPlugin.getName() + " wasn't delete!");
+            }
         }
 
         return driver;
