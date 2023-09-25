@@ -17,6 +17,7 @@ public class StepExecutionSleepImpl implements StepExecutionSleep {
 
     @Override
     public void step(WebDriver webDriver, Step step) {
+        System.out.println(getClass().getSimpleName() + "-> we are execute");
         try {
             Thread.sleep(parseInt(step.getValue()) * 1000L);
         } catch (InterruptedException e) {

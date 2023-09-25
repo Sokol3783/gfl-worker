@@ -14,6 +14,6 @@ public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
 
     @Override
     public void step(WebDriver webDriver, Step step) {
-
+        System.out.println(getClass().getSimpleName() + "-> we are execute");
     }
 }
