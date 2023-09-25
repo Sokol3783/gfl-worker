@@ -1,8 +1,9 @@
-package executor.service.service.impl;
+package executor.service.service.webdriver;
 
-import executor.service.model.ProxyConfigHolder;
-import executor.service.model.WebDriverConfig;
-import executor.service.service.WebDriverInitializer;
+import com.google.common.base.Strings;
+import executor.service.config.properties.PropertiesConstants;
+import executor.service.model.configs.WebDriverConfig;
+import executor.service.model.proxy.ProxyConfigHolder;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -13,8 +14,13 @@ import java.time.Duration;
 
 public class WebDriverInitializerImpl implements WebDriverInitializer {
 
+    private final WebDriverConfig webDriverConfig;
+    public WebDriverInitializerImpl(WebDriverConfig webDriverConfig, WebDriverConfig webDriverConfig1) {
+        this.webDriverConfig = webDriverConfig1;
+    }
+
     @Override
-    public WebDriver getInstance(WebDriverConfig webDriverConfig, ProxyConfigHolder proxyConfigHolder) {
+    public WebDriver getInstance(ProxyConfigHolder proxyConfigHolder) {
         String host = proxyConfigHolder.getProxyNetworkConfig().getHostname();
         Integer port = proxyConfigHolder.getProxyNetworkConfig().getPort();
         String username = proxyConfigHolder.getProxyCredentials().getUsername();
