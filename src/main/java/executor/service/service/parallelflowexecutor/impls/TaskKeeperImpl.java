@@ -11,7 +11,7 @@ public record TaskKeeperImpl(List<TaskNode> nodes) implements TaskKeeper {
     public boolean taskNotAlive() {
         if (!nodes.isEmpty()) {
             return nodes.stream().anyMatch(s -> s.getThread() == null
-                    || s.getThread().isAlive());
+                    || !s.getThread().isAlive());
         }
         return false;
     }

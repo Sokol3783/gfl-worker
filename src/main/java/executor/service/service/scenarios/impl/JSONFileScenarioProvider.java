@@ -53,8 +53,6 @@ public class JSONFileScenarioProvider implements ScenarioProvider {
                 throws JsonParseException {
             try {
                 return StepTypes.valueOf(json.getAsString());
-                //return Arrays.stream(StepTypes.values()).filter(s -> s.getName().compareToIgnoreCase(json.getAsString()) == 0).findFirst().orElseThrow();
-
             } catch (IllegalArgumentException e) {
                 throw new JsonParseException("Invalid ENUM value: " + json.getAsString(), e);
             }
