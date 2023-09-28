@@ -36,7 +36,7 @@ import static executor.service.config.properties.PropertiesConstants.*;
 public class ObjectFactoryImpl implements ObjectFactory {
 
     private static final Singleton INSTANCE = Singleton.INSTANCE;
-
+    //TODO переименовать/удалить/решить проблему обращения
     private static final String PATH_TO_THREAD_PROPERTIES = "thread-pool.properties";
     private static final String PATH_TO_WEBDRIVER_PROPERTIES = "web-driver.properties";
 
@@ -58,6 +58,8 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
         }
 
+
+        //TODO подумать над уровнями проверок и возможностями
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
             List<Class> list = List.of(ParallelFlowExecutorService.class, TaskKeeper.class, Task.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
@@ -94,8 +96,8 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) new StepExecutionFabricimpl(stepExecutions);
         }
 
+        //TODO вынести в статический класс который будет возвращать пропертю/проперти
         private <T> T createWebDriverConfig() {
-
             WebDriverConfig driver = new WebDriverConfig();
             try {
                 Properties properties = PropertiesConfig.getProperties(PATH_TO_WEBDRIVER_PROPERTIES);
@@ -110,6 +112,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) driver;
         }
 
+        //TODO Если будет решена проблема костыля удалить
         private <T> T createExecutionSubscriber() {
             return (T) new ExecutionSubscriber(create(ProxyQueue.class)
                     ,create(ScenarioQueue.class)
@@ -117,6 +120,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     null);
         }
 
+        //TODO вынести в статический класс который будет возвращать пропертю/проперти
         private <T> T createThreadPoolConfig() {
 
             ThreadPoolConfig pool = new ThreadPoolConfig();
@@ -144,21 +148,19 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
-            TaskKeeper taskKeeper = create(TaskKeeper.class);
             ThreadPoolConfig config = create(ThreadPoolConfig.class);
-            ParallelFlowExecutorServiceImpl parallelFlowExecutorService = new ParallelFlowExecutorServiceImpl((Integer) config.getCorePoolSize()
+            ParallelFlowExecutorServiceImpl parallelFlowExecutorService = new ParallelFlowExecutorServiceImpl(config.getCorePoolSize()
                     , config.getCorePoolSize(),
                     config.getKeepAliveTime(),
                     config.getTimeUnit(),
                     Executors.defaultThreadFactory(),
                     new LinkedBlockingDeque<>(),
-                    taskKeeper);
-
+                    create(TaskKeeper.class));
             injectParallelFlowInCreateExecutionSubscriber(parallelFlowExecutorService);
-
             return (T) parallelFlowExecutorService;
         }
 
+        //TODO КОСТЫЛЬ
         private void injectParallelFlowInCreateExecutionSubscriber(ParallelFlowExecutorServiceImpl parallelFlowExecutorService) throws NoSuchFieldException, IllegalAccessException {
             ExecutionSubscriber subscriber = create(ExecutionSubscriber.class);
 
@@ -193,6 +195,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             }
         }
 
+        //TODO обернуть в оптишионал и добавить выброс исключения
         private <T> Constructor<T> findSuitableConstructor(Class<T> clazz) throws NoSuchMethodException, InstantiationException {
             Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
             if (first.isEmpty()) {
@@ -201,7 +204,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (Constructor<T>) first.get();
 
         }
-
+        //TODO обернуть в оптишионал и добавить выброс исключения
         private <T> Constructor<?> findEmptyConstructor(Class<T> clazz){
 
             return Arrays.stream(clazz.getDeclaredConstructors()).findFirst().get();

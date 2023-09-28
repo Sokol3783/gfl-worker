@@ -13,8 +13,11 @@ import java.util.List;
 public class ProxySourcesClientImpl implements ProxySourcesClient {
 
     private static final Logger log = LoggerFactory.getLogger(ProxySourcesClient.class);
+
+    //TODO DELAY -> нужны идеи что с ним сделать
     private static final long DELAY = 1000;
     private final ProxyProvider provider;
+    //TODO заставить работать или снести нафиг
     private final ProxyValidator validator;
 
 

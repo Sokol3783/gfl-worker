@@ -8,7 +8,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
-
+//TODO подумать над тем стоит ли выделить общий интерфейс
 public class ProxyQueue {
     private BlockingQueue<ProxyConfigHolder> proxies;
 
@@ -21,7 +21,7 @@ public class ProxyQueue {
     }
 
     public ProxyConfigHolder getProxy() throws InterruptedException {
-        return proxies.poll();
+        return proxies.peek();
     }
 
     public List<ProxyConfigHolder> getAllProxy() throws InterruptedException {

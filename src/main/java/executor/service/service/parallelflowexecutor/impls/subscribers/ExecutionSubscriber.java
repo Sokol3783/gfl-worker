@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ExecutionSubscriber implements Task {
+    //TODO предложения за статик лонг DELAY!
     private static long DELAY = 2000L;
     private final ProxyQueue proxyQueue;
     private final ScenarioQueue scenarioQueue;
@@ -25,6 +26,7 @@ public class ExecutionSubscriber implements Task {
         this.proxyQueue = proxyQueue;
         this.scenarioQueue = scenarioQueue;
         this.executionService = executionService;
+        //TODO победить плохую двухстороннюю зависимость заодно решить проблему с костылем ObjectFactory
         this.parallelFlow = parallelFlow;
     }
 
@@ -35,6 +37,12 @@ public class ExecutionSubscriber implements Task {
             while (true) {
                 List<ProxyConfigHolder> proxies = proxyQueue.getAllProxy();
                 List<Scenario> scenarios = scenarioQueue.getAllScenario();
+                /*TODO создать новый сервис у которого будет функционал генерировать из принимаемых
+                       листов проксей и сценариев список пар для запуска executionService.execute
+                       проблема будет в перенасыщенности класса зависимостями
+                       либо выделить сервис в который заинжектены кьюхи и отдает список пар
+                       пары вынести в модели и дать нормальное название
+                 */
                 List<Pair> pair = makePairs(proxies, scenarios);
                 pair.forEach(s ->
                                 parallelFlow.execute(() -> executionService.execute(s.getScenario(), s.getProxy()))

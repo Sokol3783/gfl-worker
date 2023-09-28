@@ -7,6 +7,7 @@ import executor.service.service.stepexecution.StepExecutionFabric;
 
 import java.util.List;
 
+//TODO расширить добавив метод на прием ENUM StepType
 public class StepExecutionFabricimpl implements StepExecutionFabric {
 
     private final List<StepExecution> stepExecutions;

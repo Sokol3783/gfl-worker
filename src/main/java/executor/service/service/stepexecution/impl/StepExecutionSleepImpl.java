@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 
 import static java.lang.Integer.parseInt;
 
+//TODO дописать логирование
 public class StepExecutionSleepImpl implements StepExecutionSleep {
 
     @Override

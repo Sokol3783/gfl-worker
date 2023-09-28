@@ -36,13 +36,13 @@ public class JSONFileScenarioProvider implements ScenarioProvider {
     private List<Scenario> parseScenariosFromJson(BufferedReader reader) {
 
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(StepTypes.class, new StepTypeAdapter<>()); // Регистрируем адаптер для StepType
+        gsonBuilder.registerTypeAdapter(StepTypes.class, new StepTypeAdapter<>()); //TODO это был костыль!
         Gson gson = gsonBuilder.create();
         Type listType = new TypeToken<List<Scenario>>(){}.getType();
         return gson.fromJson(reader, listType);
     }
 
-    class StepTypeAdapter<StepType> implements JsonSerializer<StepTypes>, JsonDeserializer<StepTypes> {
+    private class StepTypeAdapter<StepType> implements JsonSerializer<StepTypes>, JsonDeserializer<StepTypes> {
         @Override
         public JsonElement serialize(StepTypes enumValue, Type type, JsonSerializationContext context) {
             return new JsonPrimitive(enumValue.toString());
