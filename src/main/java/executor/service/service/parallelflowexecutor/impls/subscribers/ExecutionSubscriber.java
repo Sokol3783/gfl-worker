@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ExecutionSubscriber implements Task {
-    private static long DELAY = 10000L;
+    private static long DELAY = 2000L;
     private final ProxyQueue proxyQueue;
     private final ScenarioQueue scenarioQueue;
     private final ExecutionService executionService;
@@ -33,7 +33,6 @@ public class ExecutionSubscriber implements Task {
 
         try {
             while (true) {
-
                 List<ProxyConfigHolder> proxies = proxyQueue.getAllProxy();
                 List<Scenario> scenarios = scenarioQueue.getAllScenario();
                 List<Pair> pair = makePairs(proxies, scenarios);

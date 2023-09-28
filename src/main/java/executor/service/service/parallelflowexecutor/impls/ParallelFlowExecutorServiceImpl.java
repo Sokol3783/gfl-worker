@@ -6,7 +6,7 @@ import executor.service.service.parallelflowexecutor.TaskKeeper;
 import java.util.concurrent.*;
 
 public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implements ParallelFlowExecutorService {
-    TaskKeeper keeper;
+    private final TaskKeeper keeper;
 
     public ParallelFlowExecutorServiceImpl(int corePoolSize,
                                            int maximumPoolSize,

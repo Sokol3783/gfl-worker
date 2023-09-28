@@ -9,8 +9,8 @@ public interface TaskKeeper {
 
     class TaskNode {
 
-        final Task task;
-        Thread thread;
+        private final Task task;
+        private Thread thread;
 
         public TaskNode(Task task) {
             this.task = task;
