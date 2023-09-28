@@ -1,4 +1,4 @@
-package executor.service.ObjectFactory;
+package executor.service.objectfactory;
 
 import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.configs.ThreadPoolConfig;
