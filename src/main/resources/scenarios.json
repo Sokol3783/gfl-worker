@@ -1,38 +1,92 @@
 [
-{
-  "name": "test scenario 1",
-  "site": "http://info.cern.ch",
-  "steps" : [
-    {
-      "action": "clickCss",
-      "value": "body > ul > li:nth-child(1) > a"
-    },
-    {
-      "action": "sleep",
-      "value": "5:10"
-    },
-    {
-      "action": "clickXpath",
-      "value": "/html/body/p"
-    }
-  ]
-},
-{
-"name": "test scenario 2",
-"site": "http://info.cern.ch",
-"steps" : [
-{
-"action": "clickXpath",
-"value": "/html/body/p"
-},
-{
-"action": "sleep",
-"value": "5:10"
-},
-{
-"action": "clickCss",
-"value": "body > ul > li:nth-child(1) > a"
-}
-]
-}
+  {
+    "name": "test scenario 1",
+    "site": "http://info.cern.ch",
+    "steps" : [
+      {
+        "action": "CLICK_CSS",
+        "value": "body > ul > li:nth-child(1) > a"
+      },
+      {
+        "action": "SLEEP",
+        "value": "5"
+      },
+      {
+        "action": "CLICK_XPATH",
+        "value": "/html/body/p"
+      }
+    ]
+  },
+  {
+    "name": "Google Search",
+    "site": "https://www.google.com",
+    "steps": [
+      {
+        "action": "CLICK_CSS",
+        "value": "#hplogo"
+      },
+      {
+        "action": "SLEEP",
+        "value": "3"
+      },
+      {
+        "action": "CLICK_XPATH",
+        "value": "//input[@name='q']"
+      }
+    ]
+  },
+  {
+    "name": "Amazon Shopping",
+    "site": "https://www.amazon.com",
+    "steps": [
+      {
+        "action": "CLICK_XPATH",
+        "value": "//a[@id='nav-hamburger-menu']"
+      },
+      {
+        "action": "SLEEP",
+        "value": "2"
+      },
+      {
+        "action": "CLICK_CSS",
+        "value": ".nav-logo-base"
+      }
+    ]
+  },
+  {
+    "name": "Wikipedia Search",
+    "site": "https://www.wikipedia.org",
+    "steps": [
+      {
+        "action": "CLICK_CSS",
+        "value": "#searchInput"
+      },
+      {
+        "action": "SLEEP",
+        "value": "4"
+      },
+      {
+        "action": "CLICK_XPATH",
+        "value": "//button[@type='submit']"
+      }
+    ]
+  },
+  {
+    "name": "YouTube",
+    "site": "https://www.youtube.com",
+    "steps": [
+      {
+        "action": "CLICK_CSS",
+        "value": "a[href='/trending']"
+      },
+      {
+        "action": "SLEEP",
+        "value": "2"
+      },
+      {
+        "action": "CLICK_XPATH",
+        "value": "//input[@id='search']"
+      }
+    ]
+  }
 ]
