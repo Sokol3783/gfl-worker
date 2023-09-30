@@ -1,6 +1,5 @@
 package executor.service.objectfactory;
 
-import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.configs.ThreadPoolConfig;
 import executor.service.model.configs.WebDriverConfig;
 import executor.service.model.proxy.ProxyCredentials;
@@ -30,8 +29,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
-
-import static executor.service.config.properties.PropertiesConstants.*;
 
 public class ObjectFactoryImpl implements ObjectFactory {
 
@@ -96,20 +93,12 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) new StepExecutionFabricimpl(stepExecutions);
         }
 
-        //TODO вынести в статический класс который будет возвращать пропертю/проперти
         private <T> T createWebDriverConfig() {
-            WebDriverConfig driver = new WebDriverConfig();
-            try {
-                Properties properties = PropertiesConfig.getProperties(PATH_TO_WEBDRIVER_PROPERTIES);
-                driver.setWebDriverExecutable(properties.getProperty("webDriver-executable", "\\chromedriver.exe"));
-                driver.setUserAgent(properties.getProperty("user-agent","default"));
-                driver.setImplicitlyWait(Long.valueOf(properties.getProperty("implicitly-wait","5000")));
-                driver.setPageLoadTimeout(Long.valueOf(properties.getProperty("page-load-timeout","15000")));
-            } catch (Exception e) {
-                driver = new WebDriverConfig("\\chromedriver.exe","default",5000L, 15000L);
-            }
+            return (T) PropertyCreator.createWebDriverConfig();
+        }
 
-            return (T) driver;
+        private <T> T createThreadPoolConfig() {
+            return (T) PropertyCreator.getThreadPoolConfig();
         }
 
         //TODO Если будет решена проблема костыля удалить
@@ -118,22 +107,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     ,create(ScenarioQueue.class)
                     ,create(ExecutionService.class),
                     null);
-        }
-
-        //TODO вынести в статический класс который будет возвращать пропертю/проперти
-        private <T> T createThreadPoolConfig() {
-
-            ThreadPoolConfig pool = new ThreadPoolConfig();
-            try {
-                Properties properties = PropertiesConfig.getProperties(PATH_TO_THREAD_PROPERTIES);
-                pool.setCorePoolSize(Integer.parseInt(properties.getProperty(CORE_POOL_SIZE, "2")));
-                pool.setKeepAliveTime(Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME, "2")));
-                pool.setTimeUnit(TimeUnit.valueOf(properties.getProperty(TIMEUNIT,"MILLISECONDS")));
-            } catch (Exception e) {
-                pool =   new ThreadPoolConfig(2, 100L, TimeUnit.MILLISECONDS);
-            }
-
-            return (T) pool;
         }
 
         private <T> T createTaskKeeper() {
@@ -181,7 +154,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                             return createInstance(clazz);
                         }
                     } else {
-                        Optional<Constructor> suitableConstructor = findSuitableConstructor(clazz);
+                        Optional<Constructor<?>> suitableConstructor = findSuitableConstructor(clazz);
                         if (suitableConstructor.isPresent()) {
                             return createInstanceWithConstructor((Constructor<T>) suitableConstructor.get());
                         }
@@ -195,18 +168,18 @@ public class ObjectFactoryImpl implements ObjectFactory {
             }
         }
 
-        private Optional<Constructor> findSuitableConstructor(Class<?> clazz) throws NoSuchMethodException, InstantiationException {
+        private Optional<Constructor<?>> findSuitableConstructor(Class<?> clazz) throws NoSuchMethodException, InstantiationException {
             Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
             if (first.isEmpty()) {
-                return Optional.of(findEmptyConstructor(clazz));
+                return findEmptyConstructor(clazz);
             }
-            return Optional.of(first.get());
+            return first;
 
         }
-        //TODO обернуть в оптишионал и добавить выброс исключения
-        private <T> Constructor<?> findEmptyConstructor(Class<T> clazz){
 
-            return Arrays.stream(clazz.getDeclaredConstructors()).findFirst().get();
+        private <T> Optional<Constructor<?>> findEmptyConstructor(Class<T> clazz){
+
+            return Arrays.stream(clazz.getDeclaredConstructors()).findFirst();
 
         }
 
