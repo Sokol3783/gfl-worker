@@ -144,7 +144,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             nodes.add(scenarioTask);
             TaskKeeper.TaskNode executor = new TaskKeeper.TaskNode(create(ExecutionSubscriber.class));
             nodes.add(executor);
-            return (T) new TaskKeeperImpl(nodes);
+            return (T) new TaskKeeperImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
         }
 
         private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
@@ -153,7 +153,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     , config.getCorePoolSize(),
                     config.getKeepAliveTime(),
                     config.getTimeUnit(),
-                    Executors.defaultThreadFactory(),
+                    (ThreadFactory) context.put(ThreadFactory.class, Executors.defaultThreadFactory()),
                     new LinkedBlockingDeque<>(),
                     create(TaskKeeper.class));
             injectParallelFlowInCreateExecutionSubscriber(parallelFlowExecutorService);

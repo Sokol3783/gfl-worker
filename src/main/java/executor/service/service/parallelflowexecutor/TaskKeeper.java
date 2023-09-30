@@ -4,9 +4,10 @@ import java.util.List;
 
 //TODO дать более полно описывающие имя
 public interface TaskKeeper {
-    boolean taskNotAlive();
 
     List<TaskNode> nodes();
+
+    void keepTaskAlive();
 
     //TODO вынести в model и создании через Builder
     class TaskNode {
