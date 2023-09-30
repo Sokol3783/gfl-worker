@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface ContinuousJobOperator {
 
-    List<ContinuousJobNode> nodes();
+    List<ContinuousJobNode> getContinuousJobs();
 
-    void keepTaskAlive();
+    void startInterruptedJob();
 
 }

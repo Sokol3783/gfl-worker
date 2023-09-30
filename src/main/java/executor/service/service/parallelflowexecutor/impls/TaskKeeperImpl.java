@@ -9,13 +9,13 @@ import java.util.concurrent.ThreadFactory;
 public record TaskKeeperImpl(List<ContinuousJobNode> nodes, ThreadFactory factory) implements ContinuousJobOperator {
 
     @Override
-    public List<ContinuousJobNode> nodes() {
+    public List<ContinuousJobNode> getContinuousJobs() {
         return List.copyOf(nodes);
     }
 
     @Override
-    public void keepTaskAlive() {
-        nodes().stream().filter(s -> s.getThread() == null ||
+    public void startInterruptedJob() {
+        getContinuousJobs().stream().filter(s -> s.getThread() == null ||
                         !s.getThread().isAlive()).
                 forEach(s -> {
                             Thread thread = factory.newThread(s.getTask());
