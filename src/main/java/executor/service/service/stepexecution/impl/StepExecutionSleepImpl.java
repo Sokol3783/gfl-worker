@@ -2,7 +2,7 @@ package executor.service.service.stepexecution.impl;
 
 import executor.service.exceptions.StepExecutionException;
 import executor.service.model.scenario.Step;
-import executor.service.model.scenario.StepTypes;
+import executor.service.model.scenario.StepAction;
 import executor.service.service.stepexecution.StepExecutionSleep;
 import org.openqa.selenium.WebDriver;
 
@@ -14,12 +14,12 @@ public class StepExecutionSleepImpl implements StepExecutionSleep {
 
     @Override
     public String getNameStepAction() {
-        return StepTypes.SLEEP.getName();
+        return StepAction.SLEEP.getName();
     }
 
     @Override
-    public StepTypes getStepAction() {
-        return StepTypes.SLEEP;
+    public StepAction getStepAction() {
+        return StepAction.SLEEP;
     }
 
     @Override

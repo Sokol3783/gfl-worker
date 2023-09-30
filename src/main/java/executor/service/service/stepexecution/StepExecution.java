@@ -2,7 +2,7 @@ package executor.service.service.stepexecution;
 
 
 import executor.service.model.scenario.Step;
-import executor.service.model.scenario.StepTypes;
+import executor.service.model.scenario.StepAction;
 import org.openqa.selenium.WebDriver;
 
 
@@ -12,5 +12,5 @@ public interface StepExecution {
 
   void step(WebDriver webDriver, Step step);
 
-  StepTypes getStepAction();
+  StepAction getStepAction();
 }

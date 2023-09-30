@@ -1,7 +1,7 @@
 package executor.service.service.stepexecution.impl;
 
 import executor.service.exceptions.StepExecutionException;
-import executor.service.model.scenario.StepTypes;
+import executor.service.model.scenario.StepAction;
 import executor.service.service.stepexecution.StepExecution;
 import executor.service.service.stepexecution.StepExecutionFabric;
 
@@ -17,11 +17,11 @@ public class StepExecutionFabricImpl implements StepExecutionFabric {
 
     @Override
     public StepExecution getStepExecutor(String stepAction) {
-        return stepExecutions.stream().filter(s -> s.getNameStepAction().compareTo(StepTypes.valueOf(stepAction).getName()) == 0)
+        return stepExecutions.stream().filter(s -> s.getNameStepAction().compareTo(StepAction.valueOf(stepAction).getName()) == 0)
                 .findFirst().orElseThrow(() -> new StepExecutionException("Unsupported type execution!"));
     }
 
-    public StepExecution getStepExecutor(StepTypes stepType) {
+    public StepExecution getStepExecutor(StepAction stepType) {
         return stepExecutions.stream()
                 .filter(s -> s.getStepAction() == stepType)
                 .findFirst()
