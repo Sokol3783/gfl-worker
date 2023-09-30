@@ -6,14 +6,14 @@ import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.parallelflowexecutor.Task;
+import executor.service.service.parallelflowexecutor.Jobable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class ExecutionSubscriber implements Task {
+public class ExecutionSubscriber implements Jobable {
     //TODO предложения за статик лонг DELAY!
     private static long DELAY = 2000L;
     private final ProxyQueue proxyQueue;

@@ -2,25 +2,24 @@ package executor.service.service.parallelflowexecutor;
 
 import java.util.List;
 
-//TODO дать более полно описывающие имя
-public interface TaskKeeper {
+public interface ContinuousJobOperator {
 
-    List<TaskNode> nodes();
+    List<ContinuousJobNode> nodes();
 
     void keepTaskAlive();
 
     //TODO вынести в model и создании через Builder
-    class TaskNode {
+    class ContinuousJobNode {
 
-        private final Task task;
+        private final Jobable jobable;
         private Thread thread;
 
-        public TaskNode(Task task) {
-            this.task = task;
+        public ContinuousJobNode(Jobable jobable) {
+            this.jobable = jobable;
         }
 
-        public Task getTask() {
-            return task;
+        public Jobable getTask() {
+            return jobable;
         }
 
         public Thread getThread() {

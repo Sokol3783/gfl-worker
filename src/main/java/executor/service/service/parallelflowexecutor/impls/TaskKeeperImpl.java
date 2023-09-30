@@ -1,14 +1,14 @@
 package executor.service.service.parallelflowexecutor.impls;
 
-import executor.service.service.parallelflowexecutor.TaskKeeper;
+import executor.service.service.parallelflowexecutor.ContinuousJobOperator;
 
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
-public record TaskKeeperImpl(List<TaskNode> nodes, ThreadFactory factory) implements TaskKeeper {
+public record TaskKeeperImpl(List<ContinuousJobNode> nodes, ThreadFactory factory) implements ContinuousJobOperator {
 
     @Override
-    public List<TaskNode> nodes() {
+    public List<ContinuousJobNode> nodes() {
         return List.copyOf(nodes);
     }
 
