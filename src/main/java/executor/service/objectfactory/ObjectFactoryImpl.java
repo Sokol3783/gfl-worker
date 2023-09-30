@@ -181,9 +181,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
                             return createInstance(clazz);
                         }
                     } else {
-                        Constructor<T> constructor = findSuitableConstructor(clazz);
-                        if (constructor != null) {
-                            return createInstanceWithConstructor(constructor);
+                        Optional<Constructor> suitableConstructor = findSuitableConstructor(clazz);
+                        if (suitableConstructor.isPresent()) {
+                            return createInstanceWithConstructor((Constructor<T>) suitableConstructor.get());
                         }
                     }
 
@@ -195,13 +195,12 @@ public class ObjectFactoryImpl implements ObjectFactory {
             }
         }
 
-        //TODO обернуть в оптишионал и добавить выброс исключения
-        private <T> Constructor<T> findSuitableConstructor(Class<T> clazz) throws NoSuchMethodException, InstantiationException {
+        private Optional<Constructor> findSuitableConstructor(Class<?> clazz) throws NoSuchMethodException, InstantiationException {
             Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
             if (first.isEmpty()) {
-                return (Constructor<T>) findEmptyConstructor(clazz);
+                return Optional.of(findEmptyConstructor(clazz));
             }
-            return (Constructor<T>) first.get();
+            return Optional.of(first.get());
 
         }
         //TODO обернуть в оптишионал и добавить выброс исключения
