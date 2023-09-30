@@ -33,9 +33,6 @@ import java.util.concurrent.*;
 public class ObjectFactoryImpl implements ObjectFactory {
 
     private static final Singleton INSTANCE = Singleton.INSTANCE;
-    //TODO переименовать/удалить/решить проблему обращения
-    private static final String PATH_TO_THREAD_PROPERTIES = "thread-pool.properties";
-    private static final String PATH_TO_WEBDRIVER_PROPERTIES = "web-driver.properties";
 
     @Override
     public <T> T create(Class<T> clazz) {
@@ -61,7 +58,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             List<Class> list = List.of(ParallelFlowExecutorService.class, TaskKeeper.class, Task.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
-                    executor.service.service.stepexecution.StepExecutionFabric.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
+                    StepExecutionFabric.class, StepExecutionFabricimpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
                     ExecutionSubscriber.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
@@ -78,11 +75,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createExecutionSubscriber();
             } else if (clazz.isAssignableFrom(WebDriverConfig.class)) {
                 return createWebDriverConfig();
-            } else if (clazz.isAssignableFrom(executor.service.service.stepexecution.StepExecutionFabric.class)) {
+            } else if (clazz.isAssignableFrom(StepExecutionFabric.class)) {
                 return createStepExecutionFabrice();
             }
-
-            throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
+            throw new InstantiationException("Prohibition on creating a new instance  " + clazz.getName());
         }
 
         private <T> T createStepExecutionFabrice() {
