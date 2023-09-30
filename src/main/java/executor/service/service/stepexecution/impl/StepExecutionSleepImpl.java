@@ -12,7 +12,7 @@ import static java.lang.Integer.parseInt;
 public class StepExecutionSleepImpl implements StepExecutionSleep {
 
     @Override
-    public String getStepAction() {
+    public String getNameStepAction() {
         return StepTypes.SLEEP.getName();
     }
 

@@ -13,7 +13,7 @@ import org.openqa.selenium.WebElement;
 public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
 
     @Override
-    public String getStepAction() {
+    public String getNameStepAction() {
         return StepTypes.CLICK_XPATH.getName();
     }
 

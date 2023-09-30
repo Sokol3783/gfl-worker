@@ -7,7 +7,6 @@ import executor.service.service.stepexecution.StepExecutionFabric;
 
 import java.util.List;
 
-//TODO расширить добавив метод на прием ENUM StepType
 public class StepExecutionFabricimpl implements StepExecutionFabric {
 
     private final List<StepExecution> stepExecutions;
@@ -18,8 +17,15 @@ public class StepExecutionFabricimpl implements StepExecutionFabric {
 
     @Override
     public StepExecution getStepExecutor(String stepAction) {
-        return stepExecutions.stream().filter(s -> s.getStepAction().compareTo(StepTypes.valueOf(stepAction).getName()) == 0)
+        return stepExecutions.stream().filter(s -> s.getNameStepAction().compareTo(StepTypes.valueOf(stepAction).getName()) == 0)
                 .findFirst().orElseThrow(() -> new StepExecutionException("Unsupported type execution!"));
+    }
+
+    public StepExecution getStepExecutor(StepTypes stepType) {
+        return stepExecutions.stream()
+                .filter(s -> s.getStepAction() == stepType)
+                .findFirst()
+                .orElseThrow(() -> new StepExecutionException("Unsupported type execution!"));
     }
 
 
