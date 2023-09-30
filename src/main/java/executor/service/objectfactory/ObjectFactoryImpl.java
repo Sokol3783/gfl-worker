@@ -7,6 +7,7 @@ import executor.service.model.proxy.ProxyCredentials;
 import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
+import executor.service.model.service.ContinuousJobNode;
 import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
@@ -137,12 +138,12 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private <T> T createTaskKeeper() {
-            List<ContinuousJobOperator.ContinuousJobNode> nodes = new ArrayList<>();
-            ContinuousJobOperator.ContinuousJobNode publisherTask = new ContinuousJobOperator.ContinuousJobNode(create(ProxyPublisher.class));
+            List<ContinuousJobNode> nodes = new ArrayList<>();
+            ContinuousJobNode publisherTask = new ContinuousJobNode(create(ProxyPublisher.class));
             nodes.add(publisherTask);
-            ContinuousJobOperator.ContinuousJobNode scenarioTask = new ContinuousJobOperator.ContinuousJobNode(create(ScenarioPublisher.class));
+            ContinuousJobNode scenarioTask = new ContinuousJobNode(create(ScenarioPublisher.class));
             nodes.add(scenarioTask);
-            ContinuousJobOperator.ContinuousJobNode executor = new ContinuousJobOperator.ContinuousJobNode(create(ExecutionSubscriber.class));
+            ContinuousJobNode executor = new ContinuousJobNode(create(ExecutionSubscriber.class));
             nodes.add(executor);
             return (T) new TaskKeeperImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
         }

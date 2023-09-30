@@ -1,5 +1,6 @@
 package executor.service.service.parallelflowexecutor.impls;
 
+import executor.service.model.service.ContinuousJobNode;
 import executor.service.service.parallelflowexecutor.ContinuousJobOperator;
 
 import java.util.List;
