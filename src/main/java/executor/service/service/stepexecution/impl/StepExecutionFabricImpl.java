@@ -7,11 +7,11 @@ import executor.service.service.stepexecution.StepExecutionFabric;
 
 import java.util.List;
 
-public class StepExecutionFabricimpl implements StepExecutionFabric {
+public class StepExecutionFabricImpl implements StepExecutionFabric {
 
     private final List<StepExecution> stepExecutions;
 
-    public StepExecutionFabricimpl(List<StepExecution> stepExecutions) {
+    public StepExecutionFabricImpl(List<StepExecution> stepExecutions) {
         this.stepExecutions = stepExecutions;
     }
 

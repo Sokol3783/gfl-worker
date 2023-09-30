@@ -21,7 +21,7 @@ import executor.service.service.parallelflowexecutor.impls.subscribers.Execution
 import executor.service.service.stepexecution.*;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
 import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
-import executor.service.service.stepexecution.impl.StepExecutionFabricimpl;
+import executor.service.service.stepexecution.impl.StepExecutionFabricImpl;
 import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import org.reflections.Reflections;
 
@@ -93,7 +93,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             stepExecutions.add(new StepExecutionClickCssImpl());
             stepExecutions.add(new StepExecutionClickXpathImpl());
             stepExecutions.add(new StepExecutionSleepImpl());
-            return (T) new StepExecutionFabricimpl(stepExecutions);
+            return (T) new StepExecutionFabricImpl(stepExecutions);
         }
 
         //TODO вынести в статический класс который будет возвращать пропертю/проперти
