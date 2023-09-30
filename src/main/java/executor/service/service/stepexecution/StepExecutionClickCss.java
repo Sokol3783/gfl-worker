@@ -8,7 +8,7 @@ public interface StepExecutionClickCss extends StepExecution {
 
     String getNameStepAction();
 
-    StepTypes stepAction();
+    StepTypes getStepAction();
 
     void step(WebDriver webDriver, Step step);
 

@@ -11,9 +11,15 @@ import static java.lang.Integer.parseInt;
 //TODO дописать логирование
 public class StepExecutionSleepImpl implements StepExecutionSleep {
 
+
     @Override
     public String getNameStepAction() {
         return StepTypes.SLEEP.getName();
+    }
+
+    @Override
+    public StepTypes getStepAction() {
+        return StepTypes.SLEEP;
     }
 
     @Override

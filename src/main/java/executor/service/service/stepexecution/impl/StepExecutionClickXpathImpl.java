@@ -18,6 +18,11 @@ public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
     }
 
     @Override
+    public StepTypes getStepAction() {
+        return StepTypes.CLICK_XPATH;
+    }
+
+    @Override
     public void step(WebDriver webDriver, Step step) {
         try {
             WebElement element = webDriver.findElement(By.xpath(step.getValue()));

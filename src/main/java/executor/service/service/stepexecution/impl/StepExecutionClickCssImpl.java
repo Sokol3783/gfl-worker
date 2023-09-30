@@ -11,6 +11,11 @@ import org.openqa.selenium.WebElement;
 public class StepExecutionClickCssImpl implements StepExecutionClickCss {
 
     @Override
+    public StepTypes getStepAction() {
+        return StepTypes.CLICK_CSS;
+    }
+
+    @Override
     public String getNameStepAction() {
         return StepTypes.CLICK_CSS.getName();
     }
