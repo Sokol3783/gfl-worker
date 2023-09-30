@@ -2,8 +2,9 @@ package executor.service.service;
 
 import executor.service.handler.ScenarioHandler;
 import executor.service.handler.TerminatorListener;
-import executor.service.model.Scenario;
-import executor.service.service.impl.ScenarioSourceListenerImpl;
+import executor.service.model.scenario.Scenario;
+import executor.service.service.scenarios.ScenarioProvider;
+import executor.service.service.scenarios.impl.ScenarioSourceListenerImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

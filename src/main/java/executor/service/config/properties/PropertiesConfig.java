@@ -9,7 +9,7 @@ import java.io.UncheckedIOException;
 import java.util.Properties;
 
 /**
- * Class for reading properties from properties file.
+ * Read properties from properties file.
  *
  *  @author Oleksandr Tuleninov
  *  @version 01
@@ -24,8 +24,8 @@ public class PropertiesConfig {
      * @param fileName properties file name with extension
      * @return the Properties class represents a persistent set of properties
      * */
-    public Properties getProperties(String fileName) {
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream(fileName)) {
+    public static Properties getProperties(String fileName) {
+        try (InputStream in = PropertiesConfig.class.getClassLoader().getResourceAsStream(fileName)) {
             Properties properties = new Properties();
             properties.load(in);
             return properties;
