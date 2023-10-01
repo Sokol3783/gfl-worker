@@ -16,11 +16,24 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The {@code JSONFileScenarioProvider} class is an implementation of the {@link ScenarioProvider}
+ * interface. It is responsible for reading scenarios from a JSON file and providing them as a list
+ * of {@link Scenario} objects.
+ * @author Yurii Kotsiuba
+ * @see ScenarioProvider
+ * @see Scenario
+ */
 public class JSONFileScenarioProvider implements ScenarioProvider {
 
     private static final Logger log = LoggerFactory.getLogger(ScenarioProvider.class);
     private static final String FILE_NAME = "/scenarios.json";
 
+    /**
+     * Reads scenarios from a JSON file and returns them as a list of {@link Scenario} objects.
+     *
+     * @return A list of scenarios read from the JSON file.
+     */
     @Override
     public List<Scenario> readScenarios() {
         List<Scenario> scenarios = null;
@@ -34,31 +47,7 @@ public class JSONFileScenarioProvider implements ScenarioProvider {
     }
 
     private List<Scenario> parseScenariosFromJson(BufferedReader reader) {
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(StepTypes.class, new StepTypeAdapter<>()); //TODO это был костыль!
-        Gson gson = gsonBuilder.create();
-        Type listType = new TypeToken<List<Scenario>>(){}.getType();
-        return gson.fromJson(reader, listType);
+        Type listType = new TypeToken<List<Scenario>>() {}.getType();
+        return new Gson().fromJson(reader, listType);
     }
-
-    private class StepTypeAdapter<StepType> implements JsonSerializer<StepTypes>, JsonDeserializer<StepTypes> {
-        @Override
-        public JsonElement serialize(StepTypes enumValue, Type type, JsonSerializationContext context) {
-            return new JsonPrimitive(enumValue.toString());
-        }
-
-        @Override
-        public StepTypes deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-                throws JsonParseException {
-            try {
-                return StepTypes.valueOf(json.getAsString());
-            } catch (IllegalArgumentException e) {
-                throw new JsonParseException("Invalid ENUM value: " + json.getAsString(), e);
-            }
-        }
-    }
-
-
-
 }
