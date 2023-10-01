@@ -99,7 +99,6 @@ public class ProxySourcesClientImpl implements ProxySourcesClient {
             if(validator.isValid(proxy)) {
                 handler.onProxyReceived(proxy);
             }
-            handler.onProxyReceived(proxy);
             currentIndex = (currentIndex + 1) % proxies.size();
             sleep();
         }

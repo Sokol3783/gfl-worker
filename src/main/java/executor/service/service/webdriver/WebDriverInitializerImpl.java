@@ -17,7 +17,6 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
     private final WebDriverConfig webDriverConfig;
     public WebDriverInitializerImpl(WebDriverConfig webDriverConfig) {
         this.webDriverConfig = webDriverConfig;
-
     }
 
     @Override
@@ -53,13 +52,13 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
     private ChromeOptions configureChromeOptions(WebDriverConfig webDriverConfig) {
         ChromeOptions chromeOptions = new ChromeOptions();
 
-        chromeOptions.setBinary(PropertiesConstants.CHROME_EXECUTABLE);
+        chromeOptions.setBinary(System.getenv("CHROME_PATH"));
         chromeOptions.setBrowserVersion(PropertiesConstants.CHROME_VERSION);
         chromeOptions.addArguments("--remote-allow-origins=*");
         chromeOptions.addArguments("user-agent=" + webDriverConfig.getUserAgent());
         chromeOptions.setImplicitWaitTimeout(Duration.ofMillis(webDriverConfig.getImplicitlyWait()));
         chromeOptions.setPageLoadTimeout(Duration.ofMillis(webDriverConfig.getPageLoadTimeout()));
-        System.setProperty("webdriver.chrome.driver", webDriverConfig.getWebDriverExecutable());
+        System.setProperty("webdriver.chrome.driver", System.getenv("WEB_DRIVER_PATH"));
 
         return chromeOptions;
     }
