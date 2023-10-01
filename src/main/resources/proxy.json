@@ -1,7 +1,7 @@
 [
   {
     "proxyNetworkConfig": {
-      "hostname": "host1",
+      "hostname": "71.86.129.131",
       "port": 8080
     },
     "proxyCredentials": {
@@ -11,22 +11,12 @@
   },
   {
     "proxyNetworkConfig": {
-      "hostname": "host2",
-      "port": 8088
+      "hostname": "71.86.129.131",
+      "port": 8080
     },
-    "credentials": {
-      "username": "user22",
-      "password": "pass2"
-    }
-  },
-  {
-    "proxyNetworkConfig": {
-      "hostname": "host3",
-      "port": 8089
-    },
-    "credentials": {
-      "username": "user33",
-      "password": "pass3"
+    "proxyCredentials": {
+      "username": "user11",
+      "password": "pass1"
     }
   }
 ]
