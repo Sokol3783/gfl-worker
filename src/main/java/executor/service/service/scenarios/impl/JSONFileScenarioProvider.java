@@ -3,7 +3,7 @@ package executor.service.service.scenarios.impl;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import executor.service.model.scenario.Scenario;
-import executor.service.model.scenario.StepTypes;
+import executor.service.model.scenario.StepAction;
 import executor.service.service.scenarios.ScenarioProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,7 +46,28 @@ public class JSONFileScenarioProvider implements ScenarioProvider {
     }
 
     private List<Scenario> parseScenariosFromJson(BufferedReader reader) {
-        Type listType = new TypeToken<List<Scenario>>() {}.getType();
-        return new Gson().fromJson(reader, listType);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(StepAction.class, new StepTypeAdapter<>()); //TODO это был костыль!
+        Gson gson = gsonBuilder.create();
+        Type listType = new TypeToken<List<Scenario>>(){}.getType();
+        return gson.fromJson(reader, listType);
     }
+
+    private class StepTypeAdapter<StepType> implements JsonSerializer<StepAction>, JsonDeserializer<StepAction> {
+        @Override
+        public JsonElement serialize(StepAction enumValue, Type type, JsonSerializationContext context) {
+            return new JsonPrimitive(enumValue.toString());
+        }
+
+        @Override
+        public StepAction deserialize(JsonElement json, Type type, JsonDeserializationContext context)
+                throws JsonParseException {
+            try {
+                return StepAction.valueOf(json.getAsString());
+            } catch (IllegalArgumentException e) {
+                throw new JsonParseException("Invalid ENUM value: " + json.getAsString(), e);
+            }
+        }
+    }
+
 }
