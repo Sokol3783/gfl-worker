@@ -1,5 +1,5 @@
 package executor.service.service.parallelflowexecutor;
 
 
-public interface Jobable extends Runnable{
+public interface Operatable extends Runnable{
 }

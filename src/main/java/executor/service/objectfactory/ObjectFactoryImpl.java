@@ -7,13 +7,13 @@ import executor.service.model.proxy.ProxyCredentials;
 import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
-import executor.service.model.service.ContinuousJobNode;
+import executor.service.model.service.ContinuousOperationNode;
 import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.parallelflowexecutor.Jobable;
-import executor.service.service.parallelflowexecutor.ContinuousJobOperator;
+import executor.service.service.parallelflowexecutor.Operatable;
+import executor.service.service.parallelflowexecutor.ContinuousOperations;
 import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
 import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
@@ -62,7 +62,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         //TODO подумать над уровнями проверок и возможностями
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
-            List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousJobOperator.class, Jobable.class,
+            List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousOperations.class, Operatable.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
                     executor.service.service.stepexecution.StepExecutionFabric.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
@@ -74,7 +74,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createNotAutoConfigureClass(Class<T> clazz) throws InstantiationException, NoSuchFieldException, IllegalAccessException {
             if (clazz.isAssignableFrom(ParallelFlowExecutorService.class)) {
                 return createParallelFlowExecutorService();
-            } else if (clazz.isAssignableFrom(ContinuousJobOperator.class)) {
+            } else if (clazz.isAssignableFrom(ContinuousOperations.class)) {
                 return createTaskKeeper();
             } else if (clazz.isAssignableFrom(ThreadPoolConfig.class)) {
                 return createThreadPoolConfig();
@@ -138,12 +138,12 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private <T> T createTaskKeeper() {
-            List<ContinuousJobNode> nodes = new ArrayList<>();
-            ContinuousJobNode publisherTask = new ContinuousJobNode(create(ProxyPublisher.class));
+            List<ContinuousOperationNode> nodes = new ArrayList<>();
+            ContinuousOperationNode publisherTask = new ContinuousOperationNode(create(ProxyPublisher.class));
             nodes.add(publisherTask);
-            ContinuousJobNode scenarioTask = new ContinuousJobNode(create(ScenarioPublisher.class));
+            ContinuousOperationNode scenarioTask = new ContinuousOperationNode(create(ScenarioPublisher.class));
             nodes.add(scenarioTask);
-            ContinuousJobNode executor = new ContinuousJobNode(create(ExecutionSubscriber.class));
+            ContinuousOperationNode executor = new ContinuousOperationNode(create(ExecutionSubscriber.class));
             nodes.add(executor);
             return (T) new TaskKeeperImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
         }
@@ -156,7 +156,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     config.getTimeUnit(),
                     (ThreadFactory) context.put(ThreadFactory.class, Executors.defaultThreadFactory()),
                     new LinkedBlockingDeque<>(),
-                    create(ContinuousJobOperator.class));
+                    create(ContinuousOperations.class));
             injectParallelFlowInCreateExecutionSubscriber(parallelFlowExecutorService);
             return (T) parallelFlowExecutorService;
         }

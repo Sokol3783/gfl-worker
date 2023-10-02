@@ -2,10 +2,10 @@ package executor.service.service.parallelflowexecutor.impls.publishers;
 
 
 import executor.service.queue.ProxyQueue;
-import executor.service.service.parallelflowexecutor.Jobable;
+import executor.service.service.parallelflowexecutor.Operatable;
 import executor.service.service.proxy.ProxySourcesClient;
 
-public class ProxyPublisher implements Jobable {
+public class ProxyPublisher implements Operatable {
     private final ProxyQueue proxyQueue;
     private final ProxySourcesClient proxyClient;
 

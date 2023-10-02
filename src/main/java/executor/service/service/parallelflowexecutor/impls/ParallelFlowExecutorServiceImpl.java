@@ -1,12 +1,12 @@
 package executor.service.service.parallelflowexecutor.impls;
 
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.parallelflowexecutor.ContinuousJobOperator;
+import executor.service.service.parallelflowexecutor.ContinuousOperations;
 
 import java.util.concurrent.*;
 
 public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implements ParallelFlowExecutorService {
-    private final ContinuousJobOperator keeper;
+    private final ContinuousOperations keeper;
 
     public ParallelFlowExecutorServiceImpl(int corePoolSize,
                                            int maximumPoolSize,
@@ -14,7 +14,7 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
                                            TimeUnit unit,
                                            ThreadFactory threadFactory,
                                            BlockingQueue<Runnable> workQueue,
-                                           ContinuousJobOperator keeper) {
+                                           ContinuousOperations keeper) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
         this.keeper = keeper;
     }
