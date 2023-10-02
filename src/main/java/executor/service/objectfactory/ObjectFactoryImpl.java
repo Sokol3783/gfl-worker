@@ -17,6 +17,7 @@ import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorS
 import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
+import executor.service.service.parallelflowexecutor.impls.subscribers.DefaultPairGeneratorService;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
 import executor.service.service.parallelflowexecutor.impls.subscribers.PairGeneratorService;
 import executor.service.service.stepexecution.*;
@@ -66,7 +67,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
                     executor.service.service.stepexecution.StepExecutionFabric.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
-                    ExecutionSubscriber.class);
+                    ExecutionSubscriber.class, DefaultPairGeneratorService.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
         }
@@ -84,9 +85,19 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createWebDriverConfig();
             } else if (clazz.isAssignableFrom(executor.service.service.stepexecution.StepExecutionFabric.class)) {
                 return createStepExecutionFabrice();
+            } else if (clazz.isAssignableFrom(DefaultPairGeneratorService.class)) {
+                return createDefaultPairGeneratorService();
             }
 
             throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
+        }
+
+        private <T> T createDefaultPairGeneratorService() {
+            try {
+                return (T) new DefaultPairGeneratorService(create(ProxyQueue.class).getAllProxy(), create(ScenarioQueue.class).getAllScenario());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         private <T> T createStepExecutionFabrice() {
