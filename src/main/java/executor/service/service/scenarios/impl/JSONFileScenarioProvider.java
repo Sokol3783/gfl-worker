@@ -15,11 +15,24 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.List;
 
+/**
+ * The {@code JSONFileScenarioProvider} class is an implementation of the {@link ScenarioProvider}
+ * interface. It is responsible for reading scenarios from a JSON file and providing them as a list
+ * of {@link Scenario} objects.
+ * @author Yurii Kotsiuba
+ * @see ScenarioProvider
+ * @see Scenario
+ */
 public class JSONFileScenarioProvider implements ScenarioProvider {
 
     private static final Logger log = LoggerFactory.getLogger(ScenarioProvider.class);
     private static final String FILE_NAME = "/scenarios.json";
 
+    /**
+     * Reads scenarios from a JSON file and returns them as a list of {@link Scenario} objects.
+     *
+     * @return A list of scenarios read from the JSON file.
+     */
     @Override
     public List<Scenario> readScenarios() {
         List<Scenario> scenarios = null;
@@ -33,7 +46,6 @@ public class JSONFileScenarioProvider implements ScenarioProvider {
     }
 
     private List<Scenario> parseScenariosFromJson(BufferedReader reader) {
-
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(StepAction.class, new StepTypeAdapter<>()); //TODO это был костыль!
         Gson gson = gsonBuilder.create();
@@ -57,7 +69,5 @@ public class JSONFileScenarioProvider implements ScenarioProvider {
             }
         }
     }
-
-
 
 }
