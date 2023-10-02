@@ -18,6 +18,7 @@ import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
+import executor.service.service.parallelflowexecutor.impls.subscribers.PairGeneratorService;
 import executor.service.service.stepexecution.*;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
 import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
@@ -114,10 +115,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         //TODO Если будет решена проблема костыля удалить
         private <T> T createExecutionSubscriber() {
-            return (T) new ExecutionSubscriber(create(ProxyQueue.class)
-                    ,create(ScenarioQueue.class)
-                    ,create(ExecutionService.class),
-                    null);
+            return (T) new ExecutionSubscriber(
+                    create(ExecutionService.class),
+                    create(ParallelFlowExecutorService.class),
+                    create(PairGeneratorService.class));
         }
 
         //TODO вынести в статический класс который будет возвращать пропертю/проперти
