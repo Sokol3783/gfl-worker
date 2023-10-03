@@ -7,8 +7,6 @@ import executor.service.model.proxy.ProxyCredentials;
 import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
-import executor.service.queue.ProxyQueue;
-import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.Task;
@@ -17,10 +15,12 @@ import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorS
 import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
-import executor.service.service.parallelflowexecutor.impls.subscribers.DefaultPairGeneratorService;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
 import executor.service.service.parallelflowexecutor.impls.subscribers.PairGeneratorService;
-import executor.service.service.stepexecution.*;
+import executor.service.service.stepexecution.StepExecution;
+import executor.service.service.stepexecution.StepExecutionClickCss;
+import executor.service.service.stepexecution.StepExecutionClickXpath;
+import executor.service.service.stepexecution.StepExecutionSleep;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
 import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
 import executor.service.service.stepexecution.impl.StepExecutionFabricimpl;
@@ -31,7 +31,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 import static executor.service.config.properties.PropertiesConstants.*;
 
@@ -67,7 +70,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
                     executor.service.service.stepexecution.StepExecutionFabric.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
-                    ExecutionSubscriber.class, DefaultPairGeneratorService.class);
+                    ExecutionSubscriber.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
         }
@@ -85,19 +88,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createWebDriverConfig();
             } else if (clazz.isAssignableFrom(executor.service.service.stepexecution.StepExecutionFabric.class)) {
                 return createStepExecutionFabrice();
-            } else if (clazz.isAssignableFrom(DefaultPairGeneratorService.class)) {
-                return createDefaultPairGeneratorService();
             }
 
             throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
-        }
-
-        private <T> T createDefaultPairGeneratorService() {
-            try {
-                return (T) new DefaultPairGeneratorService(create(ProxyQueue.class).getAllProxy(), create(ScenarioQueue.class).getAllScenario());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
         }
 
         private <T> T createStepExecutionFabrice() {

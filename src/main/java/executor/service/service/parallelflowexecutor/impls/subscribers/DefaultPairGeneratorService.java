@@ -2,29 +2,39 @@ package executor.service.service.parallelflowexecutor.impls.subscribers;
 
 import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.scenario.Scenario;
+import executor.service.queue.ProxyQueue;
+import executor.service.queue.ScenarioQueue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultPairGeneratorService implements PairGeneratorService {
-    private final List<ProxyConfigHolder> proxies;
-    private final List<Scenario> scenarios;
+    private final ProxyQueue proxyQueue;
+    private final ScenarioQueue scenarioQueue;
 
-    public DefaultPairGeneratorService(List<ProxyConfigHolder> proxies, List<Scenario> scenarios) {
-        this.proxies = proxies;
-        this.scenarios = scenarios;
+    public DefaultPairGeneratorService(ProxyQueue proxyQueue, ScenarioQueue scenarioQueue) {
+        this.proxyQueue = proxyQueue;
+        this.scenarioQueue = scenarioQueue;
     }
+
 
     @Override
     public List<Pair> generatePairs() {
         List<Pair> pairs = new ArrayList<>();
-
-        if (!proxies.isEmpty() && !scenarios.isEmpty()) {
-            if (proxies.size() == scenarios.size()) {
-                pairs = createOneToOnePairs(proxies, scenarios);
-            } else {
-                pairs = createMixPairs(proxies, scenarios);
+        List<ProxyConfigHolder> proxies;
+        List<Scenario> scenarios;
+        try {
+            proxies = proxyQueue.getAllProxy();
+            scenarios = scenarioQueue.getAllScenario();
+            if (!proxies.isEmpty() && !scenarios.isEmpty()) {
+                if (proxies.size() == scenarios.size()) {
+                    pairs = createOneToOnePairs(proxies, scenarios);
+                } else {
+                    pairs = createMixPairs(proxies, scenarios);
+                }
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
         return pairs;
