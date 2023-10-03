@@ -6,7 +6,7 @@ import executor.service.service.parallelflowexecutor.ContinuousOperations;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
-public record TaskKeeperImpl(List<ContinuousOperationNode> nodes, ThreadFactory factory) implements ContinuousOperations {
+public record ContinuousOperationsImpl(List<ContinuousOperationNode> nodes, ThreadFactory factory) implements ContinuousOperations {
 
     @Override
     public List<ContinuousOperationNode> getContinuousJobs() {

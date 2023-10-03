@@ -14,7 +14,7 @@ import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService
 import executor.service.service.parallelflowexecutor.Operatable;
 import executor.service.service.parallelflowexecutor.ContinuousOperations;
 import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
-import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
+import executor.service.service.parallelflowexecutor.impls.ContinuousOperationsImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
@@ -54,12 +54,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
 
-        //TODO подумать над уровнями проверок и возможностями
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
             List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousOperations.class, Operatable.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
-                    StepExecutionFabric.class, StepExecutionFabricimpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
+                    StepExecutionFabric.class, StepExecutionFabricImpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
                     ExecutionSubscriber.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
@@ -114,7 +113,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             nodes.add(scenarioTask);
             ContinuousOperationNode executor = new ContinuousOperationNode(create(ExecutionSubscriber.class));
             nodes.add(executor);
-            return (T) new TaskKeeperImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
+            return (T) new ContinuousOperationsImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
         }
 
         private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
