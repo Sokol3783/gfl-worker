@@ -1,7 +1,7 @@
 package executor.service.service.stepexecution.impl;
 
 import executor.service.model.scenario.Step;
-import executor.service.model.scenario.StepTypes;
+import executor.service.model.scenario.StepAction;
 import executor.service.service.stepexecution.StepExecutionClickCss;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -11,8 +11,13 @@ import org.openqa.selenium.WebElement;
 public class StepExecutionClickCssImpl implements StepExecutionClickCss {
 
     @Override
-    public String getStepAction() {
-        return StepTypes.CLICK_CSS.getName();
+    public StepAction getStepAction() {
+        return StepAction.CLICK_CSS;
+    }
+
+    @Override
+    public String getNameStepAction() {
+        return StepAction.CLICK_CSS.getName();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package executor.service.objectfactory;
 
-import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.configs.ThreadPoolConfig;
 import executor.service.model.configs.WebDriverConfig;
 import executor.service.model.proxy.ProxyCredentials;
@@ -22,7 +21,7 @@ import executor.service.service.parallelflowexecutor.impls.subscribers.Execution
 import executor.service.service.stepexecution.*;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
 import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
-import executor.service.service.stepexecution.impl.StepExecutionFabricimpl;
+import executor.service.service.stepexecution.impl.StepExecutionFabricImpl;
 import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import org.reflections.Reflections;
 
@@ -32,14 +31,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static executor.service.config.properties.PropertiesConstants.*;
-
 public class ObjectFactoryImpl implements ObjectFactory {
 
     private static final Singleton INSTANCE = Singleton.INSTANCE;
-    //TODO переименовать/удалить/решить проблему обращения
-    private static final String PATH_TO_THREAD_PROPERTIES = "thread-pool.properties";
-    private static final String PATH_TO_WEBDRIVER_PROPERTIES = "web-driver.properties";
 
     @Override
     public <T> T create(Class<T> clazz) {
@@ -65,7 +59,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousOperations.class, Operatable.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
-                    executor.service.service.stepexecution.StepExecutionFabric.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
+                    StepExecutionFabric.class, StepExecutionFabricimpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
                     ExecutionSubscriber.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
@@ -82,11 +76,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createExecutionSubscriber();
             } else if (clazz.isAssignableFrom(WebDriverConfig.class)) {
                 return createWebDriverConfig();
-            } else if (clazz.isAssignableFrom(executor.service.service.stepexecution.StepExecutionFabric.class)) {
+            } else if (clazz.isAssignableFrom(StepExecutionFabric.class)) {
                 return createStepExecutionFabrice();
             }
-
-            throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
+            throw new InstantiationException("Prohibition on creating a new instance  " + clazz.getName());
         }
 
         private <T> T createStepExecutionFabrice() {
@@ -94,23 +87,15 @@ public class ObjectFactoryImpl implements ObjectFactory {
             stepExecutions.add(new StepExecutionClickCssImpl());
             stepExecutions.add(new StepExecutionClickXpathImpl());
             stepExecutions.add(new StepExecutionSleepImpl());
-            return (T) new StepExecutionFabricimpl(stepExecutions);
+            return (T) new StepExecutionFabricImpl(stepExecutions);
         }
 
-        //TODO вынести в статический класс который будет возвращать пропертю/проперти
         private <T> T createWebDriverConfig() {
-            WebDriverConfig driver = new WebDriverConfig();
-            try {
-                Properties properties = PropertiesConfig.getProperties(PATH_TO_WEBDRIVER_PROPERTIES);
-                driver.setWebDriverExecutable(properties.getProperty("webDriver-executable", "\\chromedriver.exe"));
-                driver.setUserAgent(properties.getProperty("user-agent","default"));
-                driver.setImplicitlyWait(Long.valueOf(properties.getProperty("implicitly-wait","5000")));
-                driver.setPageLoadTimeout(Long.valueOf(properties.getProperty("page-load-timeout","15000")));
-            } catch (Exception e) {
-                driver = new WebDriverConfig("\\chromedriver.exe","default",5000L, 15000L);
-            }
+            return (T) PropertyCreator.createWebDriverConfig();
+        }
 
-            return (T) driver;
+        private <T> T createThreadPoolConfig() {
+            return (T) PropertyCreator.getThreadPoolConfig();
         }
 
         //TODO Если будет решена проблема костыля удалить
@@ -119,22 +104,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     ,create(ScenarioQueue.class)
                     ,create(ExecutionService.class),
                     null);
-        }
-
-        //TODO вынести в статический класс который будет возвращать пропертю/проперти
-        private <T> T createThreadPoolConfig() {
-
-            ThreadPoolConfig pool = new ThreadPoolConfig();
-            try {
-                Properties properties = PropertiesConfig.getProperties(PATH_TO_THREAD_PROPERTIES);
-                pool.setCorePoolSize(Integer.parseInt(properties.getProperty(CORE_POOL_SIZE, "2")));
-                pool.setKeepAliveTime(Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME, "2")));
-                pool.setTimeUnit(TimeUnit.valueOf(properties.getProperty(TIMEUNIT,"MILLISECONDS")));
-            } catch (Exception e) {
-                pool =   new ThreadPoolConfig(2, 100L, TimeUnit.MILLISECONDS);
-            }
-
-            return (T) pool;
         }
 
         private <T> T createTaskKeeper() {
@@ -182,9 +151,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
                             return createInstance(clazz);
                         }
                     } else {
-                        Constructor<T> constructor = findSuitableConstructor(clazz);
-                        if (constructor != null) {
-                            return createInstanceWithConstructor(constructor);
+                        Optional<Constructor<?>> suitableConstructor = findSuitableConstructor(clazz);
+                        if (suitableConstructor.isPresent()) {
+                            return createInstanceWithConstructor((Constructor<T>) suitableConstructor.get());
                         }
                     }
 
@@ -196,19 +165,18 @@ public class ObjectFactoryImpl implements ObjectFactory {
             }
         }
 
-        //TODO обернуть в оптишионал и добавить выброс исключения
-        private <T> Constructor<T> findSuitableConstructor(Class<T> clazz) throws NoSuchMethodException, InstantiationException {
+        private Optional<Constructor<?>> findSuitableConstructor(Class<?> clazz) throws NoSuchMethodException, InstantiationException {
             Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
             if (first.isEmpty()) {
-                return (Constructor<T>) findEmptyConstructor(clazz);
+                return findEmptyConstructor(clazz);
             }
-            return (Constructor<T>) first.get();
+            return first;
 
         }
-        //TODO обернуть в оптишионал и добавить выброс исключения
-        private <T> Constructor<?> findEmptyConstructor(Class<T> clazz){
 
-            return Arrays.stream(clazz.getDeclaredConstructors()).findFirst().get();
+        private <T> Optional<Constructor<?>> findEmptyConstructor(Class<T> clazz){
+
+            return Arrays.stream(clazz.getDeclaredConstructors()).findFirst();
 
         }
 

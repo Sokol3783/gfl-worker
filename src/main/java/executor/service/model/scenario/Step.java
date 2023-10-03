@@ -3,23 +3,23 @@ package executor.service.model.scenario;
 import java.util.Objects;
 
 public class Step {
-    private StepTypes action;
+    private StepAction action;
     //Artem said use number for sle
     private String value;
 
     public Step() {
     }
 
-    public Step(StepTypes action, String value) {
+    public Step(StepAction action, String value) {
         this.action = action;
         this.value = value;
     }
 
-    public StepTypes getAction() {
+    public StepAction getAction() {
         return action;
     }
 
-    public void setAction(StepTypes action) {
+    public void setAction(StepAction action) {
         this.action = action;
     }
 

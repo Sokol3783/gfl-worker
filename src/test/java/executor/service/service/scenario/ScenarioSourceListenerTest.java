@@ -1,10 +1,11 @@
-package executor.service.service;
+package executor.service.service.scenario;
 
 import executor.service.handler.ScenarioHandler;
 import executor.service.handler.TerminatorListener;
 import executor.service.model.scenario.Scenario;
 import executor.service.service.scenarios.ScenarioProvider;
 import executor.service.service.scenarios.impl.ScenarioSourceListenerImpl;
+import executor.service.util.TestTerminator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,21 +78,4 @@ public class ScenarioSourceListenerTest {
                 new Scenario()
         );
     }
-
-    private class TestTerminator implements TerminatorListener {
-        private int maxIterations;
-        private int currentIteration = 0;
-
-        public TestTerminator(int maxIterations) {
-            this.maxIterations = maxIterations;
-        }
-
-        @Override
-        public boolean shouldTerminate() {
-            currentIteration++;
-            return currentIteration > maxIterations;
-        }
-    }
 }
-
-
