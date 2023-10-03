@@ -2,23 +2,24 @@ package executor.service.service.parallelflowexecutor.impls.publishers;
 
 
 import executor.service.queue.ScenarioQueue;
-import executor.service.service.parallelflowexecutor.Task;
+import executor.service.service.parallelflowexecutor.Operatable;
 import executor.service.service.scenarios.ScenarioSourceListener;
 
 /**
  * The {@code ScenarioPublisher} class is responsible for publishing scenarios to a scenario queue
  * by utilizing a provided {@link ScenarioSourceListener}.
  * <p>
- * This class implements the {@link Task} interface, allowing it to be executed in a separate
+ * This class implements the {@link Operatable} interface, allowing it to be executed in a separate
  * thread or context.
  * <p>
  *
  * @author Yurii Kotsiuba
- * @see Task
+ * @see Operatable
  * @see ScenarioQueue
  * @see ScenarioSourceListener
  */
-public class ScenarioPublisher implements Task {
+public class ScenarioPublisher implements Operatable {
+
     private final ScenarioQueue scenarioQueue;
     private final ScenarioSourceListener listener;
 

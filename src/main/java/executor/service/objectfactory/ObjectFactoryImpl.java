@@ -6,14 +6,15 @@ import executor.service.model.proxy.ProxyCredentials;
 import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
+import executor.service.model.service.ContinuousOperationNode;
 import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.parallelflowexecutor.Task;
-import executor.service.service.parallelflowexecutor.TaskKeeper;
+import executor.service.service.parallelflowexecutor.Operatable;
+import executor.service.service.parallelflowexecutor.ContinuousOperations;
 import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
-import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
+import executor.service.service.parallelflowexecutor.impls.ContinuousOperationsImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
@@ -53,12 +54,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
 
-        //TODO подумать над уровнями проверок и возможностями
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
-            List<Class> list = List.of(ParallelFlowExecutorService.class, TaskKeeper.class, Task.class,
+            List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousOperations.class, Operatable.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
-                    StepExecutionFabric.class, StepExecutionFabricimpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
+                    StepExecutionFabric.class, StepExecutionFabricImpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
                     ExecutionSubscriber.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
@@ -67,7 +67,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createNotAutoConfigureClass(Class<T> clazz) throws InstantiationException, NoSuchFieldException, IllegalAccessException {
             if (clazz.isAssignableFrom(ParallelFlowExecutorService.class)) {
                 return createParallelFlowExecutorService();
-            } else if (clazz.isAssignableFrom(TaskKeeper.class)) {
+            } else if (clazz.isAssignableFrom(ContinuousOperations.class)) {
                 return createTaskKeeper();
             } else if (clazz.isAssignableFrom(ThreadPoolConfig.class)) {
                 return createThreadPoolConfig();
@@ -106,14 +106,14 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private <T> T createTaskKeeper() {
-            List<TaskKeeper.TaskNode> nodes = new ArrayList<>();
-            TaskKeeper.TaskNode publisherTask = new TaskKeeper.TaskNode(create(ProxyPublisher.class));
+            List<ContinuousOperationNode> nodes = new ArrayList<>();
+            ContinuousOperationNode publisherTask = new ContinuousOperationNode(create(ProxyPublisher.class));
             nodes.add(publisherTask);
-            TaskKeeper.TaskNode scenarioTask = new TaskKeeper.TaskNode(create(ScenarioPublisher.class));
+            ContinuousOperationNode scenarioTask = new ContinuousOperationNode(create(ScenarioPublisher.class));
             nodes.add(scenarioTask);
-            TaskKeeper.TaskNode executor = new TaskKeeper.TaskNode(create(ExecutionSubscriber.class));
+            ContinuousOperationNode executor = new ContinuousOperationNode(create(ExecutionSubscriber.class));
             nodes.add(executor);
-            return (T) new TaskKeeperImpl(nodes);
+            return (T) new ContinuousOperationsImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
         }
 
         private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
@@ -122,9 +122,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     , config.getCorePoolSize(),
                     config.getKeepAliveTime(),
                     config.getTimeUnit(),
-                    Executors.defaultThreadFactory(),
+                    (ThreadFactory) context.put(ThreadFactory.class, Executors.defaultThreadFactory()),
                     new LinkedBlockingDeque<>(),
-                    create(TaskKeeper.class));
+                    create(ContinuousOperations.class));
             injectParallelFlowInCreateExecutionSubscriber(parallelFlowExecutorService);
             return (T) parallelFlowExecutorService;
         }

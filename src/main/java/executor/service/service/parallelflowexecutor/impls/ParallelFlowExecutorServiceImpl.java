@@ -1,12 +1,12 @@
 package executor.service.service.parallelflowexecutor.impls;
 
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.parallelflowexecutor.TaskKeeper;
+import executor.service.service.parallelflowexecutor.ContinuousOperations;
 
 import java.util.concurrent.*;
 
 public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implements ParallelFlowExecutorService {
-    private final TaskKeeper keeper;
+    private final ContinuousOperations keeper;
 
     public ParallelFlowExecutorServiceImpl(int corePoolSize,
                                            int maximumPoolSize,
@@ -14,7 +14,7 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
                                            TimeUnit unit,
                                            ThreadFactory threadFactory,
                                            BlockingQueue<Runnable> workQueue,
-                                           TaskKeeper keeper) {
+                                           ContinuousOperations keeper) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
         this.keeper = keeper;
     }
@@ -39,20 +39,7 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
     }
 
     private void keepAliveTaskThreads() {
-        /*TODO
-              Возможно стоит его добавить как метод контракта в ParallelFlowExecutorService
-         */
-        if (keeper.taskNotAlive()) {
-            //TODO отдавать keeper super.getThreadFactory() что бы внутри него запускало новые потоки
-            keeper.nodes().stream().filter(s -> s.getThread() == null ||
-                            !s.getThread().isAlive()).
-                    forEach(s -> {
-                                Thread thread = super.getThreadFactory().newThread(s.getTask());
-                                thread.start();
-                                s.setThread(thread);
-                            }
-                    );
-        }
+        keeper.startInterruptedJob();
     }
 
     @Override
