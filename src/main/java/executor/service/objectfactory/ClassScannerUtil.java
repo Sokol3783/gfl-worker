@@ -2,7 +2,7 @@ package executor.service.objectfactory;
 
 import org.reflections.Reflections;
 
-public class ClassScannerUtil {
+class ClassScannerUtil {
 
   private static Reflections CLASS_SCANNER = new Reflections("/src/java/executor/service/");
 
