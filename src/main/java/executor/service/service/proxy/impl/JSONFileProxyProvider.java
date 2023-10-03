@@ -15,6 +15,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code JSONFileProxyProvider} class is an implementation of the {@link ProxyProvider}
+ * interface. It is responsible for reading proxies from a JSON file and providing them as a list
+ * of {@link ProxyConfigHolder} objects.
+ * @author Yurii Kotsiuba
+ * @see ProxyProvider
+ * @see ProxyConfigHolder
+ */
 public class JSONFileProxyProvider implements ProxyProvider {
 
     private static final Logger log = LoggerFactory.getLogger(ProxyProvider.class);
