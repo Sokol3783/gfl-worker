@@ -12,9 +12,12 @@ public class DefaultPairGeneratorService implements PairGeneratorService {
     private final ProxyQueue proxyQueue;
     private final ScenarioQueue scenarioQueue;
 
-    public DefaultPairGeneratorService(ProxyQueue proxyQueue, ScenarioQueue scenarioQueue) {
+    private final ProxyConfigHolder defaultProxy;
+
+    public DefaultPairGeneratorService(ProxyQueue proxyQueue, ScenarioQueue scenarioQueue, ProxyConfigHolder defaultProxy) {
         this.proxyQueue = proxyQueue;
         this.scenarioQueue = scenarioQueue;
+        this.defaultProxy = defaultProxy;
     }
 
 
@@ -26,12 +29,15 @@ public class DefaultPairGeneratorService implements PairGeneratorService {
         try {
             proxies = proxyQueue.getAllProxy();
             scenarios = scenarioQueue.getAllScenario();
-            if (!proxies.isEmpty() && !scenarios.isEmpty()) {
+            if (!scenarios.isEmpty() && !proxies.isEmpty()) {
                 if (proxies.size() == scenarios.size()) {
                     pairs = createOneToOnePairs(proxies, scenarios);
                 } else {
                     pairs = createMixPairs(proxies, scenarios);
                 }
+            } else if (!scenarios.isEmpty()) {
+                proxies.add(defaultProxy);
+                pairs = createMixPairs(proxies, scenarios);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
