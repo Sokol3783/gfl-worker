@@ -18,7 +18,11 @@ import executor.service.service.parallelflowexecutor.impls.ContinuousOperationsI
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
-import executor.service.service.stepexecution.*;
+import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutableScenarioComposer;
+import executor.service.service.stepexecution.StepExecution;
+import executor.service.service.stepexecution.StepExecutionClickCss;
+import executor.service.service.stepexecution.StepExecutionClickXpath;
+import executor.service.service.stepexecution.StepExecutionSleep;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
 import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
 import executor.service.service.stepexecution.impl.StepExecutionFabricImpl;
@@ -29,7 +33,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 public class ObjectFactoryImpl implements ObjectFactory {
 
@@ -99,10 +106,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         //TODO Если будет решена проблема костыля удалить
         private <T> T createExecutionSubscriber() {
-            return (T) new ExecutionSubscriber(create(ProxyQueue.class)
-                    ,create(ScenarioQueue.class)
-                    ,create(ExecutionService.class),
-                    null);
+            return (T) new ExecutionSubscriber(
+                    create(ExecutionService.class),
+                    create(ParallelFlowExecutorService.class),
+                    create(ExecutableScenarioComposer.class));
         }
 
         private <T> T createTaskKeeper() {
