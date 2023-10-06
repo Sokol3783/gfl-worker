@@ -22,29 +22,29 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
 
     @Override
     public Future<?> submit(Runnable task) {
-        keepAliveTaskThreads();
+        keepAliveContinuousOperations();
         return super.submit(task);
     }
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
-        keepAliveTaskThreads();
+        keepAliveContinuousOperations();
         return super.submit(task, result);
     }
 
     @Override
     public <T> Future<T> submit(Callable<T> task) {
-        keepAliveTaskThreads();
+        keepAliveContinuousOperations();
         return super.submit(task);
     }
 
-    private void keepAliveTaskThreads() {
-        keeper.startInterruptedJob();
+    private void keepAliveContinuousOperations() {
+        keeper.startInterruptedOperation();
     }
 
     @Override
     public void execute(Runnable command) {
-        keepAliveTaskThreads();
+        keepAliveContinuousOperations();
         super.execute(command);
     }
 
