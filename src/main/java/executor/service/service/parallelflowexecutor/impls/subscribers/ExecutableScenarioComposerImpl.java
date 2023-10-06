@@ -4,12 +4,17 @@ import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.scenario.Scenario;
 import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
+import executor.service.service.executionservice.ExecutionServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExecutableScenarioComposerImpl implements ExecutableScenarioComposer {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(ExecutableScenarioComposerImpl.class);
+
     private final ProxyQueue proxyQueue;
     private final ScenarioQueue scenarioQueue;
     private final ProxyConfigHolder defaultProxy;
@@ -33,9 +38,8 @@ public class ExecutableScenarioComposerImpl implements ExecutableScenarioCompose
                 proxies.forEach(proxyQueue::addProxy);
             }
         } catch (InterruptedException e) {
-            
+            log.error(e.getMessage());
         }
-
         return new ArrayList<>();
     }
 
