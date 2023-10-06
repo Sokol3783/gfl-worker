@@ -10,22 +10,22 @@ public class ExecutionSubscriber implements Task {
     private static final long DELAY = 2000L;
     private final ExecutionService executionService;
     private final ParallelFlowExecutorService parallelFlow;
-    private final PairGeneratorService pairGenerator;
+    private final ExecutableScenarioComposer scenarioComposer;
 
     public ExecutionSubscriber(ExecutionService executionService,
                                ParallelFlowExecutorService parallelFlow,
-                               PairGeneratorService pairGenerator) {
+                               ExecutableScenarioComposer scenarioComposer) {
         this.executionService = executionService;
         this.parallelFlow = parallelFlow;
-        this.pairGenerator = pairGenerator;
+        this.scenarioComposer = scenarioComposer;
     }
 
     @Override
     public void run() {
         while (true) {
-            List<Pair> pairs = pairGenerator.generatePairs();
-            pairs.forEach(pair ->
-                    parallelFlow.execute(() -> executionService.execute(pair.getScenario(), pair.getProxy())));
+            List<ExecutableScenario> executableScenarios = scenarioComposer.composeExecutableScenarios();
+            executableScenarios.forEach(executableScenario ->
+                    parallelFlow.execute(() -> executionService.execute(executableScenario.scenario(), executableScenario.proxy())));
             sleep();
         }
     }

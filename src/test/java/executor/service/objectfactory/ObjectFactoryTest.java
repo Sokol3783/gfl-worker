@@ -2,8 +2,8 @@ package executor.service.objectfactory;
 
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
-import executor.service.service.parallelflowexecutor.impls.subscribers.DefaultPairGeneratorService;
-import executor.service.service.parallelflowexecutor.impls.subscribers.PairGeneratorService;
+import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutableScenarioComposerImpl;
+import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutableScenarioComposer;
 import executor.service.service.scenarios.ScenarioExecutor;
 import executor.service.service.scenarios.ScenarioProvider;
 import executor.service.service.scenarios.ScenarioSourceListener;
@@ -79,10 +79,10 @@ class ObjectFactoryTest {
   }
   @Test
   public void createPairGeneratorService() {
-    PairGeneratorService defaultPairGeneratorService = factory.create(PairGeneratorService.class);
+    ExecutableScenarioComposer defaultExecutableScenarioComposer = factory.create(ExecutableScenarioComposer.class);
 
-    assertNotNull(defaultPairGeneratorService);
-    assertEquals(defaultPairGeneratorService.getClass(),DefaultPairGeneratorService.class);
+    assertNotNull(defaultExecutableScenarioComposer);
+    assertEquals(defaultExecutableScenarioComposer.getClass(), ExecutableScenarioComposerImpl.class);
     System.out.println();
   }
 }

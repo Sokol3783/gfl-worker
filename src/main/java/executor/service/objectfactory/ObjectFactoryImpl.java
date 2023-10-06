@@ -16,7 +16,7 @@ import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
-import executor.service.service.parallelflowexecutor.impls.subscribers.PairGeneratorService;
+import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutableScenarioComposer;
 import executor.service.service.stepexecution.StepExecution;
 import executor.service.service.stepexecution.StepExecutionClickCss;
 import executor.service.service.stepexecution.StepExecutionClickXpath;
@@ -122,7 +122,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) new ExecutionSubscriber(
                     create(ExecutionService.class),
                     create(ParallelFlowExecutorService.class),
-                    create(PairGeneratorService.class));
+                    create(ExecutableScenarioComposer.class));
         }
 
         //TODO вынести в статический класс который будет возвращать пропертю/проперти
