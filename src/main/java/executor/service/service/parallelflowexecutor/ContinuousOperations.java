@@ -8,6 +8,6 @@ public interface ContinuousOperations {
 
     List<ContinuousOperationNode> getContinuousOperations();
 
-    void startInterruptedJob();
+    void startInterruptedOperation();
 
 }

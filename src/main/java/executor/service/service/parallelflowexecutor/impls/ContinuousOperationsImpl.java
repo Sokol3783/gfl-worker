@@ -14,7 +14,7 @@ public record ContinuousOperationsImpl(List<ContinuousOperationNode> nodes, Thre
     }
 
     @Override
-    public void startInterruptedJob() {
+    public void startInterruptedOperation() {
         getContinuousOperations().stream().filter(s -> s.getThread() == null ||
                         !s.getThread().isAlive()).
                 forEach(s -> {
