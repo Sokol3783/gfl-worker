@@ -9,13 +9,13 @@ import java.util.concurrent.ThreadFactory;
 public record ContinuousOperationsImpl(List<ContinuousOperationNode> nodes, ThreadFactory factory) implements ContinuousOperations {
 
     @Override
-    public List<ContinuousOperationNode> getContinuousJobs() {
+    public List<ContinuousOperationNode> getContinuousOperations() {
         return List.copyOf(nodes);
     }
 
     @Override
     public void startInterruptedJob() {
-        getContinuousJobs().stream().filter(s -> s.getThread() == null ||
+        getContinuousOperations().stream().filter(s -> s.getThread() == null ||
                         !s.getThread().isAlive()).
                 forEach(s -> {
                             Thread thread = factory.newThread(s.getTask());

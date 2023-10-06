@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ContinuousOperations {
 
-    List<ContinuousOperationNode> getContinuousJobs();
+    List<ContinuousOperationNode> getContinuousOperations();
 
     void startInterruptedJob();
 
