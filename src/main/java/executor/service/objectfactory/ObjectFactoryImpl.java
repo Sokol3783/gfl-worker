@@ -7,8 +7,6 @@ import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
 import executor.service.model.service.ContinuousOperationNode;
-import executor.service.queue.ProxyQueue;
-import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.Operatable;
@@ -19,24 +17,15 @@ import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPubli
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutableScenarioComposer;
-import executor.service.service.stepexecution.StepExecution;
-import executor.service.service.stepexecution.StepExecutionClickCss;
-import executor.service.service.stepexecution.StepExecutionClickXpath;
-import executor.service.service.stepexecution.StepExecutionSleep;
-import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
-import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
-import executor.service.service.stepexecution.impl.StepExecutionFabricImpl;
-import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
+import executor.service.service.stepexecution.*;
+import executor.service.service.stepexecution.impl.*;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class ObjectFactoryImpl implements ObjectFactory {
 
