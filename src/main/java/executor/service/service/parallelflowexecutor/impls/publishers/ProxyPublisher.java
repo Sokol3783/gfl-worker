@@ -2,23 +2,23 @@ package executor.service.service.parallelflowexecutor.impls.publishers;
 
 
 import executor.service.queue.ProxyQueue;
-import executor.service.service.parallelflowexecutor.Task;
+import executor.service.service.parallelflowexecutor.Operatable;
 import executor.service.service.proxy.ProxySourcesClient;
 
 /**
  * The {@code ProxyPublisher} class is responsible for publishing proxy information to a proxy queue
  * by utilizing a provided {@link ProxySourcesClient}.
  * <p>
- * This class implements the {@link Task} interface, allowing it to be executed in a separate
+ * This class implements the {@link Operatable} interface, allowing it to be executed in a separate
  * thread or context.
  * <p>
  *
  * @author Yurii Kotsiuba
- * @see Task
+ * @see Operatable
  * @see ProxyQueue
  * @see ProxySourcesClient
  */
-public class ProxyPublisher implements Task {
+public class ProxyPublisher implements Operatable {
     private final ProxyQueue proxyQueue;
     private final ProxySourcesClient proxyClient;
 

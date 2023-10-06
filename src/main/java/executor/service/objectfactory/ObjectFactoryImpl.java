@@ -1,18 +1,20 @@
 package executor.service.objectfactory;
 
-import executor.service.config.properties.PropertiesConfig;
 import executor.service.model.configs.ThreadPoolConfig;
 import executor.service.model.configs.WebDriverConfig;
 import executor.service.model.proxy.ProxyCredentials;
 import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
+import executor.service.model.service.ContinuousOperationNode;
+import executor.service.queue.ProxyQueue;
+import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.parallelflowexecutor.Task;
-import executor.service.service.parallelflowexecutor.TaskKeeper;
+import executor.service.service.parallelflowexecutor.Operatable;
+import executor.service.service.parallelflowexecutor.ContinuousOperations;
 import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorServiceImpl;
-import executor.service.service.parallelflowexecutor.impls.TaskKeeperImpl;
+import executor.service.service.parallelflowexecutor.impls.ContinuousOperationsImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
@@ -23,7 +25,7 @@ import executor.service.service.stepexecution.StepExecutionClickXpath;
 import executor.service.service.stepexecution.StepExecutionSleep;
 import executor.service.service.stepexecution.impl.StepExecutionClickCssImpl;
 import executor.service.service.stepexecution.impl.StepExecutionClickXpathImpl;
-import executor.service.service.stepexecution.impl.StepExecutionFabricimpl;
+import executor.service.service.stepexecution.impl.StepExecutionFabricImpl;
 import executor.service.service.stepexecution.impl.StepExecutionSleepImpl;
 import org.reflections.Reflections;
 
@@ -36,14 +38,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-import static executor.service.config.properties.PropertiesConstants.*;
-
 public class ObjectFactoryImpl implements ObjectFactory {
 
     private static final Singleton INSTANCE = Singleton.INSTANCE;
-    //TODO переименовать/удалить/решить проблему обращения
-    private static final String PATH_TO_THREAD_PROPERTIES = "thread-pool.properties";
-    private static final String PATH_TO_WEBDRIVER_PROPERTIES = "web-driver.properties";
 
     @Override
     public <T> T create(Class<T> clazz) {
@@ -64,12 +61,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
 
-        //TODO подумать над уровнями проверок и возможностями
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
-            List<Class> list = List.of(ParallelFlowExecutorService.class, TaskKeeper.class, Task.class,
+            List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousOperations.class, Operatable.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
-                    executor.service.service.stepexecution.StepExecutionFabric.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
+                    StepExecutionFabric.class, StepExecutionFabricImpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
                     ExecutionSubscriber.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
@@ -78,7 +74,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createNotAutoConfigureClass(Class<T> clazz) throws InstantiationException, NoSuchFieldException, IllegalAccessException {
             if (clazz.isAssignableFrom(ParallelFlowExecutorService.class)) {
                 return createParallelFlowExecutorService();
-            } else if (clazz.isAssignableFrom(TaskKeeper.class)) {
+            } else if (clazz.isAssignableFrom(ContinuousOperations.class)) {
                 return createTaskKeeper();
             } else if (clazz.isAssignableFrom(ThreadPoolConfig.class)) {
                 return createThreadPoolConfig();
@@ -86,11 +82,10 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createExecutionSubscriber();
             } else if (clazz.isAssignableFrom(WebDriverConfig.class)) {
                 return createWebDriverConfig();
-            } else if (clazz.isAssignableFrom(executor.service.service.stepexecution.StepExecutionFabric.class)) {
+            } else if (clazz.isAssignableFrom(StepExecutionFabric.class)) {
                 return createStepExecutionFabrice();
             }
-
-            throw new InstantiationException("Not supported instantiation  for " + clazz.getName());
+            throw new InstantiationException("Prohibition on creating a new instance  " + clazz.getName());
         }
 
         private <T> T createStepExecutionFabrice() {
@@ -98,23 +93,15 @@ public class ObjectFactoryImpl implements ObjectFactory {
             stepExecutions.add(new StepExecutionClickCssImpl());
             stepExecutions.add(new StepExecutionClickXpathImpl());
             stepExecutions.add(new StepExecutionSleepImpl());
-            return (T) new StepExecutionFabricimpl(stepExecutions);
+            return (T) new StepExecutionFabricImpl(stepExecutions);
         }
 
-        //TODO вынести в статический класс который будет возвращать пропертю/проперти
         private <T> T createWebDriverConfig() {
-            WebDriverConfig driver = new WebDriverConfig();
-            try {
-                Properties properties = PropertiesConfig.getProperties(PATH_TO_WEBDRIVER_PROPERTIES);
-                driver.setWebDriverExecutable(properties.getProperty("webDriver-executable", "\\chromedriver.exe"));
-                driver.setUserAgent(properties.getProperty("user-agent","default"));
-                driver.setImplicitlyWait(Long.valueOf(properties.getProperty("implicitly-wait","5000")));
-                driver.setPageLoadTimeout(Long.valueOf(properties.getProperty("page-load-timeout","15000")));
-            } catch (Exception e) {
-                driver = new WebDriverConfig("\\chromedriver.exe","default",5000L, 15000L);
-            }
+            return (T) PropertyCreator.createWebDriverConfig();
+        }
 
-            return (T) driver;
+        private <T> T createThreadPoolConfig() {
+            return (T) PropertyCreator.getThreadPoolConfig();
         }
 
         //TODO Если будет решена проблема костыля удалить
@@ -125,31 +112,15 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     create(ExecutableScenarioComposer.class));
         }
 
-        //TODO вынести в статический класс который будет возвращать пропертю/проперти
-        private <T> T createThreadPoolConfig() {
-
-            ThreadPoolConfig pool = new ThreadPoolConfig();
-            try {
-                Properties properties = PropertiesConfig.getProperties(PATH_TO_THREAD_PROPERTIES);
-                pool.setCorePoolSize(Integer.parseInt(properties.getProperty(CORE_POOL_SIZE, "2")));
-                pool.setKeepAliveTime(Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME, "2")));
-                pool.setTimeUnit(TimeUnit.valueOf(properties.getProperty(TIMEUNIT,"MILLISECONDS")));
-            } catch (Exception e) {
-                pool =   new ThreadPoolConfig(2, 100L, TimeUnit.MILLISECONDS);
-            }
-
-            return (T) pool;
-        }
-
         private <T> T createTaskKeeper() {
-            List<TaskKeeper.TaskNode> nodes = new ArrayList<>();
-            TaskKeeper.TaskNode publisherTask = new TaskKeeper.TaskNode(create(ProxyPublisher.class));
+            List<ContinuousOperationNode> nodes = new ArrayList<>();
+            ContinuousOperationNode publisherTask = new ContinuousOperationNode(create(ProxyPublisher.class));
             nodes.add(publisherTask);
-            TaskKeeper.TaskNode scenarioTask = new TaskKeeper.TaskNode(create(ScenarioPublisher.class));
+            ContinuousOperationNode scenarioTask = new ContinuousOperationNode(create(ScenarioPublisher.class));
             nodes.add(scenarioTask);
-            TaskKeeper.TaskNode executor = new TaskKeeper.TaskNode(create(ExecutionSubscriber.class));
+            ContinuousOperationNode executor = new ContinuousOperationNode(create(ExecutionSubscriber.class));
             nodes.add(executor);
-            return (T) new TaskKeeperImpl(nodes);
+            return (T) new ContinuousOperationsImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
         }
 
         private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
@@ -158,9 +129,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     , config.getCorePoolSize(),
                     config.getKeepAliveTime(),
                     config.getTimeUnit(),
-                    Executors.defaultThreadFactory(),
+                    (ThreadFactory) context.put(ThreadFactory.class, Executors.defaultThreadFactory()),
                     new LinkedBlockingDeque<>(),
-                    create(TaskKeeper.class));
+                    create(ContinuousOperations.class));
             injectParallelFlowInCreateExecutionSubscriber(parallelFlowExecutorService);
             return (T) parallelFlowExecutorService;
         }
@@ -186,9 +157,9 @@ public class ObjectFactoryImpl implements ObjectFactory {
                             return createInstance(clazz);
                         }
                     } else {
-                        Constructor<T> constructor = findSuitableConstructor(clazz);
-                        if (constructor != null) {
-                            return createInstanceWithConstructor(constructor);
+                        Optional<Constructor<?>> suitableConstructor = findSuitableConstructor(clazz);
+                        if (suitableConstructor.isPresent()) {
+                            return createInstanceWithConstructor((Constructor<T>) suitableConstructor.get());
                         }
                     }
 
@@ -200,19 +171,18 @@ public class ObjectFactoryImpl implements ObjectFactory {
             }
         }
 
-        //TODO обернуть в оптишионал и добавить выброс исключения
-        private <T> Constructor<T> findSuitableConstructor(Class<T> clazz) throws NoSuchMethodException, InstantiationException {
+        private Optional<Constructor<?>> findSuitableConstructor(Class<?> clazz) throws NoSuchMethodException, InstantiationException {
             Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
             if (first.isEmpty()) {
-                return (Constructor<T>) findEmptyConstructor(clazz);
+                return findEmptyConstructor(clazz);
             }
-            return (Constructor<T>) first.get();
+            return first;
 
         }
-        //TODO обернуть в оптишионал и добавить выброс исключения
-        private <T> Constructor<?> findEmptyConstructor(Class<T> clazz){
 
-            return Arrays.stream(clazz.getDeclaredConstructors()).findFirst().get();
+        private <T> Optional<Constructor<?>> findEmptyConstructor(Class<T> clazz){
+
+            return Arrays.stream(clazz.getDeclaredConstructors()).findFirst();
 
         }
 
