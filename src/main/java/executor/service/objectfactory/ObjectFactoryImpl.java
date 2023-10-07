@@ -109,7 +109,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             nodes.add(scenarioTask);
             ContinuousOperationNode executor = new ContinuousOperationNode(create(ExecutionSubscriber.class));
             nodes.add(executor);
-            return (T) new ContinuousOperationsImpl(nodes, (ThreadFactory) context.get(ThreadFactory.class));
+            return (T) new ContinuousOperationsImpl(nodes);
         }
 
         private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {

@@ -16,68 +16,63 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ContinuousOperationsImplTest {
 
-    private static ThreadFactory factory;
-    private static ExecutorService executor;
-
     private static BlockingQueue<Runnable> queue;
 
     @Test
     void doNothingWhenEmpty() {
-        ContinuousOperations operations = new ContinuousOperationsImpl(new ArrayList<>(), factory);
+        ContinuousOperations operations = new ContinuousOperationsImpl(new ArrayList<>());
         assertTrue(operations.getContinuousOperations().isEmpty());
         ParallelFlowExecutorService service = getParallelFlow(operations);
         operations.startInterruptedOperation(service, queue);
-        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) executor;
+        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) service;
         assertEquals(0, poolExecutor.getActiveCount());
     }
 
     @Test
     void startWhenThreadNull() {
-        ContinuousOperations operations = new ContinuousOperationsImpl(List.of(getOperatableNodeWhileTrueOperation()), factory);
+        ContinuousOperations operations = new ContinuousOperationsImpl(List.of(getOperatableNodeWhileTrueOperation()));
         ParallelFlowExecutorService service = getParallelFlow(operations);
         operations.startInterruptedOperation(service, queue);
-        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) executor;
-        assertEquals(1, poolExecutor.getQueue().size());
+        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) service;
+        assertEquals(1, poolExecutor.getActiveCount());
     }
 
     @Test
     void startWhenThreadIsInterrupted() {
-        ContinuousOperations operations = new ContinuousOperationsImpl(List.of(getOperatableNodeThrowInterruptedException()), factory);
+        ContinuousOperations operations = new ContinuousOperationsImpl(List.of(getOperatableNodeThrowInterruptedException()));
         ParallelFlowExecutorService service = getParallelFlow(operations);
         operations.startInterruptedOperation(service, queue);
-        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) executor;
-        assertEquals(1, poolExecutor.getQueue().size());
+        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) service;
+        assertEquals(1, poolExecutor.getActiveCount());
     }
 
     @Test
     void startWhenThreadWhenFinished() {
-        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) executor;
-        ContinuousOperations operations = new ContinuousOperationsImpl(List.of(getOperatableNodeExecuteFiveTimes()), factory);
+        ContinuousOperations operations = new ContinuousOperationsImpl(List.of(getOperatableNodeExecuteFiveTimes()));
         ParallelFlowExecutorService service = getParallelFlow(operations);
+        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) service;
         operations.startInterruptedOperation(service, queue);
-        assertEquals(1, poolExecutor.getQueue().size());
+        assertEquals(1, poolExecutor.getActiveCount());
         setSleepUnitTime(6);
-        assertEquals(0, poolExecutor.getQueue().size());
+        assertEquals(0, poolExecutor.getActiveCount());
         operations.startInterruptedOperation(service, queue);
-        assertEquals(1, poolExecutor.getQueue().size());
+        assertEquals(1, poolExecutor.getActiveCount());
     }
 
     @BeforeEach
     void setUp() {
-        factory = Executors.defaultThreadFactory();
-        executor = Executors.newFixedThreadPool(2, factory);
         queue = new LinkedBlockingDeque<>();
     }
 
     private static ParallelFlowExecutorService getParallelFlow(ContinuousOperations continuousOperations) {
         return new ParallelFlowExecutorServiceImpl(2, 2,
                 100, TimeUnit.MILLISECONDS,
-                factory, queue,continuousOperations);
+                Executors.defaultThreadFactory(), queue,continuousOperations);
     }
 
     @AfterEach
     void tearDown() {
-        factory = null;
+        queue = null;
     }
 
     private ContinuousOperationNode getOperatableNodeExecuteFiveTimes() {
@@ -121,7 +116,7 @@ class ContinuousOperationsImplTest {
             public void run() {
                 while (true) {
                     try {
-                        TimeUnit.SECONDS.sleep(3);
+                        TimeUnit.SECONDS.sleep(10);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }

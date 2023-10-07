@@ -9,6 +9,6 @@ public interface ContinuousOperations {
 
     List<ContinuousOperationNode> getContinuousOperations();
 
-    void startInterruptedOperation(ParallelFlowExecutorService service, Queue<? extends Runnable> queue);
+    void startInterruptedOperation(ParallelFlowExecutorService service, Queue<Runnable> queue);
 
 }

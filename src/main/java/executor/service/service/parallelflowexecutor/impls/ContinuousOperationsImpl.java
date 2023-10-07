@@ -8,7 +8,14 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ThreadFactory;
 
-public record ContinuousOperationsImpl(List<ContinuousOperationNode> nodes, ThreadFactory factory) implements ContinuousOperations {
+public class ContinuousOperationsImpl implements ContinuousOperations {
+    private final  List<ContinuousOperationNode> nodes;
+
+    private boolean isActive;
+
+    public ContinuousOperationsImpl(List<ContinuousOperationNode> nodes) {
+        this.nodes = nodes;
+    }
 
     @Override
     public List<ContinuousOperationNode> getContinuousOperations() {
@@ -16,13 +23,15 @@ public record ContinuousOperationsImpl(List<ContinuousOperationNode> nodes, Thre
     }
 
     @Override
-    public void startInterruptedOperation(ParallelFlowExecutorService service, Queue<? extends Runnable> queue) {
+    public void startInterruptedOperation(ParallelFlowExecutorService service, Queue<Runnable> queue) {
 
-        List<ContinuousOperationNode> list = nodes.stream().filter(s -> queue.stream().noneMatch(q -> q.equals(s))).toList();
-        System.out.println("Non runned tasks " + list.size());
+        if (!isActive) {
+            isActive = true;
+            nodes.stream().filter( s -> queue.stream().noneMatch(q -> q.equals(s))).forEach(
+                    s -> service.execute(s.getTask()));
+            isActive = false;
+        }
 
-        nodes.stream().filter( s -> queue.stream().noneMatch(q -> q.equals(s))).forEach(
-                s -> service.execute(s.getTask()));
 
 
     }
