@@ -39,7 +39,7 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
     }
 
     private void keepAliveContinuousOperations() {
-        keeper.startInterruptedOperation();
+        keeper.startInterruptedOperation(this, super.getQueue());
     }
 
     @Override
