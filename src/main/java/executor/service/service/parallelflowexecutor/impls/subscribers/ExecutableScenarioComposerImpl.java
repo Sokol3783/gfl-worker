@@ -2,9 +2,9 @@ package executor.service.service.parallelflowexecutor.impls.subscribers;
 
 import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.scenario.Scenario;
+import executor.service.model.service.ExecutableScenario;
 import executor.service.queue.ProxyQueue;
 import executor.service.queue.ScenarioQueue;
-import executor.service.service.executionservice.ExecutionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class ExecutableScenarioComposerImpl implements ExecutableScenarioCompose
     }
 
     @Override
-    public List<ExecutableScenario> composeExecutableScenarios() {        
+    public List<ExecutableScenario> composeExecutableScenarios() {
         try {
             List<ProxyConfigHolder> proxies = proxyQueue.getAllProxy();
             List<Scenario> scenarios = scenarioQueue.getAllScenario();

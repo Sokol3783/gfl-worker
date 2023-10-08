@@ -1,5 +1,6 @@
 package executor.service.service.parallelflowexecutor.impls.subscribers;
 
+import executor.service.model.service.ExecutableScenario;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.Operatable;

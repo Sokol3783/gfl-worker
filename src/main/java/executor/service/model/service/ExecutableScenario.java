@@ -1,4 +1,4 @@
-package executor.service.service.parallelflowexecutor.impls.subscribers;
+package executor.service.model.service;
 
 import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.scenario.Scenario;
