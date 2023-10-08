@@ -2,11 +2,14 @@ package executor.service.objectfactory;
 
 import executor.service.model.configs.ThreadPoolConfig;
 import executor.service.model.configs.WebDriverConfig;
+import executor.service.model.proxy.ProxyConfigHolder;
 import executor.service.model.proxy.ProxyCredentials;
 import executor.service.model.proxy.ProxyNetworkConfig;
 import executor.service.model.scenario.Scenario;
 import executor.service.model.scenario.Step;
 import executor.service.model.service.ContinuousOperationNode;
+import executor.service.queue.ProxyQueue;
+import executor.service.queue.ScenarioQueue;
 import executor.service.service.executionservice.ExecutionService;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
 import executor.service.service.parallelflowexecutor.Operatable;
@@ -15,6 +18,7 @@ import executor.service.service.parallelflowexecutor.impls.ParallelFlowExecutorS
 import executor.service.service.parallelflowexecutor.impls.ContinuousOperationsImpl;
 import executor.service.service.parallelflowexecutor.impls.publishers.ProxyPublisher;
 import executor.service.service.parallelflowexecutor.impls.publishers.ScenarioPublisher;
+import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutableScenarioComposerImpl;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutionSubscriber;
 import executor.service.service.parallelflowexecutor.impls.subscribers.ExecutableScenarioComposer;
 import executor.service.service.stepexecution.*;
@@ -46,6 +50,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         @Override
         public <T> T create(Class<T> clazz) {
+            System.out.println(clazz.getSimpleName());
             return (T) context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
         }
 
@@ -73,8 +78,21 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createWebDriverConfig();
             } else if (clazz.isAssignableFrom(StepExecutionFabric.class)) {
                 return createStepExecutionFabrice();
+            } else if (clazz.isAssignableFrom(ExecutableScenarioComposerImpl.class)) {
+                return createExecutableScenarioComposerImpl();
             }
             throw new InstantiationException("Prohibition on creating a new instance  " + clazz.getName());
+        }
+
+        private <T> T createExecutableScenarioComposerImpl() {
+            return (T) new ExecutableScenarioComposerImpl(create(ProxyQueue.class),
+                    create(ScenarioQueue.class),
+                    getDefaultProxy());
+        }
+
+        //TODO set default proxy who want's to do it
+        private ProxyConfigHolder getDefaultProxy() {
+            return new ProxyConfigHolder();
         }
 
         private <T> T createStepExecutionFabrice() {
@@ -97,7 +115,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
         private <T> T createExecutionSubscriber() {
             return (T) new ExecutionSubscriber(
                     create(ExecutionService.class),
-                    create(ParallelFlowExecutorService.class),
+                    null,
                     create(ExecutableScenarioComposer.class));
         }
 
