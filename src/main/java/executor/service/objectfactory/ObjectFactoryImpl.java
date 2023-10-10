@@ -80,6 +80,8 @@ public class ObjectFactoryImpl implements ObjectFactory {
                 return createStepExecutionFabrice();
             } else if (clazz.isAssignableFrom(ExecutableScenarioComposerImpl.class)) {
                 return createExecutableScenarioComposerImpl();
+            } else if (clazz.isAssignableFrom(ProxyNetworkConfig.class)) {
+                return (T) getDefaultProxy();
             }
             throw new InstantiationException("Prohibition on creating a new instance  " + clazz.getName());
         }
