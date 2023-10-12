@@ -19,7 +19,7 @@ public class ScenarioQueue {
         scenarios.add(scenario);
     }
 
-    public Scenario getScenario() throws InterruptedException {
+    public Scenario getScenario(){
         return scenarios.poll();
     }
 
