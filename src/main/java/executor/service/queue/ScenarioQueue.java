@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class ScenarioQueue {
-    private BlockingQueue<Scenario> scenarios;
+    private final BlockingQueue<Scenario> scenarios;
 
     public ScenarioQueue() {
         this.scenarios = new LinkedBlockingDeque<>();

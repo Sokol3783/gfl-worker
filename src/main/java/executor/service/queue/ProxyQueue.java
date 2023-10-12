@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 //TODO подумать над тем стоит ли выделить общий интерфейс
 public class ProxyQueue {
-    private BlockingQueue<ProxyConfigHolder> proxies;
+    private final BlockingQueue<ProxyConfigHolder> proxies;
 
     public ProxyQueue() {
         this.proxies = new LinkedBlockingDeque<>();
