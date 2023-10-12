@@ -1,5 +1,6 @@
 package executor.service.objectfactory;
 
+import executor.service.App;
 import executor.service.model.configs.ThreadPoolConfig;
 import executor.service.model.configs.WebDriverConfig;
 import executor.service.model.proxy.ProxyConfigHolder;
@@ -45,7 +46,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
     private enum Singleton implements ObjectFactory {
         INSTANCE;
 
-        private final Reflections scanner = ClassScannerUtil.getClassScanner("executor.service");
+        private final Reflections scanner = ClassScannerUtil.getClassScanner(App.class.getPackageName());
         private final Map<Class, Object> context = new ConcurrentHashMap<>();
 
         @Override
@@ -92,7 +93,6 @@ public class ObjectFactoryImpl implements ObjectFactory {
                     getDefaultProxy());
         }
 
-        //TODO set default proxy who want's to do it
         private ProxyConfigHolder getDefaultProxy() {
             return new ProxyConfigHolder();
         }
@@ -105,15 +105,14 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) new StepExecutionFabricImpl(stepExecutions);
         }
 
-        private <T> T createWebDriverConfig() {
+        private <T> T createWebDriverConfig() throws InstantiationException {
             return (T) PropertyCreator.createWebDriverConfig();
         }
 
-        private <T> T createThreadPoolConfig() {
+        private <T> T createThreadPoolConfig() throws InstantiationException {
             return (T) PropertyCreator.getThreadPoolConfig();
         }
 
-        //TODO Если будет решена проблема костыля удалить
         private <T> T createExecutionSubscriber() {
             return (T) new ExecutionSubscriber(
                     create(ExecutionService.class),
@@ -145,13 +144,12 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) parallelFlowExecutorService;
         }
 
-        //TODO КОСТЫЛЬ
         private void injectParallelFlowInCreateExecutionSubscriber(ParallelFlowExecutorServiceImpl parallelFlowExecutorService) throws NoSuchFieldException, IllegalAccessException {
             ExecutionSubscriber subscriber = create(ExecutionSubscriber.class);
-
             Field field = subscriber.getClass().getDeclaredField("parallelFlow");
             field.setAccessible(true);
             field.set(subscriber, parallelFlowExecutorService);
+            field.setAccessible(false);
         }
 
         private <T> T createInstance(Class<T> clazz) {
@@ -181,32 +179,38 @@ public class ObjectFactoryImpl implements ObjectFactory {
         }
 
         private Optional<Constructor<?>> findSuitableConstructor(Class<?> clazz) throws NoSuchMethodException, InstantiationException {
-            Optional<Constructor<?>> first = Arrays.stream(clazz.getDeclaredConstructors()).filter(s -> s.getParameterCount() > 0).max(Comparator.comparing(Constructor::getParameterCount));
-            if (first.isEmpty()) {
+            Optional<Constructor<?>> maxConstructor = findMaxConstructor(clazz);
+            if (maxConstructor.isEmpty()) {
                 return findEmptyConstructor(clazz);
             }
-            return first;
+            return maxConstructor;
 
         }
 
+        private Optional<Constructor<?>> findMaxConstructor(Class<?> clazz) {
+            return Arrays.stream(clazz.getDeclaredConstructors())
+                    .max(Comparator.comparing(Constructor::getParameterCount));
+        }
+
         private <T> Optional<Constructor<?>> findEmptyConstructor(Class<T> clazz){
-
             return Arrays.stream(clazz.getDeclaredConstructors()).findFirst();
-
         }
 
         private <T> T createInstanceWithConstructor(Constructor<T> constructor) throws IllegalAccessException,
                 InvocationTargetException, InstantiationException {
             if (constructor.getParameterCount() > 0) {
-                Object[] params = new Object[constructor.getParameterCount()];
-                for (int i = 0; i < params.length; i++) {
-                    Class<?> paramType = constructor.getParameterTypes()[i];
-                    params[i] = create(paramType);
-                }
-                return constructor.newInstance(params);
-            } else {
-                return constructor.newInstance();
+                return constructor.newInstance(fillClassesInConstructor(constructor));
             }
+            return constructor.newInstance();
+        }
+
+        private <T> Object fillClassesInConstructor(Constructor constructor) {
+            Object[] params = new Object[constructor.getParameterCount()];
+            for (int i = 0; i < params.length; i++) {
+                Class<?> paramType = constructor.getParameterTypes()[i];
+                params[i] = create(paramType);
+            }
+            return params;
         }
     }
 }
