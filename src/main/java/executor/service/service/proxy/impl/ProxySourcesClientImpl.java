@@ -29,7 +29,7 @@ import java.util.List;
 public class ProxySourcesClientImpl implements ProxySourcesClient {
 
     private static final Logger log = LoggerFactory.getLogger(ProxySourcesClient.class);
-    private static final long DELAY = 1000;
+    private static final long DELAY = Long.parseLong(System.getProperty("source.listener.delay","1000"));
     private final ProxyProvider provider;
     private final ProxyValidator validator;
 
