@@ -14,36 +14,36 @@ import static executor.service.config.properties.PropertiesConstants.*;
 class PropertyCreator {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyCreator.class);
-    private static final String PATH_TO_THREAD_PROPERTIES = "thread-pool.properties";
-    private static final String PATH_TO_WEBDRIVER_PROPERTIES = "web-driver.properties";
+    private static final String PATH_TO_THREAD_PROPERTIES = System.getProperty("thread-pool.properties");
+    private static final String PATH_TO_WEBDRIVER_PROPERTIES = System.getProperty("web-driver.properties");
 
-    static ThreadPoolConfig getThreadPoolConfig() {
-        ThreadPoolConfig pool = new ThreadPoolConfig();
+    static ThreadPoolConfig getThreadPoolConfig()  throws InstantiationException {
         try {
+            ThreadPoolConfig pool = new ThreadPoolConfig();
             Properties properties = PropertiesConfig.getProperties(PATH_TO_THREAD_PROPERTIES);
             pool.setCorePoolSize(Integer.parseInt(properties.getProperty(CORE_POOL_SIZE, "2")));
             pool.setKeepAliveTime(Long.parseLong(properties.getProperty(KEEP_ALIVE_TIME, "2")));
             pool.setTimeUnit(TimeUnit.valueOf(properties.getProperty(TIMEUNIT,"MILLISECONDS")));
+            return pool;
         } catch (Exception e) {
             log.error(e.getMessage());
-            pool =   new ThreadPoolConfig(2, 100L, TimeUnit.MILLISECONDS);
+            throw new InstantiationException("Set the environment variable for the path of thread pool properties!");
         }
-        return pool;
     }
 
-    static WebDriverConfig createWebDriverConfig(){
-        WebDriverConfig driver = new WebDriverConfig();
+    static WebDriverConfig createWebDriverConfig() throws InstantiationException{
         try {
+            WebDriverConfig driver = new WebDriverConfig();
             Properties properties = PropertiesConfig.getProperties(PATH_TO_WEBDRIVER_PROPERTIES);
             driver.setWebDriverExecutable(properties.getProperty("webDriver-executable", "\\chromedriver.exe"));
             driver.setUserAgent(properties.getProperty("user-agent","default"));
             driver.setImplicitlyWait(Long.valueOf(properties.getProperty("implicitly-wait","5000")));
             driver.setPageLoadTimeout(Long.valueOf(properties.getProperty("page-load-timeout","15000")));
+            return driver;
         } catch (Exception e) {
             log.error(e.getMessage());
-            driver = new WebDriverConfig("\\chromedriver.exe","default",5000L, 15000L);
+            throw new InstantiationException("Set the environment variable for the path of thread pool properties!");
         }
-        return driver;
     }
 
 }
