@@ -19,7 +19,6 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
         this.keeper = keeper;
     }
 
-
     @Override
     public Future<?> submit(Runnable task) {
         keepAliveContinuousOperations();
@@ -51,5 +50,10 @@ public class ParallelFlowExecutorServiceImpl extends ThreadPoolExecutor implemen
     @Override
     public void setThreadFactory(ThreadFactory threadFactory) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void run() {
+        keepAliveContinuousOperations();
     }
 }
