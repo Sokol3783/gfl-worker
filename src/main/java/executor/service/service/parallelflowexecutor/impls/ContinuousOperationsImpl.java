@@ -32,7 +32,5 @@ public class ContinuousOperationsImpl implements ContinuousOperations {
             isActive = false;
         }
 
-
-
     }
 }
