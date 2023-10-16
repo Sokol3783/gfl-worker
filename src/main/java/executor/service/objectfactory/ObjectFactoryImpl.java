@@ -38,9 +38,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
     @Override
     public <T> T create(Class<T> clazz) {
-        synchronized (ObjectFactoryImpl.class){
-            return INSTANCE.create(clazz);
-        }
+        return INSTANCE.create(clazz);
     }
 
     private enum Singleton implements ObjectFactory {
@@ -51,17 +49,17 @@ public class ObjectFactoryImpl implements ObjectFactory {
 
         @Override
         public <T> T create(Class<T> clazz) {
-            System.out.println(clazz.getSimpleName());
             return (T) context.merge(clazz, createInstance(clazz), (oldKey, newKey) -> oldKey);
         }
 
 
         private <T> boolean isNotAutoconfigure(Class<T> clazz) {
-            List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousOperations.class, Operatable.class,
+            List<Class> list = List.of(ParallelFlowExecutorService.class, ContinuousOperations.class,
+                    Operatable.class, ExecutionSubscriber.class,
                     WebDriverConfig.class, Scenario.class, Step.class, ProxyCredentials.class,
                     ProxyNetworkConfig.class, ThreadPoolConfig.class,
-                    StepExecutionFabric.class, StepExecutionFabricImpl.class, StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class,
-                    ExecutionSubscriber.class);
+                    StepExecutionFabric.class, StepExecutionFabricImpl.class,
+                    StepExecutionClickCss.class,StepExecutionClickXpath.class, StepExecutionSleep.class);
             return list.stream().anyMatch(s -> s.equals(clazz));
 
         }
