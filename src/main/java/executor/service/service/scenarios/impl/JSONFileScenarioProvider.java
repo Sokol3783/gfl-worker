@@ -47,7 +47,7 @@ public class JSONFileScenarioProvider implements ScenarioProvider {
 
     private List<Scenario> parseScenariosFromJson(BufferedReader reader) {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(StepAction.class, new StepTypeAdapter<>()); //TODO это был костыль!
+        gsonBuilder.registerTypeAdapter(StepAction.class, new StepTypeAdapter<>());
         Gson gson = gsonBuilder.create();
         Type listType = new TypeToken<List<Scenario>>(){}.getType();
         return gson.fromJson(reader, listType);
