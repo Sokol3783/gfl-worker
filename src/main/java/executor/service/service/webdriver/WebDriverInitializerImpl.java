@@ -1,7 +1,6 @@
 package executor.service.service.webdriver;
 
 import com.google.common.base.Strings;
-import executor.service.config.properties.PropertiesConstants;
 import executor.service.model.configs.WebDriverConfig;
 import executor.service.model.proxy.ProxyConfigHolder;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +14,9 @@ import java.time.Duration;
 public class WebDriverInitializerImpl implements WebDriverInitializer {
 
     private final WebDriverConfig webDriverConfig;
+    private final String CHROME_VERSION = System.getProperty("CHROME_VERSION");
+
+
     public WebDriverInitializerImpl(WebDriverConfig webDriverConfig) {
         this.webDriverConfig = webDriverConfig;
     }
@@ -53,7 +55,7 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
         ChromeOptions chromeOptions = new ChromeOptions();
 
         chromeOptions.setBinary(System.getenv("CHROME_PATH"));
-        chromeOptions.setBrowserVersion(PropertiesConstants.CHROME_VERSION);
+        chromeOptions.setBrowserVersion(CHROME_VERSION);
         chromeOptions.addArguments("--remote-allow-origins=*");
         chromeOptions.addArguments("user-agent=" + webDriverConfig.getUserAgent());
         chromeOptions.setImplicitWaitTimeout(Duration.ofMillis(webDriverConfig.getImplicitlyWait()));
