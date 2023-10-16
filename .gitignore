@@ -40,3 +40,4 @@ build/
 
 ### logging ###
 *.log
+/dependency-reduced-pom.xml
