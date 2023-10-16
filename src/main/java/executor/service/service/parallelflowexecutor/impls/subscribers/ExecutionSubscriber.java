@@ -8,7 +8,7 @@ import executor.service.service.parallelflowexecutor.Operatable;
 import java.util.List;
 
 public class ExecutionSubscriber implements Operatable {
-    private static final long DELAY = 2000L;
+    private static final long DELAY = Long.parseLong(System.getProperty("EXECUTION_SUBSCRIBER", "2000"));
     private final ExecutionService executionService;
     private final ParallelFlowExecutorService parallelFlow;
     private final ExecutableScenarioComposer scenarioComposer;
