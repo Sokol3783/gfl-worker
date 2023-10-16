@@ -21,12 +21,12 @@ import org.openqa.selenium.WebDriver;
 public class ExecutionServiceImpl implements ExecutionService {
 
     private final ScenarioExecutor scenarioExecutor;
-    private final WebDriverInitializer initializer;
+    private final WebDriverInitializer webDriverInitializer;
 
     public ExecutionServiceImpl(ScenarioExecutor scenarioExecutor,
-                                WebDriverInitializer initializer) {
+                                WebDriverInitializer webDriverInitializer) {
         this.scenarioExecutor = scenarioExecutor;
-        this.initializer = initializer;
+        this.webDriverInitializer = webDriverInitializer;
     }
 
     /**
@@ -34,24 +34,11 @@ public class ExecutionServiceImpl implements ExecutionService {
      * provided {@link ProxyConfigHolder}.
      *
      * @param scenario the scenario
-     * @param proxy    the proxy
+     * @param holder    the proxy
      */
     @Override
-    public void execute(Scenario scenario, ProxyConfigHolder proxy) {
-        WebDriver webDriver = getWebDriver(proxy);
-
-        scenarioExecutor.execute(scenario, webDriver);
+    public void execute(Scenario scenario, ProxyConfigHolder holder) {
+        scenarioExecutor.execute(scenario, webDriverInitializer.getInstance(holder));
     }
 
-    /**
-     * Retrieves a {@link WebDriver} instance using the provided
-     * {@link ProxyConfigHolder}.
-     *
-     * @param proxyConfigHolder The {@link ProxyConfigHolder} entity containing
-     *                          proxy configuration information.
-     * @return The initialized {@link WebDriver} instance.
-     */
-    private WebDriver getWebDriver(ProxyConfigHolder proxyConfigHolder) {
-        return initializer.getInstance(proxyConfigHolder);
-    }
 }
