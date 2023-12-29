@@ -3,7 +3,6 @@ package executor.service;
 import executor.service.objectfactory.ObjectFactory;
 import executor.service.objectfactory.ObjectFactoryImpl;
 import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService;
-import executor.service.service.scenarios.ScenarioSourceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
