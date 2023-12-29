@@ -77,6 +77,7 @@ class ObjectFactoryTest {
 
     System.out.println();
   }
+
   @Test
   public void createPairGeneratorService() {
     ExecutableScenarioComposer defaultExecutableScenarioComposer = factory.create(ExecutableScenarioComposer.class);

@@ -9,7 +9,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 
-//TODO дописать логирование
 public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
 
     @Override
