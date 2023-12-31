@@ -6,7 +6,6 @@ import executor.service.service.parallelflowexecutor.ParallelFlowExecutorService
 
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ThreadFactory;
 
 public class ContinuousOperationsImpl implements ContinuousOperations {
     private final  List<ContinuousOperationNode> nodes;

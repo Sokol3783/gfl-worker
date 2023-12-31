@@ -5,6 +5,9 @@ import org.reflections.Reflections;
 
 class ClassScannerUtil {
 
+  private ClassScannerUtil() {
+  }
+
   private static Reflections CLASS_SCANNER = new Reflections(App.class.getPackageName());
 
   public static Reflections getClassScanner(String path) {

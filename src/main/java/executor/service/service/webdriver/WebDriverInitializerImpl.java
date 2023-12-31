@@ -8,13 +8,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Duration;
 
 
 public class WebDriverInitializerImpl implements WebDriverInitializer {
 
     private final WebDriverConfig webDriverConfig;
-    private final String CHROME_VERSION = System.getProperty("CHROME_VERSION");
+    private static final String CHROME_VERSION = System.getProperty("CHROME_VERSION");
 
 
     public WebDriverInitializerImpl(WebDriverConfig webDriverConfig) {
@@ -23,14 +25,13 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
 
     @Override
     public WebDriver getInstance(ProxyConfigHolder proxyConfigHolder) {
-        //will fall if ProxyNetworkConfig or ProxyCredentials are themselves null
+
         String host = proxyConfigHolder.getProxyNetworkConfig().getHostname();
         Integer port = proxyConfigHolder.getProxyNetworkConfig().getPort();
         String username = proxyConfigHolder.getProxyCredentials().getUsername();
         String password = proxyConfigHolder.getProxyCredentials().getPassword();
-        File proxyPlugin = null;
         ChromeOptions options = configureChromeOptions(webDriverConfig);
-
+        File proxyPlugin = new File("");
         if (!Strings.isNullOrEmpty(host)) {
             if (!Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password)) {
                 proxyPlugin = ChromeProxyPlugin.generate(host, port, username, password);
@@ -41,13 +42,13 @@ public class WebDriverInitializerImpl implements WebDriverInitializer {
         }
 
         ChromeDriver driver = new ChromeDriver();
-        if (proxyPlugin != null) {
-            boolean delete = proxyPlugin.delete();
-            if (!delete){
-                System.out.println(proxyPlugin.getName() + " wasn't delete!");
+        if (proxyPlugin.exists() && proxyPlugin.isFile()) {
+            try {
+                Files.delete(proxyPlugin.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
-
         return driver;
     }
 

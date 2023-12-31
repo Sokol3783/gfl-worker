@@ -1,8 +1,9 @@
 package executor.service.service.webdriver;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -36,15 +37,17 @@ public class ChromeProxyPlugin {
 
     public static File generate(String host, int port, String username, String password) {
         String backgroundJs = generateBackgroundJs(host, port, username, password);
-
+        Path zip;
         try {
-            File zipFile = new File(generateRandomName());
-            try (FileOutputStream fos = new FileOutputStream(zipFile);
-                 ZipOutputStream zipOS = new ZipOutputStream(fos)) {
+            zip = Files.createTempFile(null, "zip");
+            try(
+                 ZipOutputStream zipOS = new ZipOutputStream(Files.newOutputStream(zip))) {
                 writeToZipFile(zipOS, "manifest.json", MANIFEST_JSON);
                 writeToZipFile(zipOS, "background.js", backgroundJs);
+                return zip.toFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            return zipFile;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -84,7 +87,7 @@ public class ChromeProxyPlugin {
     }
 
     public static String generateRandomName() {
-        return "proxy_auth_plugin" +  RANDOM.nextInt() * 100000000 + ".zip";
+        return "proxy_auth_plugin" +  RANDOM.nextInt() * 100000000;
     }
 
     private static void writeToZipFile(ZipOutputStream zipStream, String entryName, String content) throws IOException {
