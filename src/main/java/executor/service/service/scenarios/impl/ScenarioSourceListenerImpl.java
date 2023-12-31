@@ -28,7 +28,7 @@ public class ScenarioSourceListenerImpl implements ScenarioSourceListener {
     private static final long DELAY = Long.parseLong(System.getProperty("source.listener.delay","1000"));
     private final ScenarioProvider provider;
 
-    private static final Logger log = LoggerFactory.getLogger(ScenarioSourceListener.class);
+    private static final Logger log = LoggerFactory.getLogger(ScenarioSourceListenerImpl.class);
 
     /**
      * Constructs a new {@code ScenarioSourceListenerImpl} with the specified scenario provider.
