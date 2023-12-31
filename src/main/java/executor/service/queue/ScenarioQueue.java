@@ -6,13 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class ScenarioQueue {
     private final BlockingQueue<Scenario> scenarios;
 
     public ScenarioQueue() {
-        this.scenarios = new LinkedBlockingDeque<>();
+        this.scenarios = new ArrayBlockingQueue<>(5000, true);
     }
 
     public void addScenario(Scenario scenario) {
