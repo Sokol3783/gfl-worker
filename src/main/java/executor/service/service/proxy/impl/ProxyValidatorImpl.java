@@ -16,8 +16,8 @@ import org.apache.http.impl.client.HttpClients;
 
 
 public class ProxyValidatorImpl implements ProxyValidator {
-    private final static String TARGET_URL = "http://www.google.com/";
-    private final static int CONNECTION_TIMEOUT = 10000;
+    private static final String TARGET_URL = "http://www.google.com/";
+    private static final int CONNECTION_TIMEOUT = 10000;
 
     public Boolean isValid(ProxyConfigHolder proxyConfigHolder) {
         int responseCode = 0;
