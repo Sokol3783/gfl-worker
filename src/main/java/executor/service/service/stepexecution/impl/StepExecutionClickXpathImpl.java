@@ -27,7 +27,7 @@ public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
             WebElement element = webDriver.findElement(By.xpath(step.getValue()));
             element.click();
         } catch (NoSuchElementException e ) {
-            System.out.println("this is error" + e.getMessage());
+            System.out.println("this is error" + e.getMessage()); //TODO add logger
         }
     }
 }
