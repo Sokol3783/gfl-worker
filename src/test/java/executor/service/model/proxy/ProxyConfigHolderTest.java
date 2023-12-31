@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProxyConfigHolderTest {
+class ProxyConfigHolderTest {
 
     private static final String USERNAME = "user";
     private static final String USERNAME_ANOTHER = "user1";
@@ -24,7 +24,7 @@ public class ProxyConfigHolderTest {
     private ProxyConfigHolder proxyConfigHolder2;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         proxyCredentials1 = new ProxyCredentials(USERNAME, PASSWORD);
         proxyCredentials2 = new ProxyCredentials(USERNAME_ANOTHER, PASSWORD);
         proxyNetworkConfig1 = new ProxyNetworkConfig(LOCALHOST, PORT);
@@ -34,7 +34,7 @@ public class ProxyConfigHolderTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         proxyCredentials1 = null;
         proxyCredentials2 = null;
         proxyNetworkConfig1 = null;
@@ -44,7 +44,7 @@ public class ProxyConfigHolderTest {
     }
 
     @Test
-    public void testNoArgsConstructor() {
+    void testNoArgsConstructor() {
         ProxyConfigHolder proxyConfigHolder = new ProxyConfigHolder();
 
         assertNull(proxyConfigHolder.getProxyCredentials());
@@ -52,25 +52,25 @@ public class ProxyConfigHolderTest {
     }
 
     @Test
-    public void testAllArgsConstructor() {
+    void testAllArgsConstructor() {
         assertEquals(proxyConfigHolder1.getProxyCredentials(), proxyCredentials1);
         assertEquals(proxyConfigHolder1.getProxyNetworkConfig(), proxyNetworkConfig1);
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         proxyConfigHolder2 = new ProxyConfigHolder(proxyNetworkConfig1, proxyCredentials1);
 
         assertEquals(proxyConfigHolder1, proxyConfigHolder2);
     }
 
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
         assertNotEquals(proxyConfigHolder1, proxyConfigHolder2);
     }
 
     @Test
-    public void testHashCodeAndSetters() {
+    void testHashCodeAndSetters() {
         //reassign differing params from proxyConfigHolder1 to proxyNetworkConfig2
         proxyConfigHolder2.setProxyCredentials(proxyConfigHolder1.getProxyCredentials());
         proxyConfigHolder2.setProxyNetworkConfig(proxyConfigHolder1.getProxyNetworkConfig());
@@ -79,7 +79,7 @@ public class ProxyConfigHolderTest {
     }
 
     @Test
-    public void testHashCodeNotMatch() {
+    void testHashCodeNotMatch() {
         assertNotEquals(proxyConfigHolder1.hashCode(), proxyConfigHolder2.hashCode());
     }
 }

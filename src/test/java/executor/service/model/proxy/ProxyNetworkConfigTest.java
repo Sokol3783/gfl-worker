@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProxyNetworkConfigTest {
+class ProxyNetworkConfigTest {
     private static final String HOSTNAME = "example.com";
     private static final String HOSTNAME_ANOTHER = "example.org";
     private static final Integer PORT = 8080;
@@ -16,21 +16,21 @@ public class ProxyNetworkConfigTest {
     private ProxyNetworkConfig config3;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         config1 = new ProxyNetworkConfig(HOSTNAME, PORT);
         config2 = new ProxyNetworkConfig(HOSTNAME, PORT);
         config3 = new ProxyNetworkConfig(HOSTNAME_ANOTHER, PORT_ANOTHER);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         config1 = null;
         config2 = null;
         config3 = null;
     }
 
     @Test
-    public void testEmptyConstructor() {
+    void testEmptyConstructor() {
         ProxyNetworkConfig config = new ProxyNetworkConfig();
 
         assertNull(config.getHostname());
@@ -38,7 +38,7 @@ public class ProxyNetworkConfigTest {
     }
 
     @Test
-    public void testParameterizedConstructorAndSetters() {
+    void testParameterizedConstructorAndSetters() {
         ProxyNetworkConfig config = new ProxyNetworkConfig();
         config.setHostname(HOSTNAME);
         config.setPort(PORT);
@@ -47,22 +47,22 @@ public class ProxyNetworkConfigTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertEquals(config1, config2);
     }
 
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
         assertNotEquals(config1, config3);
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(config1.hashCode(), config2.hashCode());
     }
 
     @Test
-    public void testHashCodeNotMatch() {
+    void testHashCodeNotMatch() {
         assertNotEquals(config1.hashCode(), config3.hashCode());
     }
 }

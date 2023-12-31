@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
-public class ProxyPublisherTest {
+class ProxyPublisherTest {
     private ProxyQueue proxyQueue;
     private ProxySourcesClient proxyClient;
     private ProxyPublisher proxyPublisher;

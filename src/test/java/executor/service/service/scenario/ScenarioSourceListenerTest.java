@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-public class ScenarioSourceListenerTest {
+class ScenarioSourceListenerTest {
 
     private ScenarioSourceListenerImpl listener;
 
@@ -28,14 +28,14 @@ public class ScenarioSourceListenerTest {
     private ScenarioHandler handler;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         provider = mock(ScenarioProvider.class);
         handler = mock(ScenarioHandler.class);
         listener = new ScenarioSourceListenerImpl(provider);
     }
 
     @Test
-    public void testExecute_numberOfTimes() {
+    void testExecute_numberOfTimes() {
         int maxIterations = 5;
         TerminatorListener terminator = new TestTerminator(maxIterations);
 
@@ -48,7 +48,7 @@ public class ScenarioSourceListenerTest {
     }
 
     @Test
-    public void testExecute_throwException_whenNullList() {
+    void testExecute_throwException_whenNullList() {
         given(provider.readScenarios()).willReturn(null);
 
         assertThrows(IllegalArgumentException.class, ()-> listener.execute(handler, () -> false));
@@ -56,7 +56,7 @@ public class ScenarioSourceListenerTest {
     }
 
     @Test
-    public void testExecute_throwException_whenEmptyList() {
+    void testExecute_throwException_whenEmptyList() {
         List<Scenario> emptyScenarioList = new ArrayList<>();
 
         given(provider.readScenarios()).willReturn(emptyScenarioList);

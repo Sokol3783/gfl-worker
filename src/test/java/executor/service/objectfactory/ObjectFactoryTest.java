@@ -22,7 +22,7 @@ class ObjectFactoryTest {
   private static final ObjectFactory factory = new ObjectFactoryImpl();
 
   @Test
-  public void isSingleton() {
+  void isSingleton() {
 
     StepExecutionSleep stepExecutionSleep = factory.create(StepExecutionSleep.class);
     StepExecutionSleep stepExecutionSleep2 = factory.create(StepExecutionSleep.class);
@@ -39,7 +39,7 @@ class ObjectFactoryTest {
   }
 
   @Test
-  public void createInterfaceWithoutDI() {
+  void createInterfaceWithoutDI() {
 
     StepExecutionSleep stepExecutionSleep = factory.create(StepExecutionSleep.class);
 
@@ -50,7 +50,7 @@ class ObjectFactoryTest {
   }
 
   @Test
-  public void createScenarioSourceListenerWithDI() {
+  void createScenarioSourceListenerWithDI() {
 
     ScenarioSourceListener service = factory.create(ScenarioSourceListener.class);
 
@@ -69,7 +69,7 @@ class ObjectFactoryTest {
   }
 
   @Test
-  public void createParallelFlowExecutorServiceWithDI() {
+  void createParallelFlowExecutorServiceWithDI() {
     ParallelFlowExecutorService service = factory.create(ParallelFlowExecutorService.class);
 
     assertNotNull(service);
@@ -79,7 +79,7 @@ class ObjectFactoryTest {
   }
 
   @Test
-  public void createPairGeneratorService() {
+  void createPairGeneratorService() {
     ExecutableScenarioComposer defaultExecutableScenarioComposer = factory.create(ExecutableScenarioComposer.class);
 
     assertNotNull(defaultExecutableScenarioComposer);

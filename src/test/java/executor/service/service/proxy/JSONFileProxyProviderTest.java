@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JSONFileProxyProviderTest {
+class JSONFileProxyProviderTest {
 
     private static final int EXPECTED_LIST_SIZE = 2;
     private ProxyProvider provider;

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class StepTest {
+ class StepTest {
 
     private static final String DEFAULT_ACTION = StepAction.SLEEP.getName();
     private static final String DEFAULT_VALUE = "Default value";
@@ -12,21 +12,21 @@ public class StepTest {
     private static final String ANOTHER_VALUE = "Another value";
 
     @Test
-    public void testNoArgsConstructor() {
+     void testNoArgsConstructor() {
         Step step = new Step();
 
         assertNotNull(step);
     }
 
     @Test
-    public void testAllArgsConstructor() {
+     void testAllArgsConstructor() {
         Step step = prepareStep();
 
         assertNotNull(step);
     }
 
     @Test
-    public void testSetters() {
+     void testSetters() {
         Step step = new Step();
 
         step.setAction(StepAction.valueOf(DEFAULT_ACTION));
@@ -38,7 +38,7 @@ public class StepTest {
     }
 
     @Test
-    public void testSameObjectsEquals() {
+     void testSameObjectsEquals() {
         Step step = prepareStep();
         Step sameStep = prepareStep();
 
@@ -46,7 +46,7 @@ public class StepTest {
     }
 
     @Test
-    public void testDifferentObjectsNotEquals() {
+     void testDifferentObjectsNotEquals() {
         Step step = prepareStep();
         Step anotherStep = prepareAnotherStep();
 
@@ -54,7 +54,7 @@ public class StepTest {
     }
 
     @Test
-    public void testSameObjectsHashCode() {
+     void testSameObjectsHashCode() {
         Step step = prepareStep();
         Step sameStep = prepareStep();
 
@@ -62,7 +62,7 @@ public class StepTest {
     }
 
     @Test
-    public void testDifferentObjectsHashCode() {
+     void testDifferentObjectsHashCode() {
         Step step = prepareStep();
         Step anotherStep = prepareAnotherStep();
 
