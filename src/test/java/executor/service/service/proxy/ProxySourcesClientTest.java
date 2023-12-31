@@ -19,7 +19,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-public class ProxySourcesClientTest {
+class ProxySourcesClientTest {
 
     private ProxySourcesClientImpl client;
 
@@ -30,7 +30,7 @@ public class ProxySourcesClientTest {
     private ProxyValidator validator;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         provider = mock(ProxyProvider.class);
         handler = mock(ProxyHandler.class);
         validator = mock(ProxyValidator.class);
@@ -38,7 +38,7 @@ public class ProxySourcesClientTest {
     }
 
     @Test
-    public void testExecute_numberOfTimes() {
+    void testExecute_numberOfTimes() {
         int maxIterations = 5;
         TerminatorListener terminator = new TestTerminator(maxIterations);
 
@@ -52,7 +52,7 @@ public class ProxySourcesClientTest {
     }
 
     @Test
-    public void testExecute_notValidProxies() {
+    void testExecute_notValidProxies() {
         int maxIterations = 5;
         TerminatorListener terminator = new TestTerminator(maxIterations);
 
@@ -66,7 +66,7 @@ public class ProxySourcesClientTest {
     }
 
     @Test
-    public void testExecute_throwException_whenNullList() {
+    void testExecute_throwException_whenNullList() {
         given(provider.readProxy()).willReturn(null);
 
         assertThrows(IllegalArgumentException.class, ()-> client.execute(handler, () -> false));
@@ -74,7 +74,7 @@ public class ProxySourcesClientTest {
     }
 
     @Test
-    public void testExecute_throwException_whenEmptyList() {
+    void testExecute_throwException_whenEmptyList() {
         List<ProxyConfigHolder> emptyProxyList = new ArrayList<>();
 
         given(provider.readProxy()).willReturn(emptyProxyList);

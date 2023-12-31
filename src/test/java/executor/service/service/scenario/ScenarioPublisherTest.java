@@ -12,7 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-public class ScenarioPublisherTest {
+class ScenarioPublisherTest {
     private ScenarioQueue scenarioQueue;
     private ScenarioSourceListener scenarioListener;
     private ScenarioPublisher scenarioPublisher;

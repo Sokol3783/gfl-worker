@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ThreadPoolConfigTest {
+ class ThreadPoolConfigTest {
 
     private ThreadPoolConfig config1;
     private ThreadPoolConfig config2;
@@ -14,7 +14,7 @@ public class ThreadPoolConfigTest {
     private ThreadPoolConfig configNull;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         config1 = new ThreadPoolConfig();
         config2 = new ThreadPoolConfig();
         config3 = new ThreadPoolConfig();
@@ -22,28 +22,28 @@ public class ThreadPoolConfigTest {
     }
 
     @AfterEach
-    public void tearDown() {
+     void tearDown() {
         config1 = null;
         config2 = null;
         config3 = null;
     }
 
     @Test
-    public void reflexiveTest() {
+     void reflexiveTest() {
         assertNotNull(config1);
-        assertEquals(config1, config1);
+        assertEquals(config1, config1); //TODO
         assertNotEquals(config1, configNull);
     }
 
     @Test
-    public void symmetricTest() {
+     void symmetricTest() {
         assertNotNull(config1);
         assertNotNull(config2);
         assertEquals(config1.equals(config2),config2.equals(config1));
     }
 
     @Test
-    public void transitiveTest() {
+     void transitiveTest() {
         assertNotNull(config1);
         assertNotNull(config2);
         assertNotNull(config3);
@@ -51,20 +51,20 @@ public class ThreadPoolConfigTest {
     }
 
     @Test
-    public void equalsWithNull() {
+     void equalsWithNull() {
         assertNotNull(config1);
         assertNotEquals(null, config1);
     }
 
     @Test
-    public void emptyConstructorTest() {
+     void emptyConstructorTest() {
         ThreadPoolConfig emptyConfig = new ThreadPoolConfig();
 
         assertNotNull(emptyConfig);
     }
 
     @Test
-    public void hashCodeTest() {
+     void hashCodeTest() {
         config1.setCorePoolSize(10);
         config1.setKeepAliveTime(100L);
         config2.setCorePoolSize(10);
@@ -74,7 +74,7 @@ public class ThreadPoolConfigTest {
     }
 
     @Test
-    public void allArgsConstructorTest() {
+     void allArgsConstructorTest() {
         config1 = new ThreadPoolConfig(10,100L);
         config2 = new ThreadPoolConfig(10,100L);
 
@@ -82,7 +82,7 @@ public class ThreadPoolConfigTest {
     }
 
     @Test
-    public void setTest() {
+     void setTest() {
         config1.setCorePoolSize(10);
         config1.setKeepAliveTime(100L);
 
@@ -91,7 +91,7 @@ public class ThreadPoolConfigTest {
     }
 
     @Test
-    public void getTest() {
+     void getTest() {
         config1 = new ThreadPoolConfig(10,100L);
 
         assertEquals(10, (int) config1.getCorePoolSize());

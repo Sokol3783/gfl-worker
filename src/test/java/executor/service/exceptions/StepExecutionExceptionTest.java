@@ -32,28 +32,28 @@ class StepExecutionExceptionTest {
     }
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         stepExecutionException = new StepExecutionException();
         assertNull(stepExecutionException.getMessage());
         assertNull(stepExecutionException.getCause());
     }
 
     @Test
-    public void testMessageConstructor() {
+    void testMessageConstructor() {
         stepExecutionException = new StepExecutionException(TEST_MESSAGE);
         assertEquals(TEST_MESSAGE, stepExecutionException.getMessage());
         assertNull(stepExecutionException.getCause());
     }
 
     @Test
-    public void testMessageAndCauseConstructor() {
+    void testMessageAndCauseConstructor() {
         stepExecutionException = new StepExecutionException(TEST_MESSAGE, TEST_CAUSE);
         assertEquals(TEST_MESSAGE, stepExecutionException.getMessage());
         assertEquals(TEST_CAUSE, stepExecutionException.getCause());
     }
 
     @Test
-    public void testCauseConstructor() {
+    void testCauseConstructor() {
         stepExecutionException = new StepExecutionException(TEST_CAUSE);
         assertEquals(TEST_CAUSE, stepExecutionException.getCause());
     }

@@ -28,12 +28,12 @@ import static org.mockito.Mockito.*;
  * @see StepExecutionFabric
  * @see Scenario
  */
-public class ScenarioExecutorImplTest {
+class ScenarioExecutorImplTest {
 
     private StepExecutionFabric stepExecutionFabric;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.stepExecutionFabric = mock(StepExecutionFabric.class);
     }
 
@@ -43,7 +43,7 @@ public class ScenarioExecutorImplTest {
     }
 
     @Test
-    public void testWorkMethodExecute() {
+    void testWorkMethodExecute() {
         Scenario scenario = getScenario();
         WebDriver webDriver = mock(WebDriver.class);
         StepExecution stepExecution = mock(StepExecution.class);

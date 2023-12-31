@@ -7,28 +7,28 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class WebDriverConfigTest {
+class WebDriverConfigTest {
 
     private WebDriverConfig config1;
     private WebDriverConfig config2;
     private WebDriverConfig config3;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         config1 = new WebDriverConfig("driver.exe", "Chrome", 5000L, 2000L);
         config2 = new WebDriverConfig("driver.exe", "Chrome", 5000L, 2000L);
         config3 = new WebDriverConfig("geckodriver.exe", "Firefox", 3000L, 1000L);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         config1 = null;
         config2 = null;
         config3 = null;
     }
 
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         config1.setWebDriverExecutable("chromedriver.exe");
         config1.setUserAgent("Chrome");
         config1.setPageLoadTimeout(6000L);
@@ -41,25 +41,25 @@ public class WebDriverConfigTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         assertEquals(config1, config1);
         assertEquals(config1, config2);
         assertEquals(config2, config1);
     }
 
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
         assertNotEquals(config1, config3);
         assertNotEquals(config2, config3);
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         assertEquals(config1.hashCode(), config2.hashCode());
     }
 
     @Test
-    public void testHashCodeNotMatch() {
+    void testHashCodeNotMatch() {
         assertNotEquals(config1.hashCode(), config3.hashCode());
         assertNotEquals(config2.hashCode(), config3.hashCode());
     }

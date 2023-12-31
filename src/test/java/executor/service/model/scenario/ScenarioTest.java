@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class ScenarioTest {
+class ScenarioTest {
 
     private static final String NAME = "Test Scenario";
     private static final String NAME_ANOTHER = "Scenario 1";
@@ -21,7 +21,7 @@ public class ScenarioTest {
     private List<Step> steps3;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         steps1 = new ArrayList<>();
         steps1.add(new Step(StepAction.SLEEP, "5000:15000"));
         steps1.add(new Step(StepAction.CLICK_CSS, "body > ul > li:nth-child(1) > a"));
@@ -36,14 +36,14 @@ public class ScenarioTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         steps1 = null;
         steps2 = null;
         steps3 = null;
     }
 
     @Test
-    public void testConstructorWithoutArgsAndSettersAndGetters() {
+    void testConstructorWithoutArgsAndSettersAndGetters() {
         Scenario scenario = new Scenario();
         scenario.setName(NAME);
         scenario.setSite(SITE);
@@ -55,7 +55,7 @@ public class ScenarioTest {
     }
 
     @Test
-    public void testConstructorWithArgsAndGetters() {
+    void testConstructorWithArgsAndGetters() {
         Scenario scenario = new Scenario(NAME, SITE, steps1);
 
         assertEquals(NAME, scenario.getName());
@@ -64,7 +64,7 @@ public class ScenarioTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
         Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
         Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps2);
 
@@ -72,7 +72,7 @@ public class ScenarioTest {
     }
 
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
         Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
         Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps3);
 
@@ -80,7 +80,7 @@ public class ScenarioTest {
     }
 
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
         Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps2);
 
@@ -88,7 +88,7 @@ public class ScenarioTest {
     }
 
     @Test
-    public void testHashCodeNotMatch() {
+    void testHashCodeNotMatch() {
         Scenario scenario1 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps1);
         Scenario scenario2 = new Scenario(NAME_ANOTHER, SITE_ANOTHER, steps3);
 

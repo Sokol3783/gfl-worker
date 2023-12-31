@@ -26,7 +26,7 @@ public class StepExecutionClickCssImpl implements StepExecutionClickCss {
             WebElement element = webDriver.findElement(By.cssSelector(step.getValue()));
             element.click();
         } catch (NoSuchElementException e) {
-            System.out.println("this is error" + e.getMessage());
+            System.out.println("this is error" + e.getMessage()); //TODO logger
         }
 
     }

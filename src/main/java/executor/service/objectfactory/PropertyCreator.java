@@ -18,6 +18,9 @@ class PropertyCreator {
     private static final String PATH_TO_THREAD_PROPERTIES = System.getProperty("thread-pool.properties");
     private static final String PATH_TO_WEBDRIVER_PROPERTIES = System.getProperty("web-driver.properties");
 
+    private PropertyCreator() {
+    }
+
     static ThreadPoolConfig getThreadPoolConfig()  throws InstantiationException {
         try {
             ThreadPoolConfig pool = new ThreadPoolConfig();

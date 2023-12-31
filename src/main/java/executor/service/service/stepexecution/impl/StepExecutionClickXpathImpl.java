@@ -9,7 +9,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 
-//TODO дописать логирование
 public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
 
     @Override
@@ -28,7 +27,7 @@ public class StepExecutionClickXpathImpl implements StepExecutionClickXpath {
             WebElement element = webDriver.findElement(By.xpath(step.getValue()));
             element.click();
         } catch (NoSuchElementException e ) {
-            System.out.println("this is error" + e.getMessage());
+            System.out.println("this is error" + e.getMessage()); //TODO add logger
         }
     }
 }

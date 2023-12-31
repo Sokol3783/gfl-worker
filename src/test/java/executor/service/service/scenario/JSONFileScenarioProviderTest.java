@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JSONFileScenarioProviderTest {
+class JSONFileScenarioProviderTest {
 
     private static final int EXPECTED_LIST_SIZE = 5;
     private ScenarioProvider provider;
