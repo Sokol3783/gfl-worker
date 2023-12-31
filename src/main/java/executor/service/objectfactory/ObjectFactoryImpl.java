@@ -70,11 +70,11 @@ public class ObjectFactoryImpl implements ObjectFactory {
             } else if (clazz.isAssignableFrom(ContinuousOperations.class)) {
                 return createTaskKeeper();
             } else if (clazz.isAssignableFrom(ThreadPoolConfig.class)) {
-                return createThreadPoolConfig();
+                return (T) createThreadPoolConfig();
             } else if (clazz.isAssignableFrom(ExecutionSubscriber.class)) {
-                return createExecutionSubscriber();
+                return (T) createExecutionSubscriber();
             } else if (clazz.isAssignableFrom(WebDriverConfig.class)) {
-                return createWebDriverConfig();
+                return (T) createWebDriverConfig();
             } else if (clazz.isAssignableFrom(StepExecutionFabric.class)) {
                 return createStepExecutionFabrice();
             } else if (clazz.isAssignableFrom(ExecutableScenarioComposerImpl.class)) {
@@ -103,22 +103,22 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) new StepExecutionFabricImpl(stepExecutions);
         }
 
-        private <T> T createWebDriverConfig() throws InstantiationException {
+        private <T extends WebDriverConfig> T createWebDriverConfig() throws InstantiationException {
             return (T) PropertyCreator.createWebDriverConfig();
         }
 
-        private <T> T createThreadPoolConfig() throws InstantiationException {
+        private <T extends ThreadPoolConfig> T createThreadPoolConfig() throws InstantiationException {
             return (T) PropertyCreator.getThreadPoolConfig();
         }
 
-        private <T> T createExecutionSubscriber() {
+        private <T extends ExecutionSubscriber> T createExecutionSubscriber() {
             return (T) new ExecutionSubscriber(
                     create(ExecutionService.class),
                     null,
                     create(ExecutableScenarioComposer.class));
         }
 
-        private <T> T createTaskKeeper() {
+        private <T extends ContinuousOperations> T createTaskKeeper() {
             List<ContinuousOperationNode> nodes = new ArrayList<>();
             ContinuousOperationNode publisherTask = new ContinuousOperationNode(create(ProxyPublisher.class));
             nodes.add(publisherTask);
@@ -129,7 +129,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return (T) new ContinuousOperationsImpl(nodes);
         }
 
-        private <T> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
+        private <T extends ParallelFlowExecutorService> T createParallelFlowExecutorService() throws NoSuchFieldException, IllegalAccessException {
             ThreadPoolConfig config = create(ThreadPoolConfig.class);
             ParallelFlowExecutorServiceImpl parallelFlowExecutorService = new ParallelFlowExecutorServiceImpl(config.getCorePoolSize()
                     , config.getCorePoolSize(),
@@ -167,22 +167,19 @@ public class ObjectFactoryImpl implements ObjectFactory {
                             return createInstanceWithConstructor((Constructor<T>) suitableConstructor.get());
                         }
                     }
-
                 }
                 throw new InstantiationException("No suitable constructor found for class: " + clazz.getName());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchFieldException |
-                     NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        private Optional<Constructor<?>> findSuitableConstructor(Class<?> clazz) throws NoSuchMethodException, InstantiationException {
+        private Optional<Constructor<?>> findSuitableConstructor(Class<?> clazz) {
             Optional<Constructor<?>> maxConstructor = findMaxConstructor(clazz);
             if (maxConstructor.isEmpty()) {
                 return findEmptyConstructor(clazz);
             }
             return maxConstructor;
-
         }
 
         private Optional<Constructor<?>> findMaxConstructor(Class<?> clazz) {
@@ -202,7 +199,7 @@ public class ObjectFactoryImpl implements ObjectFactory {
             return constructor.newInstance();
         }
 
-        private <T> Object fillClassesInConstructor(Constructor constructor) {
+        private Object fillClassesInConstructor(Constructor constructor) {
             Object[] params = new Object[constructor.getParameterCount()];
             for (int i = 0; i < params.length; i++) {
                 Class<?> paramType = constructor.getParameterTypes()[i];
