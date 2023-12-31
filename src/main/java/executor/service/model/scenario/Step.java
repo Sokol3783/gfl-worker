@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Step {
     private StepAction action;
-    //Artem said use number for sle
     private String value;
 
     public Step() {
