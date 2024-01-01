@@ -1,15 +1,16 @@
 package executor.service.queue;
 
-import executor.service.exceptions.QueueStorageException;
+import executor.service.exceptions.DataFetchException;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface DataFetcher<T> {
 
     T fetchValue();
 
-    List<T> fetchValues(int count) throws QueueStorageException;
+    Collection<T> fetchValues(int count) throws DataFetchException;
 
-    List<T> fetchAllValue();
+    Collection<T> fetchAllValue();
 
 }
