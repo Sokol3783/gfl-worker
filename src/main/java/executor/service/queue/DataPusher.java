@@ -7,4 +7,9 @@ public interface DataPusher<T>{
     boolean addValue(T value);
 
     boolean addValue(Collection<T> value);
+
+    int fillPercent();
+
+    int isFull();
+
 }
