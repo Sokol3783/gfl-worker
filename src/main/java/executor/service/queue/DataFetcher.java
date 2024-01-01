@@ -3,7 +3,6 @@ package executor.service.queue;
 import executor.service.exceptions.DataFetchException;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface DataFetcher<T> {
 
