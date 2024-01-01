@@ -1,12 +1,14 @@
 package executor.service.queue;
 
+import executor.service.exceptions.DataPushException;
+
 import java.util.Collection;
 
 public interface DataPusher<T>{
 
-    boolean addValue(T value);
+    boolean addValue(T value) throws DataPushException;
 
-    boolean addValue(Collection<T> value);
+    boolean addAllValue(Collection<T> value) throws DataPushException;
 
     int fillPercent();
 
