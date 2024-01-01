@@ -22,7 +22,7 @@ public class ProxyQueue {
         return proxies.peek();
     }
 
-    public List<ProxyConfigHolder> getAllProxy() throws InterruptedException {
+    public List<ProxyConfigHolder> getAllProxy() {
         List<ProxyConfigHolder> list = new ArrayList<>();
         proxies.drainTo(list);
         return list;

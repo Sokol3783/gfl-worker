@@ -22,7 +22,7 @@ public class ScenarioQueue {
         return scenarios.poll();
     }
 
-    public List<Scenario> getAllScenario() throws InterruptedException {
+    public List<Scenario> getAllScenario() {
         List<Scenario> list = new ArrayList<>();
         scenarios.drainTo(list);
         return list;
